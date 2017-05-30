@@ -50,4 +50,39 @@
         android:onClick="onClickExecute"
         android:text="GO GOOGLE STT DEMO" />
 
+    <EditText
+        android:id="@+id/et_speech_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="say ..."
+        />
+
+    <Button
+        android:id="@+id/btn_service_bind"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Bind service"
+        android:onClick="onClickExecute"/>
+
+    <Button
+        android:id="@+id/btn_service_unbind"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Unbind service"
+        android:onClick="onClickExecute"/>
+
+    <Button
+        android:id="@+id/btn_tts_play"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TTS PLAY"
+        android:onClick="onClickExecute"/>
+
+    <Button
+        android:id="@+id/btn_tts_stop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TTS STOP"
+        android:onClick="onClickExecute"/>
+
 </LinearLayout>
