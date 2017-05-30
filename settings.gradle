@@ -1,1 +1,1 @@
-include ':bDebugApp'
+include ':bDebugApp', ':daum-speech-openapi-5.0'

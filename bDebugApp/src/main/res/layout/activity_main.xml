@@ -29,4 +29,25 @@
         android:onClick="onClickExecute"
         android:text="Exec.OtherProcess"/>
 
+    <Button
+        android:id="@+id/btn_go_naver_demo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onClickExecute"
+        android:text="GO NAVER STT DEMO" />
+
+    <Button
+        android:id="@+id/btn_go_kakao_demo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onClickExecute"
+        android:text="GO KAKAO STT DEMO" />
+
+    <Button
+        android:id="@+id/btn_go_google_demo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onClickExecute"
+        android:text="GO GOOGLE STT DEMO" />
+
 </LinearLayout>

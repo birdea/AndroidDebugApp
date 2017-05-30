@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Speech To Text Demo"
+        android:textSize="20sp"
+        />
+
+    <EditText
+        android:id="@+id/et_speech"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:hint="..."
+        android:inputType="none"
+        android:lines="5"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_stt_google"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="onClickExecute"
+            android:text="Intent"/>
+
+        <Button
+            android:id="@+id/btn_stt_custom"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="onClickExecute"
+            android:text="SpeechRecognize"/>
+
+        <Button
+            android:id="@+id/btn_stt_custom_loop"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="onClickExecute"
+            android:text="LOOP"/>
+
+        <Button
+            android:id="@+id/btn_stt_custom_stop"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="onClickExecute"
+            android:text="STOP"/>
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/lv_status"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:transcriptMode="alwaysScroll"
+        android:stackFromBottom="true"/>
+
+</LinearLayout>

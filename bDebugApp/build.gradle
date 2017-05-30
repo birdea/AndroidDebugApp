@@ -26,4 +26,8 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.3.1'
     testCompile 'junit:junit:4.12'
+    // naver tts
+    compile 'com.naver.speech.clientapi:naverspeech-sdk-android:1.1.2'
+    // daum tts
+    compile project(':daum-speech-openapi-5.0')
 }

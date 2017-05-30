@@ -2,6 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.risewide.bdebugapp">
 
+    <!-- Naver STT -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <!-- Kakao STT -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,15 +27,35 @@
             </intent-filter>
         </activity>
 
+        <!-- Process Test (Same Process) -->
         <activity
-            android:name=".ActivityTestCrashOnSameProcess"
+            android:name=".process.ActivityTestCrashOnSameProcess"
             />
         <!--android:process=":one"-->
 
+        <!-- Process Test (Other Process) -->
         <activity
-            android:name=".ActivityTestCrashOnOtherProcess"
+            android:name=".process.ActivityTestCrashOnOtherProcess"
             android:process=":other"
             />
+
+        <!-- Naver STT -->
+        <activity android:name=".external.SpeechDemoNaverActivity"
+                  android:screenOrientation="portrait"/>
+
+        <!-- Google STT -->
+        <activity android:name=".external.SpeechDemoGoogleActivity"
+                  android:screenOrientation="portrait"/>
+
+        <!-- Kakao STT -->
+        <activity android:name=".external.SpeechDemoKakaoActivity"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".external.VoiceRecoActivity"
+                  android:screenOrientation="portrait"
+                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
+        <activity android:name=".external.TextToSpeechActivity"
+                  android:screenOrientation="portrait"
+                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
 
     </application>
 

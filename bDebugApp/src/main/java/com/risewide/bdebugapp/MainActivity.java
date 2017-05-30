@@ -4,6 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.risewide.bdebugapp.external.SpeechDemoGoogleActivity;
+import com.risewide.bdebugapp.external.SpeechDemoKakaoActivity;
+import com.risewide.bdebugapp.external.SpeechDemoNaverActivity;
+import com.risewide.bdebugapp.process.ActivityTestCrashOnOtherProcess;
+import com.risewide.bdebugapp.process.ActivityTestCrashOnSameProcess;
+import com.risewide.bdebugapp.util.SVLog;
+
 public class MainActivity extends BaseActivity {
 
 	private Thread.UncaughtExceptionHandler deUncaughtExceptionHandler;
@@ -32,6 +39,21 @@ public class MainActivity extends BaseActivity {
 			}
 			case R.id.btnExecuteOtherProc: {
 				Intent intent = new Intent(this, ActivityTestCrashOnOtherProcess.class);
+				startActivity(intent);
+				break;
+			}
+			case R.id.btn_go_naver_demo: {
+				Intent intent = new Intent(MainActivity.this, SpeechDemoNaverActivity.class);
+				startActivity(intent);
+				break;
+			}
+			case R.id.btn_go_kakao_demo: {
+				Intent intent = new Intent(MainActivity.this, SpeechDemoKakaoActivity.class);
+				startActivity(intent);
+				break;
+			}
+			case R.id.btn_go_google_demo: {
+				Intent intent = new Intent(MainActivity.this, SpeechDemoGoogleActivity.class);
 				startActivity(intent);
 				break;
 			}

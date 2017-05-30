@@ -2,6 +2,8 @@ package com.risewide.bdebugapp;
 
 import android.app.Application;
 
+import com.risewide.bdebugapp.util.SVLog;
+
 /**
  * Created by sktechx on 2017-05-29.
  */

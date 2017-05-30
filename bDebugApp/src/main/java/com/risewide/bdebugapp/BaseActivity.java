@@ -3,6 +3,8 @@ package com.risewide.bdebugapp;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.risewide.bdebugapp.util.SVLog;
+
 /**
  * Created by sktechx on 2017-05-29.
  */
