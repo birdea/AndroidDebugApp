@@ -1,88 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical">
+    android:paddingTop="@dimen/activity_vertical_margin">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="init\nstatus\ncrash\ntest"/>
-
-    <Button
-        android:id="@+id/btnExecuteSameProc"
+    <LinearLayout
+        android:id="@+id/activity_main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="onClickExecute"
-        android:text="Exec.SameProcess"/>
-    <Button
-        android:id="@+id/btnExecuteOtherProc"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="onClickExecute"
-        android:text="Exec.OtherProcess"/>
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn_go_naver_demo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="onClickExecute"
-        android:text="GO NAVER STT DEMO" />
+        <TextView
+            style="@style/titleCommonLayout"
+            android:text="# Message(SMS/MMS)"/>
 
-    <Button
-        android:id="@+id/btn_go_kakao_demo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="onClickExecute"
-        android:text="GO KAKAO STT DEMO" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <Button
+                android:id="@+id/btnCommunicationMessageSender"
+                style="@style/btnCommonLayout"
+                android:text="Comm.Msg.Sender"/>
+            <Button
+                android:id="@+id/btnCommunicationMessageReader"
+                style="@style/btnCommonLayout"
+                android:text="Comm.Msg.Reader"/>
+        </TableRow>
 
-    <Button
-        android:id="@+id/btn_go_google_demo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="onClickExecute"
-        android:text="GO GOOGLE STT DEMO" />
+        <TextView
+            style="@style/titleCommonLayout"
+            android:text="# process"/>
 
-    <EditText
-        android:id="@+id/et_speech_msg"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="say ..."
-        />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <Button
+                android:id="@+id/btnExecuteSameProc"
+                style="@style/btnCommonLayout"
+                android:text="exec Same Process"/>
+            <Button
+                android:id="@+id/btnExecuteOtherProc"
+                style="@style/btnCommonLayout"
+                android:text="exec Other Process"/>
+        </TableRow>
 
-    <Button
-        android:id="@+id/btn_service_bind"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Bind service"
-        android:onClick="onClickExecute"/>
+        <TextView
+            style="@style/titleCommonLayout"
+            android:text="# STT"/>
 
-    <Button
-        android:id="@+id/btn_service_unbind"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Unbind service"
-        android:onClick="onClickExecute"/>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <Button
+                android:id="@+id/btn_go_naver_demo"
+                style="@style/btnCommonLayout"
+                android:text="GO NAVER STT" />
 
-    <Button
-        android:id="@+id/btn_tts_play"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TTS PLAY"
-        android:onClick="onClickExecute"/>
+            <Button
+                android:id="@+id/btn_go_kakao_demo"
+                style="@style/btnCommonLayout"
+                android:text="GO KAKAO STT" />
 
-    <Button
-        android:id="@+id/btn_tts_stop"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TTS STOP"
-        android:onClick="onClickExecute"/>
+            <Button
+                android:id="@+id/btn_go_google_demo"
+                style="@style/btnCommonLayout"
+                android:text="GO GOOGLE STT" />
+        </TableRow>
 
-</LinearLayout>
+        <TextView
+            style="@style/titleCommonLayout"
+            android:text="# smart voice"/>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <Button
+                android:id="@+id/btn_service_bind"
+                style="@style/btnCommonLayout"
+                android:text="Bind service"/>
+
+            <Button
+                android:id="@+id/btn_service_unbind"
+                style="@style/btnCommonLayout"
+                android:text="Unbind service"/>
+        </TableRow>
+
+        <EditText
+            android:id="@+id/et_speech_msg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="say ..."
+            />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <Button
+                android:id="@+id/btn_tts_play"
+                style="@style/btnCommonLayout"
+                android:text="TTS PLAY"/>
+
+            <Button
+                android:id="@+id/btn_tts_stop"
+                style="@style/btnCommonLayout"
+                android:text="TTS STOP"/>
+        </TableRow>
+
+    </LinearLayout>
+</ScrollView>

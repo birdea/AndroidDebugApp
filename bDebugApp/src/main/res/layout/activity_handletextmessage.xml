@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="This is title area"
+        android:visibility="gone"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/tv_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="blah blah blah~~~"
+        android:textSize="12sp"
+        android:visibility="gone"
+        android:layout_below="@+id/tv_title"
+        android:layout_centerHorizontal="true"/>
+
+    <ListView
+        android:id="@+id/lv_textmessage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_change_mode"
+            style="@style/btnCommonLayout"
+            android:gravity="center"
+            android:visibility="gone"
+            android:text="@string/common_btn_change_mode"/>
+
+        <Button
+            android:id="@+id/btn_check"
+            style="@style/btnCommonLayout"
+            android:gravity="center"
+            android:visibility="visible"
+            android:text="@string/common_check_count"/>
+
+        <Button
+            android:id="@+id/btn_refresh"
+            style="@style/btnCommonLayout"
+            android:layout_margin="6dp"
+            android:background="@drawable/btn_bluegreen_next"
+            android:gravity="center"
+            android:visibility="visible"
+            android:text="@string/common_refresh"/>
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

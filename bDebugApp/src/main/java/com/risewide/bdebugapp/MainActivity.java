@@ -3,24 +3,27 @@ package com.risewide.bdebugapp;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import com.risewide.bdebugapp.communication.MessageReaderTestActivity;
+import com.risewide.bdebugapp.communication.MessageSenderTestActivity;
 import com.risewide.bdebugapp.external.SpeechDemoGoogleActivity;
 import com.risewide.bdebugapp.external.SpeechDemoKakaoActivity;
 import com.risewide.bdebugapp.external.SpeechDemoNaverActivity;
 import com.risewide.bdebugapp.process.ActivityTestCrashOnOtherProcess;
 import com.risewide.bdebugapp.process.ActivityTestCrashOnSameProcess;
+import com.risewide.bdebugapp.util.AudioFocusManager;
 import com.risewide.bdebugapp.util.SVLog;
 import com.skt.prod.voice.v2.aidl.ISmartVoice;
 import com.skt.prod.voice.v2.aidl.ITextToSpeechCallback;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements AudioManager.OnAudioFocusChangeListener{
 
 	private Thread.UncaughtExceptionHandler deUncaughtExceptionHandler;
 	private ISmartVoice iSmartVoice;
@@ -29,7 +32,8 @@ public class MainActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		bindService();
+
+		AudioFocusManager.getInstance().init(this, this);
 
 		deUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
@@ -45,10 +49,28 @@ public class MainActivity extends BaseActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 		unbindService();
+
+		AudioFocusManager.getInstance().release(this, this);
+
+		deUncaughtExceptionHandler = null;
+		iSmartVoice = null;
+		iTextToSpeechCallback = null;
+		mConnection = null;
+		//System.gc();
 	}
 
-	public void onClickExecute(View view) {
+	public void onClickView(View view) {
 		switch (view.getId()) {
+			case R.id.btnCommunicationMessageReader: {
+				Intent intent = new Intent(this, MessageReaderTestActivity.class);
+				startActivity(intent);
+				break;
+			}
+			case R.id.btnCommunicationMessageSender: {
+				Intent intent = new Intent(this, MessageSenderTestActivity.class);
+				startActivity(intent);
+				break;
+			}
 			case R.id.btnExecuteSameProc: {
 				Intent intent = new Intent(this, ActivityTestCrashOnSameProcess.class);
 				startActivity(intent);
@@ -223,5 +245,10 @@ public class MainActivity extends BaseActivity {
 		}
 		//
 		return speechMsg;
+	}
+
+	@Override
+	public void onAudioFocusChange(int focusChange) {
+		log("onAudioFocusChange > focusChange : "+focusChange+", "+ AudioFocusManager.getAudioFocusStatus(focusChange));
 	}
 }

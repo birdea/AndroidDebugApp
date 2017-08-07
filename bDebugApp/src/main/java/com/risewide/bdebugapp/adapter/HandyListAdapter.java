@@ -1,6 +1,7 @@
 package com.risewide.bdebugapp.adapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -15,11 +16,9 @@ import com.risewide.bdebugapp.R;
 
 public class HandyListAdapter extends BaseAdapter {
 
-	public static final int MAX_ITEM = 100;
-
 	private LayoutInflater inflater;
 	private Context context;
-	private ArrayList<Param> items = new ArrayList<Param>();
+	private List<Param> items = new ArrayList<>();
 
 
 	public enum Mode {
@@ -29,6 +28,11 @@ public class HandyListAdapter extends BaseAdapter {
 	}
 
 	private Mode mode;
+
+	public HandyListAdapter(Context context) {
+		this.context = context;
+		this.mode = Mode.HEAD_BODY;
+	}
 
 	public HandyListAdapter(Context context, Mode mode) {
 		this.context = context;
@@ -40,20 +44,16 @@ public class HandyListAdapter extends BaseAdapter {
 		TextView tv_body;
 	}
 
-	public enum From {
-		ME,
-		YOU,
-	}
-
 	public static class Param {
 		public String msgHead;
 		public String msgBody;
-		public From from;
 	}
 
 	@SuppressLint("InflateParams")
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
+
+		ViewHolder viewHolder;
 
 		if (inflater == null) {
 			inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -61,35 +61,39 @@ public class HandyListAdapter extends BaseAdapter {
 
 		if (convertView == null) {
 			convertView = inflater.inflate(R.layout.listitem_simple, null);
-		}
-
-		TextView tv_head = (TextView) convertView.findViewById(R.id.tv_head);
-		TextView tv_body = (TextView) convertView.findViewById(R.id.tv_body);
-
-		if(Mode.HEAD_BODY.equals(mode)) {
-			tv_head.setVisibility(View.VISIBLE);
-			tv_head.setVisibility(View.VISIBLE);
-		} else if (Mode.HEAD_ONLY.equals(mode)) {
-			tv_body.setVisibility(View.GONE);
-		} else if (Mode.BODY_ONLY.equals(mode)) {
-			tv_head.setVisibility(View.GONE);
+			viewHolder = new ViewHolder();
+			//
+			viewHolder.tv_head = (TextView) convertView.findViewById(R.id.tv_head);
+			viewHolder.tv_head.setVisibility(View.GONE);
+			viewHolder.tv_body = (TextView) convertView.findViewById(R.id.tv_body);
+			//
+			convertView.setTag(viewHolder);
 		} else {
-			tv_head.setVisibility(View.VISIBLE);
-			tv_head.setVisibility(View.VISIBLE);
+			viewHolder = (ViewHolder) convertView.getTag();
 		}
+
+		adjustViewMode(viewHolder);
 
 		if (items != null && items.size() > position) {
 			Param item = items.get(position);
-			tv_head.setText(String.valueOf(item.msgHead));
-			tv_body.setText(String.valueOf(item.msgBody));
-
-			if(From.ME.equals(item.from)) {
-				tv_body.setGravity(Gravity.RIGHT);
-			} else {
-				tv_body.setGravity(Gravity.LEFT);
-			}
+			viewHolder.tv_head.setText(String.valueOf(item.msgHead));
+			viewHolder.tv_body.setText(String.valueOf(item.msgBody));
 		}
 		return convertView;
+	}
+
+	private void adjustViewMode(ViewHolder viewHolder) {
+		if(Mode.HEAD_BODY.equals(mode)) {
+			viewHolder.tv_head.setVisibility(View.VISIBLE);
+			viewHolder.tv_head.setVisibility(View.VISIBLE);
+		} else if (Mode.HEAD_ONLY.equals(mode)) {
+			viewHolder.tv_body.setVisibility(View.GONE);
+		} else if (Mode.BODY_ONLY.equals(mode)) {
+			viewHolder.tv_head.setVisibility(View.GONE);
+		} else {
+			viewHolder.tv_head.setVisibility(View.VISIBLE);
+			viewHolder.tv_head.setVisibility(View.VISIBLE);
+		}
 	}
 
 	private String getBodyMessage(Param item) {
@@ -125,7 +129,7 @@ public class HandyListAdapter extends BaseAdapter {
 		return 0;
 	}
 
-	public void set(ArrayList<Param> list) {
+	public void set(List<Param> list) {
 		if (null == list) {
 			return;
 		}
@@ -134,10 +138,7 @@ public class HandyListAdapter extends BaseAdapter {
 
 	public void add(Param item) {
 		if (null == items) {
-			return;
-		}
-		if (items.size() >= MAX_ITEM) {
-			items.remove(0);
+			items = new ArrayList<>();
 		}
 		items.add(item);
 	}

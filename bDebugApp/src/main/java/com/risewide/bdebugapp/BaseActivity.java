@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.risewide.bdebugapp.util.SVLog;
 
 /**
- * Created by sktechx on 2017-05-29.
+ * Created by birdea on 2017-05-29.
  */
 
 public class BaseActivity extends AppCompatActivity {

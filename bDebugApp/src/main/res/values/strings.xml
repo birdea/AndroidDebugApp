@@ -5,4 +5,20 @@
     <string name="action_settings">Settings</string>
     <string name="str_start">Start</string>
     <string name="str_stop">Stop</string>
+
+    <!-- Common Usages -->
+
+    <string name="common_ok">ok</string>
+    <string name="common_cancel">cancel</string>
+    <string name="common_next">next</string>
+    <string name="common_set">set</string>
+    <string name="common_check">check</string>
+    <string name="common_done">완료</string>
+
+    <string name="common_btn_change_mode">모드 변경</string>
+    <string name="common_btn_next">다음</string>
+    <string name="common_check_count">갯수 확인</string>
+    <string name="common_upload">업로드</string>
+    <string name="common_refresh">갱신</string>
+
 </resources>
