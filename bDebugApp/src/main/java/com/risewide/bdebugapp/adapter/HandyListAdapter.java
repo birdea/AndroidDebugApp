@@ -5,6 +5,8 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -149,4 +151,26 @@ public class HandyListAdapter extends BaseAdapter {
 		}
 		items.clear();
 	}
+
+	public void addAndnotifyDataSetChanged(final String head, final Object body) {
+		getUiHandler().post(new Runnable() {
+			@Override
+			public void run() {
+				Param param = new Param();
+				param.msgHead = head;
+				param.msgBody = String.valueOf(body);
+				add(param);
+				notifyDataSetChanged();
+			}
+		});
+	}
+
+	private Handler uiHandler;
+	private Handler getUiHandler() {
+		if(uiHandler == null) {
+			uiHandler = new Handler(Looper.getMainLooper());
+		}
+		return uiHandler;
+	}
+
 }

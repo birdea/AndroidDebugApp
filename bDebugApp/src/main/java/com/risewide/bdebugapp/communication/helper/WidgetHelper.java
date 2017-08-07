@@ -1,5 +1,6 @@
 package com.risewide.bdebugapp.communication.helper;
 
+import android.view.View;
 import android.widget.EditText;
 
 /**
@@ -16,4 +17,20 @@ public class WidgetHelper {
 		return result;
 	}
 
+	public static int changeVisiblity(View view) {
+		if (view == null) {
+			return Integer.MIN_VALUE;
+		}
+		int result;
+		switch (view.getVisibility()) {
+			case View.VISIBLE:
+				result = View.GONE;
+				break;
+			default:
+				result = View.VISIBLE;
+				break;
+		}
+		view.setVisibility(result);
+		return result;
+	}
 }

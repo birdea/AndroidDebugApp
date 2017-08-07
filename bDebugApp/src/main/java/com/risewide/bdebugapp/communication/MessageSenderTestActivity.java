@@ -2,10 +2,12 @@ package com.risewide.bdebugapp.communication;
 
 import com.risewide.bdebugapp.BaseActivity;
 import com.risewide.bdebugapp.R;
+import com.risewide.bdebugapp.adapter.HandyListAdapter;
 import com.risewide.bdebugapp.communication.helper.IntentActionHelper;
 import com.risewide.bdebugapp.communication.helper.TToast;
 import com.risewide.bdebugapp.communication.helper.WidgetHelper;
 import com.risewide.bdebugapp.util.DeviceInfo;
+import com.risewide.bdebugapp.util.SVLog;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,8 +18,11 @@ import android.provider.ContactsContract;
 import android.support.annotation.IdRes;
 import android.support.v7.app.AlertDialog;
 import android.telephony.SmsManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -28,6 +33,10 @@ import android.widget.TextView;
 public class MessageSenderTestActivity extends BaseActivity{
 
 	CommMessageSender commMessageSender;
+	HandyListAdapter handyListAdapter;
+	//
+	TextView tvDeviceInfo, tvMsgSize, tvMsgTitle;
+	EditText etTextMessage;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +44,14 @@ public class MessageSenderTestActivity extends BaseActivity{
 		setContentView(R.layout.activity_message_test);
 		initCont();
 		initView();
+		addEventMessage("onCreate.inited");
 	}
 
 	private void initView() {
-		TextView tvDeviceInfo = (TextView) findViewById(R.id.tvDeviceInfo);
+		// find a settable textview
+		tvDeviceInfo = (TextView) findViewById(R.id.tvDeviceInfo);
+		tvMsgSize = (TextView) findViewById(R.id.tvMsgSize);
+		tvMsgTitle = (TextView) findViewById(R.id.tvMsgTitle);
 		//
 		StringBuilder sb = new StringBuilder();
 		String phoneNumber = String.format("phonenumber = %s", DeviceInfo.getPhoneNumber(this));
@@ -72,8 +85,11 @@ public class MessageSenderTestActivity extends BaseActivity{
 						commMessageSender.setProtocolType(CommMessageSender.ProtocolType.MMS);
 						break;
 				}
+				addEventMessage("rgProtocolType.checked:"+checkedId+","+commMessageSender.getProtocolType());
 			}
 		});
+		rgProtocolType.check(R.id.rbProtocolTypeSms);
+
 		RadioGroup rgMethodType = (RadioGroup)findViewById(R.id.rgMethodType);
 		rgMethodType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 			@Override
@@ -86,13 +102,55 @@ public class MessageSenderTestActivity extends BaseActivity{
 						commMessageSender.setCallMethodType(CommMessageSender.CallMethodType.Intent);
 						break;
 				}
+				addEventMessage("rgMethodType.checked:"+checkedId+","+commMessageSender.getCallMethodType());
 			}
 		});
+		etTextMessage = (EditText)findViewById(R.id.etTextMessage);
+		etTextMessage.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+				addEventMessage("TextWatcher.before-s:"+s+",start:"+start+",cnt:"+count+",after:"+after);
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				addEventMessage("TextWatcher.onTextChanged-s:"+s+",start:"+start+",cnt:"+count+",before:"+before);
+
+			}
+			@Override
+			public void afterTextChanged(Editable s) {
+				addEventMessage("TextWatcher.afterTextChanged-s:"+s);
+				int charLength = 0, bytes = 0;
+				if (s != null) {
+					charLength = s.toString().length();
+					bytes = s.toString().getBytes().length;
+				}
+				tvMsgSize.setText(String.format("%d(%d bytes)", charLength, bytes));
+				tvMsgTitle.setText(String.format("msg[%d]", CommMessageSender.getCountOfDivideMessage(s.toString())));
+			}
+		});
+
+		handyListAdapter = new HandyListAdapter(this, HandyListAdapter.Mode.BODY_ONLY);
+		ListView lvEvents = (ListView) findViewById(R.id.lvEvents);
+		lvEvents.setAdapter(handyListAdapter);
 	}
 
+	private void addEventMessage(String event) {
+		SVLog.i(event);
+		if(handyListAdapter == null) {
+			return;
+		}
+		handyListAdapter.addAndnotifyDataSetChanged(null, event);
+	}
 
 	private void initCont() {
 		commMessageSender = new CommMessageSender();
+		commMessageSender.setOnProcessListener(new CommMessageSender.OnProcessListener() {
+			@Override
+			public void onEvent(String msg) {
+				addEventMessage(msg);
+			}
+		});
 
 		if(!commMessageSender.hasPermission(this)){
 			TToast.show(this, "need to get permissions..");
@@ -111,6 +169,9 @@ public class MessageSenderTestActivity extends BaseActivity{
 	//
 	public void onClickView(View view) {
 		switch (view.getId()) {
+			case R.id.btnShowDeviceInfo:
+				WidgetHelper.changeVisiblity(tvDeviceInfo);
+				break;
 			case R.id.btnSelectReceiverNumber:
 				selectReceiver();
 				break;
@@ -132,7 +193,7 @@ public class MessageSenderTestActivity extends BaseActivity{
 		intentActionHelper.selectReceiverPhoneNumber(this, new IntentActionHelper.OnActivityResultDispatcher() {
 			@Override
 			public void dispatcher(int resultCode, Intent data) {
-				if(resultCode == RESULT_OK) {
+				if (resultCode == RESULT_OK) {
 					Cursor cursor = null;
 					try {
 						cursor = getContentResolver().query(data.getData(),
@@ -150,6 +211,9 @@ public class MessageSenderTestActivity extends BaseActivity{
 					EditText etReceiverNumber = (EditText)findViewById(R.id.etReceiverNumber);
 					etReceiverName.setText(String.valueOf(commMessageSender.getMessageData().nameReceiver));
 					etReceiverNumber.setText(String.valueOf(commMessageSender.getMessageData().phoneNumberReceiver));
+					addEventMessage("selectReceiver-resultCode:"+resultCode+" > see (name, number)");
+				} else {
+					addEventMessage("selectReceiver-resultCode:"+resultCode+" > not selected");
 				}
 			}
 		});
@@ -164,10 +228,7 @@ public class MessageSenderTestActivity extends BaseActivity{
 	private CharSequence[] sampleMsg = {
 			"",
 			"멜론 TOP 100을 시작합니다.",
-			"TWICE의 CHEER UP 들려드릴께요.",
-			"휴대폰 찾기를 시작합니다. 소리와 진동에 귀기울여보세요~",
 			"현재 서울 하늘은 맑고, 오후늦게 구름이 조금 끼겠습니다. 현재 기온은 영상 32도 이고, 최고 기온은 영상 33도, 최저 기온은 영상 25도로 예상됩니다.",
-			"오늘 폭염 주의보가 내려졌어요. 오늘도 엄청 덥겠네요. 더위로 체내 수분이 부족해질 수 있으니 물을 자주 마시는 것이 좋을 것 같아요.",
 			"dkssadlkfaslkdjfaslkjfaslk jfalksdhf;alskdhf alshkf ;aslkhfa;slkhfal ;skhfa;sldkhf ;aslkhfas;lkhf a;slkjfhaslhf aslkhfa;slkhf; alkhfa;slkhf a;slkhfa;asldkfhal;skhdfjal;skhdf;alkshf;lakhsf;lkhasdfl;khasd;lfkhjas;lkfha;l"
 	};
 
@@ -187,13 +248,18 @@ public class MessageSenderTestActivity extends BaseActivity{
 		intentActionHelper.selectGaleryImage(this, new IntentActionHelper.OnActivityResultDispatcher() {
 			@Override
 			public void dispatcher(int resultCode, Intent data) {
-				if (data != null) {
-					Uri imageUri = data.getData();
-					if (imageUri != null) {
-						EditText etImageDataInfo = (EditText)findViewById(R.id.etImageDataInfo);
-						etImageDataInfo.setText(imageUri.getPath());
-						commMessageSender.setImageUri(imageUri);
+				if (resultCode == RESULT_OK) {
+					if (data != null) {
+						Uri imageUri = data.getData();
+						if (imageUri != null) {
+							EditText etImageDataInfo = (EditText)findViewById(R.id.etImageDataInfo);
+							etImageDataInfo.setText(imageUri.getPath());
+							commMessageSender.setImageUri(imageUri);
+						}
 					}
+					addEventMessage("selectImage-resultCode:"+resultCode+" > selected? data:"+data);
+				} else {
+					addEventMessage("selectImage-resultCode:"+resultCode+" > not selected");
 				}
 			}
 		});

@@ -48,12 +48,27 @@ public class CommMessageSender {
 		public Uri imageDataUri;
 	}
 
-	private ProtocolType protocolType;
-	private CallMethodType callMethodType;
+	private ProtocolType protocolType;// = ProtocolType.SMS;
+	private CallMethodType callMethodType;// = CallMethodType.DirectCall;
 	private MessageData messageData;
 
 	public CommMessageSender() {
 		messageData = new MessageData();
+	}
+
+	public interface OnProcessListener {
+		void onEvent(String msg);
+	}
+	public void setOnProcessListener(OnProcessListener listener) {
+		onProcessListener = listener;
+	}
+	private OnProcessListener onProcessListener;
+	private void notifyOnProcessListener(String msg) {
+		SVLog.i("CommMessageSender", msg);
+		if(onProcessListener ==null) {
+			return;
+		}
+		onProcessListener.onEvent(msg);
 	}
 
 	private static final int MY_PERMISSION_REQUEST = 0x01;
@@ -78,9 +93,14 @@ public class CommMessageSender {
 	public void setProtocolType(ProtocolType type) {
 		protocolType = type;
 	}
-
+	public ProtocolType getProtocolType(){
+		return protocolType;
+	}
 	public void setCallMethodType(CallMethodType type) {
 		callMethodType = type;
+	}
+	public CallMethodType getCallMethodType(){
+		return callMethodType;
 	}
 	public void setNameSender(String name) {
 		messageData.nameSender = name;
@@ -108,9 +128,11 @@ public class CommMessageSender {
 	public void send(Context context) {
 		// check for data to be ready to send
 		if (!isValidData(context, messageData)) {
+			notifyOnProcessListener("validation fails..");
 			TToast.show(context, "invalid data, check again plz..");
 			return;
 		}
+		notifyOnProcessListener("validation is ok.. send on protocol:"+protocolType);
 		// switch the delivery way of automatic or manual
 		if (ProtocolType.AUTO.equals(protocolType)) {
 			TToast.show(context, "send on automatic-protocol");
@@ -144,7 +166,7 @@ public class CommMessageSender {
 				sendOnSMS(context);
 				break;
 			case LMS:
-				sendOnMMS(context);
+				sendOnLMS(context);
 				break;
 			case MMS:
 				sendOnMMS(context);
@@ -155,6 +177,7 @@ public class CommMessageSender {
 	}
 
 	private void sendOnLMS(Context context) {
+		notifyOnProcessListener("sendOnLMS");
 		SmsManager smsManager = SmsManager.getDefault();
 		//
 		String destinationAddress, scAddress, text;
@@ -168,6 +191,7 @@ public class CommMessageSender {
 		text = messageData.textMessage;
 		//
 		ArrayList<String> msgList = smsManager.divideMessage(text);
+		notifyOnProcessListener("sendOnLMS [size]:"+msgList.size());
 		for(int i=0;i<msgList.size();i++) {
 			String action = ACTION_SMS_SEND+"_"+i;
 			PendingIntent sentIntent = PendingIntent.getBroadcast(context, 0, new Intent(action), 0);
@@ -183,6 +207,7 @@ public class CommMessageSender {
 	}
 
 	private void sendOnSMS(Context context) {
+		notifyOnProcessListener("sendOnSMS");
 		SmsManager smsManager = SmsManager.getDefault();
 		//
 		String destinationAddress, scAddress, text;
@@ -203,6 +228,7 @@ public class CommMessageSender {
 	}
 
 	private void sendOnMMS(Context context) {
+		notifyOnProcessListener("sendOnMMS");
 		SmsManager smsManager = SmsManager.getDefault();
 		//
 		String destinationAddress, text;
@@ -226,11 +252,13 @@ public class CommMessageSender {
 	private boolean isValidData(Context context, MessageData messageData) {
 
 		if (TextUtils.isEmpty(messageData.phoneNumberReceiver)) {
-			TToast.show(context, "Invalid destinationAddress");
+			notifyOnProcessListener("Invalid [destinationAddress]");
+			TToast.show(context, "Invalid [destinationAddress]");
 			return false;
 		}
 		if (TextUtils.isEmpty(messageData.textMessage)) {
-			TToast.show(context, "Invalid message body");
+			notifyOnProcessListener("Invalid [message is empty]");
+			TToast.show(context, "Invalid [message  is empty]");
 			return false;
 		}
 		return true;
@@ -250,7 +278,7 @@ public class CommMessageSender {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			int resultCode = getResultCode();
-			SVLog.i("MessageSendListener onReceive - resultCode:"+resultCode+",action:"+intent.getAction());
+			notifyOnProcessListener("MessageSendListener.onReceive - resultCode:"+resultCode+",action:"+intent.getAction()+", msgSize:"+msgSize+",count:"+count);
 			switch(resultCode){
 				case Activity.RESULT_OK:
 					TToast.show(context, "SMS 전송 완료");
@@ -271,8 +299,8 @@ public class CommMessageSender {
 			//
 			if (msgSize <= ++count) {
 				this.context.unregisterReceiver(this);
+				notifyOnProcessListener("MessageSendListener unregisterReceiver! size:"+msgSize+",count:"+count);
 			}
-			SVLog.i("MessageSendListener onReceive - msgSize:"+msgSize+",count:"+count);
 		}
 	}
 	public class MessageDeliveryListener extends BroadcastReceiver {
@@ -286,7 +314,7 @@ public class CommMessageSender {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			int resultCode = getResultCode();
-			SVLog.i("MessageDeliveryListener onReceive - resultCode:"+resultCode+",action:"+intent.getAction());
+			notifyOnProcessListener("MessageDeliveryListener.onReceive - resultCode:"+resultCode+",action:"+intent.getAction()+", msgSize:"+msgSize+",count:"+count);
 			switch (resultCode){
 				case Activity.RESULT_OK:
 					TToast.show(context, "SMS 도착 완료");
@@ -298,8 +326,21 @@ public class CommMessageSender {
 			//
 			if (msgSize <= ++count) {
 				this.context.unregisterReceiver(this);
+				notifyOnProcessListener("MessageDeliveryListener unregisterReceiver! size:"+msgSize+",count:"+count);
 			}
-			SVLog.i("MessageDeliveryListener onReceive - msgSize:"+msgSize+",count:"+count);
 		}
+	}
+	//////////////////////////////////////////////////////////////////////////////////////
+
+	public static int getCountOfDivideMessage(String text) {
+		if (TextUtils.isEmpty(text)) {
+			return 0;
+		}
+		SmsManager smsManager = SmsManager.getDefault();
+		List<String> list = smsManager.divideMessage(text);
+		if (list == null) {
+			return 0;
+		}
+		return list.size();
 	}
 }
