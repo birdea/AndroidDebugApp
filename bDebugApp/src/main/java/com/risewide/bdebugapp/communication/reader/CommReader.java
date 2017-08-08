@@ -1,11 +1,11 @@
-package com.risewide.bdebugapp.communication;
+package com.risewide.bdebugapp.communication.reader;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
-import com.risewide.bdebugapp.communication.data.MessageItem;
+import com.risewide.bdebugapp.communication.model.MessageItem;
 import com.risewide.bdebugapp.util.SVLog;
 
 import java.util.ArrayList;

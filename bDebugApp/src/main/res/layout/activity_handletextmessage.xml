@@ -18,16 +18,32 @@
         android:visibility="gone"
         android:textSize="20sp"/>
 
-    <TextView
-        android:id="@+id/tv_description"
+    <RadioGroup
+        android:id="@+id/rgProtocolType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="blah blah blah~~~"
-        android:textSize="12sp"
-        android:visibility="gone"
-        android:layout_below="@+id/tv_title"
-        android:layout_centerHorizontal="true"/>
+        android:orientation="horizontal">
+        <RadioButton
+            android:id="@+id/rbProtocolTypeAll1"
+            style="@style/rbCommonLayout"
+            android:text="All_1"
+            />
+        <RadioButton
+            android:id="@+id/rbProtocolTypeAll2"
+            style="@style/rbCommonLayout"
+            android:checked="true"
+            android:text="All_2"/>
+        <RadioButton
+            android:id="@+id/rbProtocolTypeSms"
+            style="@style/rbCommonLayout"
+            android:text="SMS"
+            />
+        <RadioButton
+            android:id="@+id/rbProtocolTypeMms"
+            style="@style/rbCommonLayout"
+            android:text="MMS"
+            />
+    </RadioGroup>
 
     <ListView
         android:id="@+id/lv_textmessage"
@@ -39,13 +55,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btn_change_mode"
-            style="@style/btnCommonLayout"
-            android:gravity="center"
-            android:visibility="gone"
-            android:text="@string/common_btn_change_mode"/>
 
         <Button
             android:id="@+id/btn_check"

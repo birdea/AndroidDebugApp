@@ -3,9 +3,11 @@ package com.risewide.bdebugapp.communication;
 import com.risewide.bdebugapp.BaseActivity;
 import com.risewide.bdebugapp.R;
 import com.risewide.bdebugapp.adapter.HandyListAdapter;
+import com.risewide.bdebugapp.communication.model.MessageData;
 import com.risewide.bdebugapp.communication.helper.IntentActionHelper;
 import com.risewide.bdebugapp.communication.helper.TToast;
 import com.risewide.bdebugapp.communication.helper.WidgetHelper;
+import com.risewide.bdebugapp.communication.model.SmsProtocolSendType;
 import com.risewide.bdebugapp.util.DeviceInfo;
 import com.risewide.bdebugapp.util.SVLog;
 
@@ -32,7 +34,7 @@ import android.widget.TextView;
 
 public class MessageSenderTestActivity extends BaseActivity{
 
-	CommMessageSender commMessageSender;
+	SmsUnifyMessageSender smsUnifyMessageSender;
 	HandyListAdapter handyListAdapter;
 	//
 	TextView tvDeviceInfo, tvMsgSize, tvMsgTitle;
@@ -73,22 +75,21 @@ public class MessageSenderTestActivity extends BaseActivity{
 			public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
 				switch (checkedId) {
 					case R.id.rbProtocolTypeAuto:
-						commMessageSender.setProtocolType(CommMessageSender.ProtocolType.AUTO);
+						smsUnifyMessageSender.setProtocolType(SmsProtocolSendType.AUTO_ADJUST);
 						break;
 					case R.id.rbProtocolTypeSms:
-						commMessageSender.setProtocolType(CommMessageSender.ProtocolType.SMS);
+						smsUnifyMessageSender.setProtocolType(SmsProtocolSendType.SMS);
 						break;
 					case R.id.rbProtocolTypeLms:
-						commMessageSender.setProtocolType(CommMessageSender.ProtocolType.LMS);
+						smsUnifyMessageSender.setProtocolType(SmsProtocolSendType.LMS);
 						break;
 					case R.id.rbProtocolTypeMms:
-						commMessageSender.setProtocolType(CommMessageSender.ProtocolType.MMS);
+						smsUnifyMessageSender.setProtocolType(SmsProtocolSendType.MMS);
 						break;
 				}
-				addEventMessage("rgProtocolType.checked:"+checkedId+","+commMessageSender.getProtocolType());
+				addEventMessage("rgProtocolType.checked:"+checkedId+","+ smsUnifyMessageSender.getProtocolType());
 			}
 		});
-		rgProtocolType.check(R.id.rbProtocolTypeSms);
 
 		RadioGroup rgMethodType = (RadioGroup)findViewById(R.id.rgMethodType);
 		rgMethodType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -96,13 +97,13 @@ public class MessageSenderTestActivity extends BaseActivity{
 			public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
 				switch (checkedId) {
 					case R.id.rbMethodTypeDirectCall:
-						commMessageSender.setCallMethodType(CommMessageSender.CallMethodType.DirectCall);
+						smsUnifyMessageSender.setCallMethodType(SmsUnifyMessageSender.CallMethodType.DirectCall);
 						break;
 					case R.id.rbMethodTypeUseIntent:
-						commMessageSender.setCallMethodType(CommMessageSender.CallMethodType.Intent);
+						smsUnifyMessageSender.setCallMethodType(SmsUnifyMessageSender.CallMethodType.Intent);
 						break;
 				}
-				addEventMessage("rgMethodType.checked:"+checkedId+","+commMessageSender.getCallMethodType());
+				addEventMessage("rgMethodType.checked:"+checkedId+","+ smsUnifyMessageSender.getCallMethodType());
 			}
 		});
 		etTextMessage = (EditText)findViewById(R.id.etTextMessage);
@@ -126,7 +127,7 @@ public class MessageSenderTestActivity extends BaseActivity{
 					bytes = s.toString().getBytes().length;
 				}
 				tvMsgSize.setText(String.format("%d(%d bytes)", charLength, bytes));
-				tvMsgTitle.setText(String.format("msg[%d]", CommMessageSender.getCountOfDivideMessage(s.toString())));
+				tvMsgTitle.setText(String.format("msg[%d]", SmsUnifyMessageSender.getCountOfDivideMessage(s.toString())));
 			}
 		});
 
@@ -144,15 +145,15 @@ public class MessageSenderTestActivity extends BaseActivity{
 	}
 
 	private void initCont() {
-		commMessageSender = new CommMessageSender();
-		commMessageSender.setOnProcessListener(new CommMessageSender.OnProcessListener() {
+		smsUnifyMessageSender = new SmsUnifyMessageSender();
+		smsUnifyMessageSender.setOnHandyEventListener(new OnHandyEventListener() {
 			@Override
 			public void onEvent(String msg) {
 				addEventMessage(msg);
 			}
 		});
 
-		if(!commMessageSender.hasPermission(this)){
+		if(!smsUnifyMessageSender.hasPermission(this)){
 			TToast.show(this, "need to get permissions..");
 			finish();
 		}
@@ -200,8 +201,9 @@ public class MessageSenderTestActivity extends BaseActivity{
 								new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
 										ContactsContract.CommonDataKinds.Phone.NUMBER}, null, null, null);
 						if (cursor.moveToFirst()) {
-							commMessageSender.setNameReceiver(cursor.getString(0));
-							commMessageSender.setPhoneNumberReceiver(cursor.getString(1));
+							MessageData messageData = smsUnifyMessageSender.getMessageData();
+							messageData.setNameReceiver(cursor.getString(0));
+							messageData.setPhoneNumberReceiver(cursor.getString(1));
 						}
 					} catch (Exception ignore){
 					} finally {
@@ -209,8 +211,8 @@ public class MessageSenderTestActivity extends BaseActivity{
 					}
 					EditText etReceiverName = (EditText)findViewById(R.id.etReceiverName);
 					EditText etReceiverNumber = (EditText)findViewById(R.id.etReceiverNumber);
-					etReceiverName.setText(String.valueOf(commMessageSender.getMessageData().nameReceiver));
-					etReceiverNumber.setText(String.valueOf(commMessageSender.getMessageData().phoneNumberReceiver));
+					etReceiverName.setText(String.valueOf(smsUnifyMessageSender.getMessageData().nameReceiver));
+					etReceiverNumber.setText(String.valueOf(smsUnifyMessageSender.getMessageData().phoneNumberReceiver));
 					addEventMessage("selectReceiver-resultCode:"+resultCode+" > see (name, number)");
 				} else {
 					addEventMessage("selectReceiver-resultCode:"+resultCode+" > not selected");
@@ -254,7 +256,8 @@ public class MessageSenderTestActivity extends BaseActivity{
 						if (imageUri != null) {
 							EditText etImageDataInfo = (EditText)findViewById(R.id.etImageDataInfo);
 							etImageDataInfo.setText(imageUri.getPath());
-							commMessageSender.setImageUri(imageUri);
+							MessageData messageData = smsUnifyMessageSender.getMessageData();
+							messageData.setImageUri(imageUri);
 						}
 					}
 					addEventMessage("selectImage-resultCode:"+resultCode+" > selected? data:"+data);
@@ -279,10 +282,11 @@ public class MessageSenderTestActivity extends BaseActivity{
 		numberReceiver = WidgetHelper.getText(etReceiverNumber);
 		textMessage = WidgetHelper.getText(etTextMessage);
 		//
-		commMessageSender.setPhoneNumberSender(numberSender);
-		commMessageSender.setPhoneNumberReceiver(numberReceiver);
-		commMessageSender.setTextMessage(textMessage);
+		MessageData messageData = smsUnifyMessageSender.getMessageData();
+		messageData.setPhoneNumberSender(numberSender);
+		messageData.setPhoneNumberReceiver(numberReceiver);
+		messageData.setTextMessage(textMessage);
 		//
-		commMessageSender.send(this);
+		smsUnifyMessageSender.send(this);
 	}
 }

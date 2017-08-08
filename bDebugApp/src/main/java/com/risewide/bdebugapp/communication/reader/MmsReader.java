@@ -1,13 +1,14 @@
-package com.risewide.bdebugapp.communication;
+package com.risewide.bdebugapp.communication.reader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.risewide.bdebugapp.communication.model.MessageItem;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -16,11 +17,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.Telephony;
-import android.telephony.SmsManager;
 import android.text.TextUtils;
-
-import com.risewide.bdebugapp.communication.data.MessageItem;
-import com.risewide.bdebugapp.util.SVLog;
 
 /**
  * Created by birdea on 2017-08-03.

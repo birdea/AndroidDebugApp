@@ -1,4 +1,4 @@
-package com.risewide.bdebugapp.communication.data;
+package com.risewide.bdebugapp.communication.model;
 
 /**
  * Created by birdea on 2017-05-12.

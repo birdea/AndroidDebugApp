@@ -5,20 +5,24 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 
 import com.risewide.bdebugapp.BaseActivity;
 import com.risewide.bdebugapp.R;
 import com.risewide.bdebugapp.adapter.HandyListAdapter;
-import com.risewide.bdebugapp.communication.data.MessageItem;
+import com.risewide.bdebugapp.communication.model.MessageItem;
 import com.risewide.bdebugapp.communication.helper.DateUtil;
 import com.risewide.bdebugapp.communication.helper.StringMaskHelper;
 import com.risewide.bdebugapp.communication.helper.TToast;
+import com.risewide.bdebugapp.communication.model.SmsProtocolReadType;
 import com.risewide.bdebugapp.util.SVLog;
 
 /**
@@ -28,82 +32,72 @@ import com.risewide.bdebugapp.util.SVLog;
 public class MessageReaderTestActivity extends BaseActivity {
 
 	private HandyListAdapter handyListAdapter;
-	private CommMessageReader textMessageManager = new CommMessageReader();
+	private SmsUnifyMessageReader smsUnifyMessageReader = new SmsUnifyMessageReader();
 	//
 	private List<MessageItem> srcList = new ArrayList<>();
-	private List<MessageItem> dstList = new ArrayList<>();
-	private Map<String, List<MessageItem>> srcMap = new HashMap<>();
-	private List<MessageItem> contactList = new ArrayList<>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_handletextmessage);
-
-		findView();
-		init();
+		initView();
+		initCont();
 	}
 
-	private void findView() {
+	private void initView() {
+
+		RadioGroup rgProtocolType = (RadioGroup)findViewById(R.id.rgProtocolType);
+		rgProtocolType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+				switch (checkedId) {
+					case R.id.rbProtocolTypeAll1:
+						smsUnifyMessageReader.setSmsProtocolReadType(SmsProtocolReadType.ALL_SEQUENTIAL);
+						break;
+					case R.id.rbProtocolTypeAll2:
+						smsUnifyMessageReader.setSmsProtocolReadType(SmsProtocolReadType.ALL_SMS_MMS);
+						break;
+					case R.id.rbProtocolTypeSms:
+						smsUnifyMessageReader.setSmsProtocolReadType(SmsProtocolReadType.SMS);
+						break;
+					case R.id.rbProtocolTypeMms:
+						smsUnifyMessageReader.setSmsProtocolReadType(SmsProtocolReadType.MMS);
+						break;
+				}
+			}
+		});
+		rgProtocolType.check(R.id.rbProtocolTypeSms);
+
 		handyListAdapter = new HandyListAdapter(this, HandyListAdapter.Mode.HEAD_BODY);
 
 		ListView lv_textmessage = (ListView) findViewById(R.id.lv_textmessage);
 		lv_textmessage.setAdapter(handyListAdapter);
-
-		// set text on textview
-		Button btn_change_mode = (Button) findViewById(R.id.btn_change_mode);
-		btn_change_mode.setText(String.valueOf(listMode.strTag));
 	}
 
-	private void init() {
-
-		if(textMessageManager.hasPermission(this)==false){
+	private void initCont() {
+		if(smsUnifyMessageReader.hasPermission(this)==false){
 			finish();
 		}
+		refresh();
+	}
 
-		textMessageManager.readMessage(this, new CommMessageReader.OnTextMessageListener() {
+	private AtomicBoolean isProcessing = new AtomicBoolean(false);
+	private void refresh() {
+		if (isProcessing.get()) {
+			TToast.show(this, "refresing.. wait for a sec");
+			return;
+		}
+		isProcessing.set(true);
+		smsUnifyMessageReader.read(this, new SmsUnifyMessageReader.OnReadTextMessageListener() {
 			@Override
 			public void onComplete(List<MessageItem> list) {
 				List<MessageItem> dstList = storeMessageList(list);
 				printOutMessageList(dstList);
 				loadMessageList(dstList);
-				//makeContactMessageMap(list);
+				isProcessing.set(false);
 			}
 		});
 	}
-
-	private void makeContactMessageMap(List<MessageItem> fulllist) {
-
-		for (MessageItem item : fulllist) {
-			String id = item.address;
-			if (srcMap.containsKey(id)) {
-				List<MessageItem> bucket = srcMap.get(id);
-				item.body = StringMaskHelper.remove(item.body);
-				bucket.add(item);
-			} else {
-				List<MessageItem> bucket = new ArrayList<>();
-				item.body = StringMaskHelper.remove(item.body);
-				bucket.add(item);
-				srcMap.put(id, bucket);
-			}
-		}
-
-		for (Map.Entry<String, List<MessageItem>> entry : srcMap.entrySet()) {
-			List<MessageItem> value = entry.getValue();
-			for(MessageItem item : value) {
-				SVLog.i("+ entry.key:"+entry.getKey()+", item:"+item.body);
-			}
-			Collections.sort(value);
-			for(MessageItem item : value) {
-				SVLog.i("+ entry.key:"+entry.getKey()+", item:"+item.toString());
-			}
-			contactList.add(value.get(0));
-		}
-
-		Collections.sort(contactList);
-
-	}
-
 
 	private List<MessageItem> storeMessageList(List<MessageItem> list) {
 		if (list == null) {
@@ -113,37 +107,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 			return null;
 		}
 		srcList.addAll(list);
-		dstList.addAll(processMaskedMessage(srcList));
-		return dstList;
-	}
-
-	private List<MessageItem> processMaskedMessage(List<MessageItem> list) {
-		if(list==null) {
-			return null;
-		}
-		List<MessageItem> dst = new ArrayList<>();
-		for(MessageItem item : list) {
-			MessageItem newItem = new MessageItem();
-			newItem.address = item.address;
-			newItem.body = StringMaskHelper.remove(item.body);
-			newItem.date = item.date;
-			dst.add(newItem);
-		}
-		return dst;
-	}
-
-	private void changeMessageList() {
-		// change mode, set each mode's list
-		if (listMode == ListMode.All) {
-			listMode = ListMode.Contact;
-			loadMessageList(contactList);
-		} else {
-			listMode = ListMode.All;
-			loadMessageList(dstList);
-		}
-		// set text on textview
-		Button btn_change_mode = (Button) findViewById(R.id.btn_change_mode);
-		btn_change_mode.setText(String.valueOf(listMode.strTag));
+		return srcList;
 	}
 
 	private void loadMessageList(final List<MessageItem> messageItemList) {
@@ -176,38 +140,14 @@ public class MessageReaderTestActivity extends BaseActivity {
 		}
 	}
 
-	private enum ListMode {
-		All("모드 변경\n(모두>개별)"),
-		Contact("모드 변경\n(개별>모두)"),
-		;
-		public String strTag;
-
-		ListMode(String t) {
-			strTag = t;
-		}
-	}
-
-	private ListMode listMode= ListMode.All;
-
 	public void onClickView(View view) {
 		switch (view.getId()) {
-			case R.id.btn_change_mode: {
-				changeMessageList();
-				break;
-			}
 			case R.id.btn_check: {
-				int cntTotal = 0, cntSelected = 0;
-				//try {
-				//	List<MessageItem> selectedList = handyListAdapter.getSelectedList();
-				//	cntTotal = srcList.size();
-				//	cntSelected = selectedList.size();
-				//} catch (Exception e) {
-				//	e.printStackTrace();
-				//}
-				TToast.show(getBaseContext(), String.format("선택 %s / 전체 %s", cntSelected, cntTotal));
+				TToast.show(getBaseContext(), String.format("전체 %s", srcList.size()));
 				break;
 			}
 			case R.id.btn_refresh: {
+				refresh();
 				break;
 			}
 		}
