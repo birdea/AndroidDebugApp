@@ -84,9 +84,10 @@ public class MessageReaderTestActivity extends BaseActivity {
 	private AtomicBoolean isProcessing = new AtomicBoolean(false);
 	private void refresh() {
 		if (isProcessing.get()) {
-			TToast.show(this, "refresing.. wait for a sec");
+			TToast.show(this, "already started.. wait for a while to done task");
 			return;
 		}
+		TToast.show(this, "start to refrese.. wait for a sec");
 		isProcessing.set(true);
 		smsUnifyMessageReader.read(this, new SmsUnifyMessageReader.OnReadTextMessageListener() {
 			@Override
@@ -100,12 +101,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 	}
 
 	private List<MessageItem> storeMessageList(List<MessageItem> list) {
-		if (list == null) {
-			srcList.clear();
-			handyListAdapter.clear();
-			handyListAdapter.notifyDataSetChanged();
-			return null;
-		}
+		srcList.clear();
 		srcList.addAll(list);
 		return srcList;
 	}
@@ -125,7 +121,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 				}
 				handyListAdapter.set(list);
 				int size = handyListAdapter.getCount();
-				TToast.show(getBaseContext(), "size:"+size);
+				TToast.show(getBaseContext(), "load complete, size:"+size);
 				handyListAdapter.notifyDataSetChanged();
 			}
 		});

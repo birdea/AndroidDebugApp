@@ -55,7 +55,7 @@ public class MmsReader {
 
 			item.id = msg.getLong(msg.getColumnIndex(Telephony.Mms._ID));
 			item.creator = msg.getString(msg.getColumnIndex(Telephony.Mms.CREATOR));
-			item.address = mmsReader.getAddressNumber(resolver, (int)item.id);
+			//item.address = mmsReader.getAddressNumber(resolver, (int)item.id);
 			//item.person = msg.getInt(msg.getColumnIndex(Telephony.Mms.PERSON));
 			item.date = msg.getLong(msg.getColumnIndex(Telephony.Mms.DATE)) * 1000;
 			item.dateSent = msg.getLong(msg.getColumnIndex(Telephony.Mms.DATE_SENT));
