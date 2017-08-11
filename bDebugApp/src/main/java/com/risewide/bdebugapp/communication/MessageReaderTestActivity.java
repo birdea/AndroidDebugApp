@@ -14,10 +14,10 @@ import android.widget.RadioGroup;
 import com.risewide.bdebugapp.BaseActivity;
 import com.risewide.bdebugapp.R;
 import com.risewide.bdebugapp.adapter.HandyListAdapter;
-import com.risewide.bdebugapp.communication.helper.DelayChecker;
+import com.risewide.bdebugapp.communication.util.DelayChecker;
 import com.risewide.bdebugapp.communication.model.SmsMmsMsg;
-import com.risewide.bdebugapp.communication.helper.DateUtil;
-import com.risewide.bdebugapp.communication.helper.TToast;
+import com.risewide.bdebugapp.communication.util.DateUtil;
+import com.risewide.bdebugapp.communication.util.TToast;
 import com.risewide.bdebugapp.communication.model.SmsMmsMsgReadType;
 import com.risewide.bdebugapp.util.DeviceInfo;
 import com.risewide.bdebugapp.util.SVLog;
@@ -124,7 +124,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 				List<HandyListAdapter.Param> list = new ArrayList<>();
 				String myPhoneNumber = DeviceInfo.getPhoneNumber(MessageReaderTestActivity.this);
 				for (SmsMmsMsg info : messageItemList) {
-					String strDate = DateUtil.getSimpleDate(info.date);
+					String strDate = DateUtil.getSimpleDate(info.getDate());
 					HandyListAdapter.Param param = new HandyListAdapter.Param();
 					param.msgHead = String.format("Address(%s), lastTime(%s)", info.getAddress(myPhoneNumber), strDate);
 					param.msgBody = String.format("%s", info.body);

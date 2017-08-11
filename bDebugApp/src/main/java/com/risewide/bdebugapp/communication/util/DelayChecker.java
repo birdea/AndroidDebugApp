@@ -1,4 +1,4 @@
-package com.risewide.bdebugapp.communication.helper;
+package com.risewide.bdebugapp.communication.util;
 
 import android.content.Context;
 

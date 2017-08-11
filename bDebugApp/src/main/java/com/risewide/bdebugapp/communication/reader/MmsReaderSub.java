@@ -7,11 +7,12 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.risewide.bdebugapp.communication.helper.HandyThreadTask;
-import com.risewide.bdebugapp.communication.helper.IOCloser;
+import com.risewide.bdebugapp.communication.util.HandyThreadTask;
+import com.risewide.bdebugapp.communication.util.IOCloser;
 import com.risewide.bdebugapp.util.SVLog;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -51,7 +52,7 @@ public class MmsReaderSub {
 
 	public List<String> getAddressNumber(ContentResolver resolver, int id) {
 		String[] projection = new String[] { "*" };
-		String selection = new String("msg_id=" + id); //?: optiional vs necessary(mandatory)
+		String selection = null;//new String("msg_id=" + id); //?: optiional vs necessary(mandatory)
 		Uri uri = Telephony.Mms.CONTENT_URI.buildUpon().appendPath(Integer.toString(id)).appendPath("addr").build();
 		Cursor cursor = resolver.query(uri, projection, selection, null, null);
 
@@ -60,11 +61,12 @@ public class MmsReaderSub {
 			// don't be lazy to assign all indexes
 			int idx_address = cursor.getColumnIndex(Telephony.Mms.Addr.ADDRESS);
 			//
-			while (cursor.moveToNext()) {
+			int rowCount = 0;
+			do {
 				String address = cursor.getString(idx_address);
-				SVLog.i("address:"+address);
+				SVLog.i("rowCount:"+(rowCount++)+", idx_address:"+idx_address+", address:"+address);
 				list.add(address);
-			}
+			} while (cursor.moveToNext());
 		}
 		IOCloser.close(cursor);
 		return list;
@@ -139,5 +141,19 @@ public class MmsReaderSub {
 			IOCloser.close(is);
 		}
 		return null;
+	}
+
+	public String getRecipientAddress(ContentResolver resolver, long recipientId) {
+		String number = null;
+		Cursor cursor = resolver.query(ContentUris.withAppendedId(Uri.parse("content://mms-sms/canonical-address"), recipientId),
+				null, null, null, null);
+
+		if (cursor != null && cursor.moveToFirst()) {
+			do {
+				number = cursor.getString(0); // same as cursor.getString(cursor.getColumnIndex("address"))
+			} while (cursor.moveToNext());
+		}
+		IOCloser.close(cursor);
+		return number;
 	}
 }

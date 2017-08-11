@@ -57,17 +57,18 @@ public class MmsReadProject {
 		@Override
 		public SmsMmsMsg read(Context context, Cursor cursor) {
 			SmsMmsMsg item = new SmsMmsMsg(SmsMmsMsg.Type.MMS);
-			item._id = cursor.getLong(idxColumn[0]);
-			item.date = cursor.getLong(idxColumn[1]);
-			item.read = cursor.getInt(idxColumn[2]);
-			item.msg_box = cursor.getInt(idxColumn[3]);
-			item.text_only = cursor.getInt(idxColumn[4]);
-			item.mms_version = cursor.getInt(idxColumn[5]);
-			item.msg_type = cursor.getInt(idxColumn[6]);
-			item.subject = cursor.getString(idxColumn[7]);
-			item.subject_charset = cursor.getInt(idxColumn[8]);
+			int idx = 0;
+			item._id = cursor.getLong(idxColumn[idx++]);
+			item.setDate(cursor.getLong(idxColumn[idx++]));
+			item.read = cursor.getInt(idxColumn[idx++]);
+			item.msg_box = cursor.getInt(idxColumn[idx++]);
+			item.text_only = cursor.getInt(idxColumn[idx++]);
+			item.mms_version = cursor.getInt(idxColumn[idx++]);
+			item.msg_type = cursor.getInt(idxColumn[idx++]);
+			item.subject = cursor.getString(idxColumn[idx++]);
+			item.subject_charset = cursor.getInt(idxColumn[idx++]);
 			//- handle in async
-			item.listAddress = mmsReaderSub.getAddressNumber(context.getContentResolver(), (int) item._id);
+			//item.listAddress = mmsReaderSub.getAddressNumber(context.getContentResolver(), (int) item._id);
 			//item.body = mmsReaderSub.getTextMessage(context, String.valueOf(item._id));
 				/*mmsReaderSub.getAddressNumberAsync(context, (int) item._id, new MmsReaderSub.OnReadListener() {
 					@Override

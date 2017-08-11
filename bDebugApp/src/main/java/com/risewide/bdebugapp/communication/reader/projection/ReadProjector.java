@@ -4,8 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
-import java.util.List;
-
 /**
  * Created by birdea on 2017-08-09.
  */

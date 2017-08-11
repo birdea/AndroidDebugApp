@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.risewide.bdebugapp.communication.helper.HandyThreadTask;
+import com.risewide.bdebugapp.communication.util.HandyThreadTask;
 import com.risewide.bdebugapp.communication.model.SmsMmsMsg;
 import com.risewide.bdebugapp.communication.model.SmsMmsMsgReadType;
 import com.risewide.bdebugapp.communication.reader.MmsReader;
-import com.risewide.bdebugapp.communication.reader.MmsSmsConversationReader;
+import com.risewide.bdebugapp.communication.reader.ConversationReader;
 import com.risewide.bdebugapp.communication.reader.SmsReader;
 import com.risewide.bdebugapp.util.SVLog;
 
@@ -86,7 +86,7 @@ public class SmsUnifyMessageReader extends AbsMessageReader{
 			@Override
 			public void run() {
 				/*
-				MmsSmsConversationReader commReader = new MmsSmsConversationReader();
+				ConversationReader commReader = new ConversationReader();
 				listener.onComplete(commReader.read(context));
 				*/
 				long startTime = System.currentTimeMillis();
@@ -136,7 +136,7 @@ public class SmsUnifyMessageReader extends AbsMessageReader{
 		HandyThreadTask.execute(new Runnable() {
 			@Override
 			public void run() {
-				MmsSmsConversationReader mmsReader = new MmsSmsConversationReader();
+				ConversationReader mmsReader = new ConversationReader();
 				listener.onComplete(mmsReader.read(context));
 			}
 		});

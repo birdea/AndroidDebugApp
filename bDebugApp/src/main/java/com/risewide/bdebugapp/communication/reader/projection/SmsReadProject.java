@@ -5,10 +5,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.Telephony;
 
-import com.risewide.bdebugapp.communication.helper.CursorHelper;
+import com.risewide.bdebugapp.communication.util.CursorUtil;
 import com.risewide.bdebugapp.communication.model.SmsMmsMsg;
-
-import java.util.List;
 
 /**
  * Created by birdea on 2017-08-08.
@@ -87,12 +85,12 @@ public class SmsReadProject {
 		@Override
 		public SmsMmsMsg read(Context context, Cursor cursor) {
 			SmsMmsMsg item = new SmsMmsMsg(SmsMmsMsg.Type.SMS);
-			item._id = CursorHelper.getLong(cursor, Telephony.Sms.Inbox._ID);
-			item.address = CursorHelper.getString(cursor, Telephony.Sms.Inbox.ADDRESS);
-			item.date = CursorHelper.getLong(cursor,Telephony.Sms.Inbox.DATE);
-			item.read = CursorHelper.getInt(cursor,Telephony.Sms.Inbox.READ);
-			item.type = CursorHelper.getInt(cursor,Telephony.Sms.Inbox.TYPE);
-			item.body = CursorHelper.getString(cursor,Telephony.Sms.Inbox.BODY);
+			item._id = CursorUtil.getLong(cursor, Telephony.Sms.Inbox._ID);
+			item.address = CursorUtil.getString(cursor, Telephony.Sms.Inbox.ADDRESS);
+			item.setDate(CursorUtil.getLong(cursor,Telephony.Sms.Inbox.DATE));
+			item.read = CursorUtil.getInt(cursor,Telephony.Sms.Inbox.READ);
+			item.type = CursorUtil.getInt(cursor,Telephony.Sms.Inbox.TYPE);
+			item.body = CursorUtil.getString(cursor,Telephony.Sms.Inbox.BODY);
 			return item;
 		}
 	}
@@ -133,12 +131,12 @@ public class SmsReadProject {
 		@Override
 		public SmsMmsMsg read(Context context, Cursor cursor) {
 			SmsMmsMsg item = new SmsMmsMsg(SmsMmsMsg.Type.SMS);
-			item._id = CursorHelper.getLong(cursor, Telephony.Sms.Sent._ID);
-			item.address = CursorHelper.getString(cursor, Telephony.Sms.Sent.ADDRESS);
-			item.date = CursorHelper.getLong(cursor,Telephony.Sms.Sent.DATE);
-			item.read = CursorHelper.getInt(cursor,Telephony.Sms.Sent.READ);
-			item.type = CursorHelper.getInt(cursor,Telephony.Sms.Sent.TYPE);
-			item.body = CursorHelper.getString(cursor,Telephony.Sms.Sent.BODY);
+			item._id = CursorUtil.getLong(cursor, Telephony.Sms.Sent._ID);
+			item.address = CursorUtil.getString(cursor, Telephony.Sms.Sent.ADDRESS);
+			item.setDate(CursorUtil.getLong(cursor,Telephony.Sms.Sent.DATE));
+			item.read = CursorUtil.getInt(cursor,Telephony.Sms.Sent.READ);
+			item.type = CursorUtil.getInt(cursor,Telephony.Sms.Sent.TYPE);
+			item.body = CursorUtil.getString(cursor,Telephony.Sms.Sent.BODY);
 			return item;
 		}
 	}

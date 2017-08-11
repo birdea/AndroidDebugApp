@@ -1,4 +1,4 @@
-package com.risewide.bdebugapp.communication.helper;
+package com.risewide.bdebugapp.communication.util;
 
 import android.database.Cursor;
 
@@ -8,9 +8,9 @@ import com.risewide.bdebugapp.util.SVLog;
  * Created by birdea on 2017-08-08.
  */
 
-public class CursorHelper {
+public class CursorUtil {
 
-	private static final String TAG = CursorHelper.class.getSimpleName();
+	private static final String TAG = CursorUtil.class.getSimpleName();
 
 	public static int getInt(Cursor cursor, String colName) {
 		int val = -1;
@@ -67,9 +67,7 @@ public class CursorHelper {
 				SVLog.d("*row : "+sb.toString());
 			}
 		}
-		if (cursor != null) {
-			cursor.close();
-		}
+		IOCloser.close(cursor);
 	}
 
 	private static Object getCursorValue(Cursor cursor, int index) {
