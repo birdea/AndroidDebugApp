@@ -1,5 +1,10 @@
 package com.risewide.bdebugapp.communication.model;
 
+import com.risewide.bdebugapp.communication.helper.DateUtil;
+import com.risewide.bdebugapp.util.DeviceInfo;
+
+import java.util.List;
+
 /**
  * Created by birdea on 2017-05-12.
  */
@@ -22,6 +27,10 @@ public class MessageItem implements Comparable<MessageItem> {
 	public int locked;
 	//
 	public boolean isSelected = true; // as default value
+	//
+	public String snippet;
+	public int snippet_cs;
+	public List<String> listAddress;
 
 	@Override
 	public String toString() {
@@ -30,7 +39,7 @@ public class MessageItem implements Comparable<MessageItem> {
 				"creator(" + creator + ")," +
 				"address(" + address + ")," +
 				"person(" + person + ")," +
-				"date(" + date + ")," +
+				"date(" + DateUtil.getSimpleDate(date) + ")," +
 				"dateSent(" + dateSent + ")," +
 				"protocol(" + protocol + ")," +
 				"errorCode(" + errorCode + ")," +
@@ -48,5 +57,21 @@ public class MessageItem implements Comparable<MessageItem> {
 	public int compareTo(MessageItem another) {
 		//int cmp = a > b ? +1 : a < b ? -1 : 0;
 		return Long.compare(another.date, date);
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	public String getAddress(String myPhoneNumber) {
+		if (address != null) {
+			return address;
+		}
+		if (listAddress != null) {
+			for (String address : listAddress) {
+				String phoneNumber = address.trim();
+				if (!address.startsWith("insert-") && !phoneNumber.equals(myPhoneNumber)) {
+					return address;
+				}
+			}
+		}
+		return null;
 	}
 }

@@ -29,7 +29,7 @@ import java.util.List;
 
 public class SmsUnifyMessageSender extends AbsMessageSender {
 
-	public static final boolean IS_SUPPORT_MMS = true;
+	public static final boolean IS_SUPPORT_MMS = false;
 
 	public enum CallMethodType {
 		DirectCall,
@@ -165,8 +165,8 @@ public class SmsUnifyMessageSender extends AbsMessageSender {
 		ArrayList<String> msgList = smsManager.divideMessage(text);
 		notifyOnEventListener("sendOnLMS [size]:"+msgList.size());
 		for(int i=0;i<msgList.size();i++) {
-			String actionSend = String.format("%s",ACTION_SMS_SEND);
-			String actionDelivery = String.format("%s",ACTION_SMS_DELIVERY);
+			String actionSend = String.format("%s", ACTION_SMS_SEND);
+			String actionDelivery = String.format("%s", ACTION_SMS_DELIVERY);
 			PendingIntent sentIntent = PendingIntent.getBroadcast(context, 0, new Intent(actionSend), PendingIntent.FLAG_UPDATE_CURRENT);
 			PendingIntent deliveryIntent = PendingIntent.getBroadcast(context, 0, new Intent(actionDelivery), PendingIntent.FLAG_UPDATE_CURRENT);
 			//- set ArrayList<PendingIntent>
@@ -205,6 +205,10 @@ public class SmsUnifyMessageSender extends AbsMessageSender {
 	}
 
 	private void sendOnMMS(Context context) {
+		notifyOnEventListener("sendOn[MMS] IS_SUPPORT_MMS:"+IS_SUPPORT_MMS);
+		if(IS_SUPPORT_MMS==false) {
+			return;
+		}
 		SmsManager smsManager = SmsManager.getDefault();
 		//
 		String destinationAddress;

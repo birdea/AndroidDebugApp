@@ -1,5 +1,7 @@
 package com.risewide.bdebugapp.communication.reader.projection;
 
+import android.content.ContentResolver;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.Telephony;
@@ -7,20 +9,16 @@ import android.provider.Telephony;
 import com.risewide.bdebugapp.communication.helper.CursorHelper;
 import com.risewide.bdebugapp.communication.model.MessageItem;
 
+import java.util.List;
+
 /**
  * Created by birdea on 2017-08-08.
  */
 
 public class SmsReadProject {
 
-	public static abstract class ReadProjector {
-		public abstract String[] getProjection();
-		public abstract Uri getUri();
-		public abstract MessageItem read(Cursor cursor);
-	}
-
-	public static class All extends ReadProjector {
-		private static final String[] PROJECTION_SMS = {
+	public static class All extends ReadProjector<MessageItem> {
+		private static final String[] PROJECTION = {
 				Telephony.Sms._ID,
 				Telephony.Sms.CREATOR,
 				Telephony.Sms.ADDRESS,
@@ -40,7 +38,7 @@ public class SmsReadProject {
 
 		@Override
 		public String[] getProjection() {
-			return PROJECTION_SMS;
+			return PROJECTION;
 		}
 
 		@Override
@@ -49,7 +47,12 @@ public class SmsReadProject {
 		}
 
 		@Override
-		public MessageItem read(Cursor cursor) {
+		public List query(Context context) {
+			return null;
+		}
+
+		@Override
+		public MessageItem read(Context context, Cursor cursor) {
 			MessageItem item = new MessageItem();
 			item.id = CursorHelper.getLong(cursor,Telephony.Sms._ID);
 			item.creator = CursorHelper.getString(cursor,Telephony.Sms.CREATOR);
@@ -70,8 +73,8 @@ public class SmsReadProject {
 		}
 	}
 
-	public static class Inbox extends ReadProjector {
-		private static final String[] PROJECTION_SMS_INBOX = {
+	public static class Inbox extends ReadProjector<MessageItem> {
+		private static final String[] PROJECTION = {
 				Telephony.Sms.Inbox._ID,
 				Telephony.Sms.Inbox.THREAD_ID,
 				Telephony.Sms.Inbox.ADDRESS,
@@ -86,7 +89,7 @@ public class SmsReadProject {
 
 		@Override
 		public String[] getProjection() {
-			return PROJECTION_SMS_INBOX;
+			return PROJECTION;
 		}
 
 		@Override
@@ -95,7 +98,12 @@ public class SmsReadProject {
 		}
 
 		@Override
-		public MessageItem read(Cursor cursor) {
+		public List query(Context context) {
+			return null;
+		}
+
+		@Override
+		public MessageItem read(Context context, Cursor cursor) {
 			MessageItem item = new MessageItem();
 			item.id = CursorHelper.getLong(cursor, Telephony.Sms.Inbox._ID);
 			//item.creator = CursorHelper.getString(cursor, Telephony.Sms.Inbox.CREATOR);
@@ -116,8 +124,8 @@ public class SmsReadProject {
 		}
 	}
 
-	public static class Sent extends ReadProjector {
-		private static final String[] PROJECTION_SMS_SENT = {
+	public static class Sent extends ReadProjector<MessageItem> {
+		private static final String[] PROJECTION = {
 				Telephony.Sms.Sent._ID,
 				Telephony.Sms.Sent.THREAD_ID,
 				Telephony.Sms.Sent.ADDRESS,
@@ -132,7 +140,7 @@ public class SmsReadProject {
 
 		@Override
 		public String[] getProjection() {
-			return PROJECTION_SMS_SENT;
+			return PROJECTION;
 		}
 
 		@Override
@@ -141,7 +149,12 @@ public class SmsReadProject {
 		}
 
 		@Override
-		public MessageItem read(Cursor cursor) {
+		public List query(Context context) {
+			return null;
+		}
+
+		@Override
+		public MessageItem read(Context context, Cursor cursor) {
 			MessageItem item = new MessageItem();
 			item.id = CursorHelper.getLong(cursor, Telephony.Sms.Sent._ID);
 			//item.creator = CursorHelper.getString(cursor, Telephony.Sms.Sent.CREATOR);

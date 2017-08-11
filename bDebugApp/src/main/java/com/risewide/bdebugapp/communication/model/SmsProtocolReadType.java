@@ -6,7 +6,7 @@ package com.risewide.bdebugapp.communication.model;
 
 public enum SmsProtocolReadType {
 	ALL_SEQUENTIAL,
-	ALL_SMS_MMS,
+	MMS_SMS,
 	SMS,
 	MMS,
 }

@@ -26,13 +26,13 @@
         <RadioButton
             android:id="@+id/rbProtocolTypeAll1"
             style="@style/rbCommonLayout"
-            android:text="All_1"
+            android:text="All"
             />
         <RadioButton
-            android:id="@+id/rbProtocolTypeAll2"
+            android:id="@+id/rbProtocolTypeMmsSms"
             style="@style/rbCommonLayout"
             android:checked="true"
-            android:text="All_2"/>
+            android:text="MmsSms"/>
         <RadioButton
             android:id="@+id/rbProtocolTypeSms"
             style="@style/rbCommonLayout"

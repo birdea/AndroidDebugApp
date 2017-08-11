@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.provider.Telephony;
 
 import com.risewide.bdebugapp.communication.model.MessageItem;
+import com.risewide.bdebugapp.communication.reader.projection.ReadProjector;
 import com.risewide.bdebugapp.communication.reader.projection.SmsReadProject;
 
 import java.util.ArrayList;
@@ -18,21 +19,21 @@ import java.util.List;
 public class SmsReader {
 
 	public List<MessageItem> read(Context context) {
-//		SmsReadProject.ReadProjector rp = new SmsReadProject.All();
-//		SmsReadProject.ReadProjector rp = new SmsReadProject.Inbox();
-		SmsReadProject.ReadProjector rp = new SmsReadProject.Sent();
+//		ReadProjector rp = new SmsReadProject.All();
+		ReadProjector rp = new SmsReadProject.Inbox();
+//		ReadProjector rp = new SmsReadProject.Sent();
 
-		List<MessageItem> contactInfoList = new ArrayList<>();
+		List<MessageItem> dataList = new ArrayList<>();
 		ContentResolver resolver = context.getContentResolver();
-		String selection = null;//") GROUP BY ("+Telephony.Sms.CONTACT_ID;
+		String selection = null;
 		Cursor cursor = resolver.query(rp.getUri(), rp.getProjection(), selection, null, Telephony.Sms.DEFAULT_SORT_ORDER);
 		while (cursor.moveToNext()) {
-			MessageItem item = rp.read(cursor);
-			contactInfoList.add(item);
+			MessageItem item = rp.read(context, cursor);
+			dataList.add(item);
 		}
 		cursor.close();
 		//
-		return contactInfoList;
+		return dataList;
 	}
 
 }

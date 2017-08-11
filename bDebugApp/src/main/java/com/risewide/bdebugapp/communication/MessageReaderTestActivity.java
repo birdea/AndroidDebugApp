@@ -1,28 +1,25 @@
 package com.risewide.bdebugapp.communication;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 
 import com.risewide.bdebugapp.BaseActivity;
 import com.risewide.bdebugapp.R;
 import com.risewide.bdebugapp.adapter.HandyListAdapter;
+import com.risewide.bdebugapp.communication.helper.DelayChecker;
 import com.risewide.bdebugapp.communication.model.MessageItem;
 import com.risewide.bdebugapp.communication.helper.DateUtil;
-import com.risewide.bdebugapp.communication.helper.StringMaskHelper;
 import com.risewide.bdebugapp.communication.helper.TToast;
 import com.risewide.bdebugapp.communication.model.SmsProtocolReadType;
+import com.risewide.bdebugapp.util.DeviceInfo;
 import com.risewide.bdebugapp.util.SVLog;
 
 /**
@@ -54,8 +51,8 @@ public class MessageReaderTestActivity extends BaseActivity {
 					case R.id.rbProtocolTypeAll1:
 						smsUnifyMessageReader.setSmsProtocolReadType(SmsProtocolReadType.ALL_SEQUENTIAL);
 						break;
-					case R.id.rbProtocolTypeAll2:
-						smsUnifyMessageReader.setSmsProtocolReadType(SmsProtocolReadType.ALL_SMS_MMS);
+					case R.id.rbProtocolTypeMmsSms:
+						smsUnifyMessageReader.setSmsProtocolReadType(SmsProtocolReadType.MMS_SMS);
 						break;
 					case R.id.rbProtocolTypeSms:
 						smsUnifyMessageReader.setSmsProtocolReadType(SmsProtocolReadType.SMS);
@@ -89,13 +86,25 @@ public class MessageReaderTestActivity extends BaseActivity {
 		}
 		TToast.show(this, "start to refrese.. wait for a sec");
 		isProcessing.set(true);
+		final DelayChecker checker = new DelayChecker();
+		checker.start("smsUnifyMessageReader");
 		smsUnifyMessageReader.read(this, new SmsUnifyMessageReader.OnReadTextMessageListener() {
 			@Override
 			public void onComplete(List<MessageItem> list) {
+//				if (list == null || list.isEmpty()) {
+//					TToast.show(getBaseContext(), "load complete, size:0");
+//					return;
+//				}
+				checker.end();
 				List<MessageItem> dstList = storeMessageList(list);
-				printOutMessageList(dstList);
+				checker.end();
+				//printOutMessageList(dstList);
 				loadMessageList(dstList);
+				checker.end();
 				isProcessing.set(false);
+				TToast.show(getBaseContext(), "load complete, size:"+dstList.size());
+				SVLog.d("load complete, size:"+dstList.size());
+				checker.showToast(getBaseContext());
 			}
 		});
 	}
@@ -112,16 +121,16 @@ public class MessageReaderTestActivity extends BaseActivity {
 			public void run() {
 				handyListAdapter.clear();
 				List<HandyListAdapter.Param> list = new ArrayList<>();
+				String myPhoneNumber = DeviceInfo.getPhoneNumber(MessageReaderTestActivity.this);
 				for (MessageItem info : messageItemList) {
 					String strDate = DateUtil.getSimpleDate(info.date);
 					HandyListAdapter.Param param = new HandyListAdapter.Param();
-					param.msgHead = String.format("Address(%s), lastTime(%s)", info.address, strDate);
+					param.msgHead = String.format("Address(%s), lastTime(%s)", info.getAddress(myPhoneNumber), strDate);
 					param.msgBody = String.format("%s", info.body);
 					list.add(param);
 				}
 				handyListAdapter.set(list);
 				int size = handyListAdapter.getCount();
-				TToast.show(getBaseContext(), "load complete, size:"+size);
 				handyListAdapter.notifyDataSetChanged();
 			}
 		});
