@@ -37,7 +37,7 @@ public class VoiceRecoActivity extends SpeechRecognizerActivity {
         putStringFromId(RES_STRINGS.PLEASE_SPEAK_NATURAL, R.string.net_daum_mf_asr_voice_search_tip_natural);
         putStringFromId(RES_STRINGS.NETWORK_IS_UNSTABLE, R.string.net_daum_mf_asr_voice_search_error_network);
 
-        // view id
+        // view _id
         // main
         putViewId(RES_VIEWID.VIEW_VOICE_RECO_ACTIVITY, R.layout.net_daum_mf_asr_activity_voice_reco);
         putViewId(RES_VIEWID.LAYOUT_MAIN, R.id.net_daum_mf_asr_main_layout);
@@ -70,7 +70,7 @@ public class VoiceRecoActivity extends SpeechRecognizerActivity {
         // activity가 표시될 때의 transition 효과 설정
         overridePendingTransition(R.anim.net_daum_mf_asr_grow_height_from_top, android.R.anim.fade_in);
 
-        // isValidResourceMappings()을 호출하면 리소스 및 view id 설정이 안된 것이 있는지 체크할 수 있다.
+        // isValidResourceMappings()을 호출하면 리소스 및 view _id 설정이 안된 것이 있는지 체크할 수 있다.
         boolean resourcePassed = isValidResourceMappings();
         Log.i("VoiceRecoActivity", "resource pass : " + resourcePassed);
 
@@ -80,7 +80,7 @@ public class VoiceRecoActivity extends SpeechRecognizerActivity {
             return;
         }
 
-        // 물방울 애니메이션에 사용되는 drawable의 id 목록
+        // 물방울 애니메이션에 사용되는 drawable의 _id 목록
         int[] bitmaps = {
                 R.drawable.net_daum_mf_asr_ani_circle_blue,
                 R.drawable.net_daum_mf_asr_ani_circle_green,

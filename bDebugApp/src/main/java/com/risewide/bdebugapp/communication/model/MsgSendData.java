@@ -6,7 +6,7 @@ import android.net.Uri;
  * Created by birdea on 2017-08-08.
  */
 
-public class MessageData {
+public class MsgSendData {
 	public String phoneNumberSender;
 	public String phoneNumberReceiver;
 	public String nameSender;

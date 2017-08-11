@@ -5,7 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.provider.Telephony;
 
-import com.risewide.bdebugapp.communication.model.MessageItem;
+import com.risewide.bdebugapp.communication.helper.CursorHelper;
+import com.risewide.bdebugapp.communication.model.SmsMmsMsg;
 import com.risewide.bdebugapp.communication.reader.projection.ReadProjector;
 import com.risewide.bdebugapp.communication.reader.projection.SmsReadProject;
 
@@ -18,17 +19,24 @@ import java.util.List;
 
 public class SmsReader {
 
-	public List<MessageItem> read(Context context) {
+	public List<SmsMmsMsg> read(Context context) {
 //		ReadProjector rp = new SmsReadProject.All();
 		ReadProjector rp = new SmsReadProject.Inbox();
 //		ReadProjector rp = new SmsReadProject.Sent();
 
-		List<MessageItem> dataList = new ArrayList<>();
+		List<SmsMmsMsg> dataList = new ArrayList<>();
 		ContentResolver resolver = context.getContentResolver();
 		String selection = null;
 		Cursor cursor = resolver.query(rp.getUri(), rp.getProjection(), selection, null, Telephony.Sms.DEFAULT_SORT_ORDER);
 		while (cursor.moveToNext()) {
-			MessageItem item = rp.read(context, cursor);
+			SmsMmsMsg item = new SmsMmsMsg();
+			item._id = CursorHelper.getLong(cursor,Telephony.Sms._ID);
+			item.address = CursorHelper.getString(cursor,Telephony.Sms.ADDRESS);
+			item.date = CursorHelper.getLong(cursor,Telephony.Sms.DATE);
+			item.read = CursorHelper.getInt(cursor,Telephony.Sms.READ);
+			item.type = CursorHelper.getInt(cursor,Telephony.Sms.TYPE);
+			item.body = CursorHelper.getString(cursor,Telephony.Sms.BODY);
+
 			dataList.add(item);
 		}
 		cursor.close();

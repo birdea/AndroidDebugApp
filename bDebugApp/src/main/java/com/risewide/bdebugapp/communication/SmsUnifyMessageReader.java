@@ -1,5 +1,17 @@
 package com.risewide.bdebugapp.communication;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import com.risewide.bdebugapp.communication.helper.HandyThreadTask;
+import com.risewide.bdebugapp.communication.model.SmsMmsMsg;
+import com.risewide.bdebugapp.communication.model.SmsMmsMsgReadType;
+import com.risewide.bdebugapp.communication.reader.MmsReader;
+import com.risewide.bdebugapp.communication.reader.MmsSmsConversationReader;
+import com.risewide.bdebugapp.communication.reader.SmsReader;
+import com.risewide.bdebugapp.util.SVLog;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -7,31 +19,19 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 
-import com.risewide.bdebugapp.communication.helper.HandyThreadTask;
-import com.risewide.bdebugapp.communication.model.MessageItem;
-import com.risewide.bdebugapp.communication.model.SmsProtocolReadType;
-import com.risewide.bdebugapp.communication.reader.MmsSmsReader;
-import com.risewide.bdebugapp.communication.reader.MmsReader;
-import com.risewide.bdebugapp.communication.reader.SmsReader;
-import com.risewide.bdebugapp.util.SVLog;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Created by birdea on 2017-08-08.
  */
 
 public class SmsUnifyMessageReader extends AbsMessageReader{
 
-	private SmsProtocolReadType smsProtocolReadType;
+	private SmsMmsMsgReadType smsProtocolReadType;
 
 	public SmsUnifyMessageReader() {
-		smsProtocolReadType = SmsProtocolReadType.SMS;
+		smsProtocolReadType = SmsMmsMsgReadType.SMS;
 	}
 
-	public void setSmsProtocolReadType(SmsProtocolReadType type) {
+	public void setSmsProtocolReadType(SmsMmsMsgReadType type) {
 		smsProtocolReadType = type;
 	}
 
@@ -41,8 +41,8 @@ public class SmsUnifyMessageReader extends AbsMessageReader{
 			case ALL_SEQUENTIAL:
 				readAllMessageOnSequence(context, listener);
 				break;
-			case MMS_SMS:
-				readMmsSmsMessage(context, listener);
+			case MMS_SMS_CONVERSATION:
+				readMmsSmsConversationMessage(context, listener);
 				break;
 			case SMS:
 				readSmsMessage(context, listener);
@@ -76,7 +76,7 @@ public class SmsUnifyMessageReader extends AbsMessageReader{
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	public interface OnReadTextMessageListener {
-		void onComplete(List<MessageItem> list);
+		void onComplete(List<SmsMmsMsg> list);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,20 +86,20 @@ public class SmsUnifyMessageReader extends AbsMessageReader{
 			@Override
 			public void run() {
 				/*
-				MmsSmsReader commReader = new MmsSmsReader();
+				MmsSmsConversationReader commReader = new MmsSmsConversationReader();
 				listener.onComplete(commReader.read(context));
 				*/
 				long startTime = System.currentTimeMillis();
 				// 1st get sms
 				SmsReader smsReader = new SmsReader();
-				List<MessageItem> smsList = smsReader.read(context);
+				List<SmsMmsMsg> smsList = smsReader.read(context);
 				SVLog.i("timechecker", "delayed(1):"+ (System.currentTimeMillis() - startTime));
 				// 2nd get mms
 				MmsReader mmsReader = new MmsReader();
-				List<MessageItem> mmsList = mmsReader.read(context);
+				List<SmsMmsMsg> mmsList = mmsReader.read(context);
 				SVLog.i("timechecker", "delayed(2):"+ (System.currentTimeMillis() - startTime));
 				// 3rd unify msgs
-				List<MessageItem> allList = new ArrayList<>();
+				List<SmsMmsMsg> allList = new ArrayList<>();
 				allList.addAll(smsList);
 				allList.addAll(mmsList);
 				SVLog.i("timechecker", "delayed(3):"+ (System.currentTimeMillis() - startTime));
@@ -123,22 +123,20 @@ public class SmsUnifyMessageReader extends AbsMessageReader{
 	}
 
 	private void readMmsMessage(final Context context, final OnReadTextMessageListener listener) {
-		Thread thread = new Thread(new Runnable() {
+		HandyThreadTask.execute(new Runnable() {
 			@Override
 			public void run() {
 				MmsReader mmsReader = new MmsReader();
 				listener.onComplete(mmsReader.read(context));
 			}
 		});
-		thread.setPriority(Thread.MAX_PRIORITY);
-		thread.start();
 	}
 
-	private void readMmsSmsMessage(final Context context, final OnReadTextMessageListener listener) {
+	private void readMmsSmsConversationMessage(final Context context, final OnReadTextMessageListener listener) {
 		HandyThreadTask.execute(new Runnable() {
 			@Override
 			public void run() {
-				MmsSmsReader mmsReader = new MmsSmsReader();
+				MmsSmsConversationReader mmsReader = new MmsSmsConversationReader();
 				listener.onComplete(mmsReader.read(context));
 			}
 		});

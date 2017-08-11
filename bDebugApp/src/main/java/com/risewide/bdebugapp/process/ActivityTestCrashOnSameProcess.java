@@ -27,10 +27,10 @@ public class ActivityTestCrashOnSameProcess extends BaseActivity {
 
 	/*public void onClickExecute(View view) {
 		switch (view.getId()) {
-			case R.id.btnExecute1: {
+			case R._id.btnExecute1: {
 				break;
 			}
-			case R.id.btnExecute2: {
+			case R._id.btnExecute2: {
 				break;
 			}
 			default:

@@ -15,10 +15,10 @@ import com.risewide.bdebugapp.BaseActivity;
 import com.risewide.bdebugapp.R;
 import com.risewide.bdebugapp.adapter.HandyListAdapter;
 import com.risewide.bdebugapp.communication.helper.DelayChecker;
-import com.risewide.bdebugapp.communication.model.MessageItem;
+import com.risewide.bdebugapp.communication.model.SmsMmsMsg;
 import com.risewide.bdebugapp.communication.helper.DateUtil;
 import com.risewide.bdebugapp.communication.helper.TToast;
-import com.risewide.bdebugapp.communication.model.SmsProtocolReadType;
+import com.risewide.bdebugapp.communication.model.SmsMmsMsgReadType;
 import com.risewide.bdebugapp.util.DeviceInfo;
 import com.risewide.bdebugapp.util.SVLog;
 
@@ -31,7 +31,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 	private HandyListAdapter handyListAdapter;
 	private SmsUnifyMessageReader smsUnifyMessageReader = new SmsUnifyMessageReader();
 	//
-	private List<MessageItem> srcList = new ArrayList<>();
+	private List<SmsMmsMsg> srcList = new ArrayList<>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,16 +49,16 @@ public class MessageReaderTestActivity extends BaseActivity {
 			public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
 				switch (checkedId) {
 					case R.id.rbProtocolTypeAll1:
-						smsUnifyMessageReader.setSmsProtocolReadType(SmsProtocolReadType.ALL_SEQUENTIAL);
+						smsUnifyMessageReader.setSmsProtocolReadType(SmsMmsMsgReadType.ALL_SEQUENTIAL);
 						break;
 					case R.id.rbProtocolTypeMmsSms:
-						smsUnifyMessageReader.setSmsProtocolReadType(SmsProtocolReadType.MMS_SMS);
+						smsUnifyMessageReader.setSmsProtocolReadType(SmsMmsMsgReadType.MMS_SMS_CONVERSATION);
 						break;
 					case R.id.rbProtocolTypeSms:
-						smsUnifyMessageReader.setSmsProtocolReadType(SmsProtocolReadType.SMS);
+						smsUnifyMessageReader.setSmsProtocolReadType(SmsMmsMsgReadType.SMS);
 						break;
 					case R.id.rbProtocolTypeMms:
-						smsUnifyMessageReader.setSmsProtocolReadType(SmsProtocolReadType.MMS);
+						smsUnifyMessageReader.setSmsProtocolReadType(SmsMmsMsgReadType.MMS);
 						break;
 				}
 			}
@@ -90,13 +90,13 @@ public class MessageReaderTestActivity extends BaseActivity {
 		checker.start("smsUnifyMessageReader");
 		smsUnifyMessageReader.read(this, new SmsUnifyMessageReader.OnReadTextMessageListener() {
 			@Override
-			public void onComplete(List<MessageItem> list) {
+			public void onComplete(List<SmsMmsMsg> list) {
 //				if (list == null || list.isEmpty()) {
 //					TToast.show(getBaseContext(), "load complete, size:0");
 //					return;
 //				}
 				checker.end();
-				List<MessageItem> dstList = storeMessageList(list);
+				List<SmsMmsMsg> dstList = storeMessageList(list);
 				checker.end();
 				//printOutMessageList(dstList);
 				loadMessageList(dstList);
@@ -109,20 +109,20 @@ public class MessageReaderTestActivity extends BaseActivity {
 		});
 	}
 
-	private List<MessageItem> storeMessageList(List<MessageItem> list) {
+	private List<SmsMmsMsg> storeMessageList(List<SmsMmsMsg> list) {
 		srcList.clear();
 		srcList.addAll(list);
 		return srcList;
 	}
 
-	private void loadMessageList(final List<MessageItem> messageItemList) {
+	private void loadMessageList(final List<SmsMmsMsg> messageItemList) {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				handyListAdapter.clear();
 				List<HandyListAdapter.Param> list = new ArrayList<>();
 				String myPhoneNumber = DeviceInfo.getPhoneNumber(MessageReaderTestActivity.this);
-				for (MessageItem info : messageItemList) {
+				for (SmsMmsMsg info : messageItemList) {
 					String strDate = DateUtil.getSimpleDate(info.date);
 					HandyListAdapter.Param param = new HandyListAdapter.Param();
 					param.msgHead = String.format("Address(%s), lastTime(%s)", info.getAddress(myPhoneNumber), strDate);
@@ -136,11 +136,11 @@ public class MessageReaderTestActivity extends BaseActivity {
 		});
 	}
 
-	private void printOutMessageList(List<MessageItem> messageItemList) {
+	private void printOutMessageList(List<SmsMmsMsg> messageItemList) {
 		if (messageItemList==null) {
 			return;
 		}
-		for (MessageItem info : messageItemList) {
+		for (SmsMmsMsg info : messageItemList) {
 			SVLog.d(info.toString());
 		}
 	}

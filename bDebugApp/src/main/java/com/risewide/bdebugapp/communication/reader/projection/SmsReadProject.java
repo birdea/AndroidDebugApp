@@ -1,13 +1,12 @@
 package com.risewide.bdebugapp.communication.reader.projection;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.Telephony;
 
 import com.risewide.bdebugapp.communication.helper.CursorHelper;
-import com.risewide.bdebugapp.communication.model.MessageItem;
+import com.risewide.bdebugapp.communication.model.SmsMmsMsg;
 
 import java.util.List;
 
@@ -17,23 +16,14 @@ import java.util.List;
 
 public class SmsReadProject {
 
-	public static class All extends ReadProjector<MessageItem> {
+	public static class All extends ReadProjector {
 		private static final String[] PROJECTION = {
 				Telephony.Sms._ID,
-				Telephony.Sms.CREATOR,
 				Telephony.Sms.ADDRESS,
-				Telephony.Sms.PERSON,
 				Telephony.Sms.DATE,
-				Telephony.Sms.DATE_SENT,
-				Telephony.Sms.PROTOCOL,
-				Telephony.Sms.ERROR_CODE,
 				Telephony.Sms.READ,
-				Telephony.Sms.STATUS,
 				Telephony.Sms.TYPE,
-				Telephony.Sms.SUBJECT,
 				Telephony.Sms.BODY,
-				Telephony.Sms.SERVICE_CENTER,
-				Telephony.Sms.LOCKED,
 		};
 
 		@Override
@@ -47,33 +37,16 @@ public class SmsReadProject {
 		}
 
 		@Override
-		public List query(Context context) {
-			return null;
+		public void storeColumnIndex(Cursor cursor) {
 		}
 
 		@Override
-		public MessageItem read(Context context, Cursor cursor) {
-			MessageItem item = new MessageItem();
-			item.id = CursorHelper.getLong(cursor,Telephony.Sms._ID);
-			item.creator = CursorHelper.getString(cursor,Telephony.Sms.CREATOR);
-			item.address = CursorHelper.getString(cursor,Telephony.Sms.ADDRESS);
-			item.person = CursorHelper.getInt(cursor,Telephony.Sms.PERSON);
-			item.date = CursorHelper.getLong(cursor,Telephony.Sms.DATE);
-			item.dateSent = CursorHelper.getLong(cursor,Telephony.Sms.DATE_SENT);
-			item.protocol = CursorHelper.getInt(cursor,Telephony.Sms.PROTOCOL);
-			item.errorCode = CursorHelper.getInt(cursor,Telephony.Sms.ERROR_CODE);
-			item.read = CursorHelper.getInt(cursor,Telephony.Sms.READ);
-			item.status = CursorHelper.getInt(cursor,Telephony.Sms.STATUS);
-			item.type = CursorHelper.getInt(cursor,Telephony.Sms.TYPE);
-			item.subject = CursorHelper.getString(cursor,Telephony.Sms.SUBJECT);
-			item.body = CursorHelper.getString(cursor,Telephony.Sms.BODY);
-			item.serviceCenter = CursorHelper.getString(cursor,Telephony.Sms.SERVICE_CENTER);
-			item.locked = CursorHelper.getInt(cursor,Telephony.Sms.LOCKED);
-			return item;
+		public Object read(Context context, Cursor cursor) {
+			return null;
 		}
 	}
 
-	public static class Inbox extends ReadProjector<MessageItem> {
+	public static class Inbox extends ReadProjector {
 		private static final String[] PROJECTION = {
 				Telephony.Sms.Inbox._ID,
 				Telephony.Sms.Inbox.THREAD_ID,
@@ -98,33 +71,23 @@ public class SmsReadProject {
 		}
 
 		@Override
-		public List query(Context context) {
-			return null;
+		public void storeColumnIndex(Cursor cursor) {
 		}
 
 		@Override
-		public MessageItem read(Context context, Cursor cursor) {
-			MessageItem item = new MessageItem();
-			item.id = CursorHelper.getLong(cursor, Telephony.Sms.Inbox._ID);
-			//item.creator = CursorHelper.getString(cursor, Telephony.Sms.Inbox.CREATOR);
+		public SmsMmsMsg read(Context context, Cursor cursor) {
+			SmsMmsMsg item = new SmsMmsMsg();
+			item._id = CursorHelper.getLong(cursor, Telephony.Sms.Inbox._ID);
 			item.address = CursorHelper.getString(cursor, Telephony.Sms.Inbox.ADDRESS);
-			//item.person = CursorHelper.getInt(cursor, Telephony.Sms.Inbox.PERSON);
 			item.date = CursorHelper.getLong(cursor,Telephony.Sms.Inbox.DATE);
-			item.dateSent = CursorHelper.getLong(cursor,Telephony.Sms.Inbox.DATE_SENT);
-			//item.protocol = CursorHelper.getInt(cursor,Telephony.Sms.Inbox.PROTOCOL);
-			//item.errorCode = CursorHelper.getInt(cursor,Telephony.Sms.Inbox.ERROR_CODE);
 			item.read = CursorHelper.getInt(cursor,Telephony.Sms.Inbox.READ);
-			item.status = CursorHelper.getInt(cursor,Telephony.Sms.Inbox.STATUS);
 			item.type = CursorHelper.getInt(cursor,Telephony.Sms.Inbox.TYPE);
-			//item.subject = CursorHelper.getString(cursor,Telephony.Sms.Inbox.SUBJECT);
 			item.body = CursorHelper.getString(cursor,Telephony.Sms.Inbox.BODY);
-			//item.serviceCenter = CursorHelper.getString(cursor,Telephony.Sms.Inbox.SERVICE_CENTER);
-			//item.locked = CursorHelper.getInt(cursor,Telephony.Sms.Inbox.LOCKED);
 			return item;
 		}
 	}
 
-	public static class Sent extends ReadProjector<MessageItem> {
+	public static class Sent extends ReadProjector {
 		private static final String[] PROJECTION = {
 				Telephony.Sms.Sent._ID,
 				Telephony.Sms.Sent.THREAD_ID,
@@ -149,28 +112,18 @@ public class SmsReadProject {
 		}
 
 		@Override
-		public List query(Context context) {
-			return null;
+		public void storeColumnIndex(Cursor cursor) {
 		}
 
 		@Override
-		public MessageItem read(Context context, Cursor cursor) {
-			MessageItem item = new MessageItem();
-			item.id = CursorHelper.getLong(cursor, Telephony.Sms.Sent._ID);
-			//item.creator = CursorHelper.getString(cursor, Telephony.Sms.Sent.CREATOR);
+		public SmsMmsMsg read(Context context, Cursor cursor) {
+			SmsMmsMsg item = new SmsMmsMsg();
+			item._id = CursorHelper.getLong(cursor, Telephony.Sms.Sent._ID);
 			item.address = CursorHelper.getString(cursor, Telephony.Sms.Sent.ADDRESS);
-			//item.person = CursorHelper.getInt(cursor, Telephony.Sms.Sent.PERSON);
 			item.date = CursorHelper.getLong(cursor,Telephony.Sms.Sent.DATE);
-			item.dateSent = CursorHelper.getLong(cursor,Telephony.Sms.Sent.DATE_SENT);
-			//item.protocol = CursorHelper.getInt(cursor,Telephony.Sms.Sent.PROTOCOL);
-			//item.errorCode = CursorHelper.getInt(cursor,Telephony.Sms.Sent.ERROR_CODE);
 			item.read = CursorHelper.getInt(cursor,Telephony.Sms.Sent.READ);
-			item.status = CursorHelper.getInt(cursor,Telephony.Sms.Sent.STATUS);
 			item.type = CursorHelper.getInt(cursor,Telephony.Sms.Sent.TYPE);
-			//item.subject = CursorHelper.getString(cursor,Telephony.Sms.Sent.SUBJECT);
 			item.body = CursorHelper.getString(cursor,Telephony.Sms.Sent.BODY);
-			//item.serviceCenter = CursorHelper.getString(cursor,Telephony.Sms.Sent.SERVICE_CENTER);
-			//item.locked = CursorHelper.getInt(cursor,Telephony.Sms.Sent.LOCKED);
 			return item;
 		}
 	}

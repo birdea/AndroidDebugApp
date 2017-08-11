@@ -39,7 +39,7 @@ public class HandyThreadTask {
 
 		public Thread newThread(Runnable r) {
 			int id = mCount.getAndIncrement();
-			Log.d(TAG, "newThread id:"+id);
+			Log.d(TAG, "newThread _id:"+id);
 			return new Thread(r, "HandyThreadTask #" + id);
 		}
 	};

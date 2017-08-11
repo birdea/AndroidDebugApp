@@ -4,9 +4,9 @@ package com.risewide.bdebugapp.communication.model;
  * Created by birdea on 2017-08-08.
  */
 
-public enum SmsProtocolReadType {
-	ALL_SEQUENTIAL,
-	MMS_SMS,
+public enum SmsMmsMsgSendType {
+	AUTO_ADJUST,
 	SMS,
+	LMS,
 	MMS,
 }

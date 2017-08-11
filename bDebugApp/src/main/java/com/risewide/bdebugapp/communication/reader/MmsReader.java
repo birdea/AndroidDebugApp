@@ -3,7 +3,8 @@ package com.risewide.bdebugapp.communication.reader;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.risewide.bdebugapp.communication.model.MessageItem;
+import com.risewide.bdebugapp.communication.helper.IOCloser;
+import com.risewide.bdebugapp.communication.model.SmsMmsMsg;
 import com.risewide.bdebugapp.communication.reader.projection.MmsReadProject;
 import com.risewide.bdebugapp.communication.reader.projection.ReadProjector;
 
@@ -17,39 +18,20 @@ import android.provider.Telephony;
  */
 
 public class MmsReader {
-
-	public List<MessageItem> read(Context context) {
-
-		ReadProjector<MessageItem> rp = new MmsReadProject.All();
-
-		List<MessageItem> dataList = new ArrayList<>();
+	public List<SmsMmsMsg> read(Context context) {
+		ReadProjector<SmsMmsMsg> rp = new MmsReadProject.All();
+		List<SmsMmsMsg> dataList = new ArrayList<>();
 		ContentResolver resolver = context.getContentResolver();
 		String selection = null;//"read!=1";
-		Cursor cursor = resolver.query(rp.getUri(), rp.getProjection(), selection, null, Telephony.Sms.DEFAULT_SORT_ORDER);
-		while (cursor.moveToNext()) {
-			MessageItem item = rp.read(context, cursor);
-			dataList.add(item);
+		Cursor cursor = resolver.query(rp.getUri(), rp.getProjection(), selection, null, Telephony.Mms.DEFAULT_SORT_ORDER);
+		if (cursor != null && cursor.moveToFirst()) {
+			rp.storeColumnIndex(cursor);
+			while (cursor.moveToNext()) {
+				SmsMmsMsg item = rp.read(context, cursor);
+				dataList.add(item);
+			}
 		}
-		cursor.close();
-		// get address, text message
-		MmsReaderSub mmsReaderSub = new MmsReaderSub();
-		for(final MessageItem item : dataList) {
-			item.listAddress = mmsReaderSub.getAddressNumber(resolver, (int) item.id);
-			//item.body = mmsReaderSub.getTextMessage(resolver, String.valueOf(item.id));
-			/*mmsReaderSub.getAddressNumberAsync(context, (int) item.id, new MmsReaderSub.OnReadListener() {
-				@Override
-				public void onRead(Object data) {
-					item.listAddress = (List<String>) data;
-				}
-			});
-			mmsReaderSub.getMessageOfMmsAsync(context, String.valueOf(item.id), new MmsReaderSub.OnReadListener() {
-				@Override
-				public void onRead(Object data) {
-					item.body = (String) data;
-				}
-			});*/
-		}
-		//
+		IOCloser.close(cursor);
 		return dataList;
 	}
 }

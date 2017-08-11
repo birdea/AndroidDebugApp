@@ -6,8 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.Telephony;
 
-import com.risewide.bdebugapp.communication.model.MessageItem;
-import com.risewide.bdebugapp.communication.reader.projection.MmsReadProject;
+import com.risewide.bdebugapp.communication.model.SmsMmsMsg;
 import com.risewide.bdebugapp.communication.reader.projection.MmsSmsReadProject;
 import com.risewide.bdebugapp.communication.reader.projection.ReadProjector;
 import com.risewide.bdebugapp.util.SVLog;
@@ -19,13 +18,13 @@ import java.util.List;
  * Created by birdea on 2017-08-03.
  */
 
-public class MmsSmsReader {
+public class MmsSmsConversationReader {
 
-	public List<MessageItem> read(Context context) {
+	public List<SmsMmsMsg> read(Context context) {
 
 		ReadProjector rp = new MmsSmsReadProject.All();
 
-		List<MessageItem> dataList = new ArrayList<>();
+		List<SmsMmsMsg> dataList = new ArrayList<>();
 		ContentResolver resolver = context.getContentResolver();
 		String selection = null;
 		Cursor cursor;
@@ -50,7 +49,12 @@ public class MmsSmsReader {
 				}
 				SVLog.d("val:"+sb.toString());
 				//
-				MessageItem item = rp.read(context, cursor);
+				SmsMmsMsg item = new SmsMmsMsg();
+				item._id = cursor.getLong(cursor.getColumnIndex(Telephony.MmsSms._ID));
+				item.date = cursor.getLong(cursor.getColumnIndex("date"));// * 1000;
+				item.body = cursor.getString(cursor.getColumnIndex("snippet"));
+				item.read = cursor.getInt(cursor.getColumnIndex("read"));
+				item.type = cursor.getInt(cursor.getColumnIndex("type"));
 //				if ("application/vnd.wap.multipart.related".equals(string)) {
 //					// it's MMS
 //					item.body = "MMS";

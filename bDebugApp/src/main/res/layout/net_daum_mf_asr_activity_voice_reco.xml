@@ -240,7 +240,7 @@
         </LinearLayout>
 
         <!--<ImageButton-->
-                <!--android:id="@+id/net_daum_mf_asr_button_top_daum"-->
+                <!--android:_id="@+_id/net_daum_mf_asr_button_top_daum"-->
                 <!--android:layout_width="fill_parent"-->
                 <!--android:layout_height="fill_parent"-->
                 <!--android:layout_margin="5dp"-->
@@ -259,7 +259,7 @@
                 android:layout_gravity="top|right">
 
             <!--<ImageButton-->
-                    <!--android:id="@+id/net_daum_mf_asr_button_top_retry"-->
+                    <!--android:_id="@+_id/net_daum_mf_asr_button_top_retry"-->
                     <!--android:layout_width="29.5dp"-->
                     <!--android:layout_height="29.5dp"-->
                     <!--android:layout_marginRight="6dp"-->

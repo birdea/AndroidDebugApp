@@ -3,11 +3,11 @@ package com.risewide.bdebugapp.communication;
 import com.risewide.bdebugapp.BaseActivity;
 import com.risewide.bdebugapp.R;
 import com.risewide.bdebugapp.adapter.HandyListAdapter;
-import com.risewide.bdebugapp.communication.model.MessageData;
+import com.risewide.bdebugapp.communication.model.MsgSendData;
 import com.risewide.bdebugapp.communication.helper.IntentActionHelper;
 import com.risewide.bdebugapp.communication.helper.TToast;
 import com.risewide.bdebugapp.communication.helper.WidgetHelper;
-import com.risewide.bdebugapp.communication.model.SmsProtocolSendType;
+import com.risewide.bdebugapp.communication.model.SmsMmsMsgSendType;
 import com.risewide.bdebugapp.util.DeviceInfo;
 import com.risewide.bdebugapp.util.SVLog;
 
@@ -61,7 +61,7 @@ public class MessageSenderTestActivity extends BaseActivity{
 		String deviceName = String.format("%s", DeviceInfo.getDeviceName());
 		String netOperator = DeviceInfo.getNetworkOperatorName(this);
 		SmsManager smsManager = SmsManager.getDefault();
-		String mmsInfo = String.format("id:%d, %s", smsManager.getSubscriptionId(), smsManager.getCarrierConfigValues());
+		String mmsInfo = String.format("_id:%d, %s", smsManager.getSubscriptionId(), smsManager.getCarrierConfigValues());
 		sb.append(String.format("%s\n%s\n%s\n%s\n%s", phoneNumber, osInfo, deviceName, netOperator, mmsInfo));
 		//
 		tvDeviceInfo.setText(sb.toString());
@@ -75,16 +75,16 @@ public class MessageSenderTestActivity extends BaseActivity{
 			public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
 				switch (checkedId) {
 					case R.id.rbProtocolTypeAuto:
-						smsUnifyMessageSender.setProtocolType(SmsProtocolSendType.AUTO_ADJUST);
+						smsUnifyMessageSender.setProtocolType(SmsMmsMsgSendType.AUTO_ADJUST);
 						break;
 					case R.id.rbProtocolTypeSms:
-						smsUnifyMessageSender.setProtocolType(SmsProtocolSendType.SMS);
+						smsUnifyMessageSender.setProtocolType(SmsMmsMsgSendType.SMS);
 						break;
 					case R.id.rbProtocolTypeLms:
-						smsUnifyMessageSender.setProtocolType(SmsProtocolSendType.LMS);
+						smsUnifyMessageSender.setProtocolType(SmsMmsMsgSendType.LMS);
 						break;
 					case R.id.rbProtocolTypeMms:
-						smsUnifyMessageSender.setProtocolType(SmsProtocolSendType.MMS);
+						smsUnifyMessageSender.setProtocolType(SmsMmsMsgSendType.MMS);
 						break;
 				}
 				addEventMessage("rgProtocolType.checked:"+checkedId+","+ smsUnifyMessageSender.getProtocolType());
@@ -201,7 +201,7 @@ public class MessageSenderTestActivity extends BaseActivity{
 								new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
 										ContactsContract.CommonDataKinds.Phone.NUMBER}, null, null, null);
 						if (cursor.moveToFirst()) {
-							MessageData messageData = smsUnifyMessageSender.getMessageData();
+							MsgSendData messageData = smsUnifyMessageSender.getMessageData();
 							messageData.setNameReceiver(cursor.getString(0));
 							messageData.setPhoneNumberReceiver(cursor.getString(1));
 						}
@@ -256,7 +256,7 @@ public class MessageSenderTestActivity extends BaseActivity{
 						if (imageUri != null) {
 							EditText etImageDataInfo = (EditText)findViewById(R.id.etImageDataInfo);
 							etImageDataInfo.setText(imageUri.getPath());
-							MessageData messageData = smsUnifyMessageSender.getMessageData();
+							MsgSendData messageData = smsUnifyMessageSender.getMessageData();
 							messageData.setImageUri(imageUri);
 						}
 					}
@@ -273,7 +273,7 @@ public class MessageSenderTestActivity extends BaseActivity{
 		EditText etSenderNumber = (EditText)findViewById(R.id.etSenderNumber);
 		EditText etReceiverNumber = (EditText)findViewById(R.id.etReceiverNumber);
 		EditText etTextMessage = (EditText)findViewById(R.id.etTextMessage);
-		//EditText etImageDataInfo = (EditText)findViewById(R.id.etImageDataInfo);
+		//EditText etImageDataInfo = (EditText)findViewById(R._id.etImageDataInfo);
 		//
 		String numberSender, numberReceiver, textMessage;
 		//Uri image;
@@ -282,7 +282,7 @@ public class MessageSenderTestActivity extends BaseActivity{
 		numberReceiver = WidgetHelper.getText(etReceiverNumber);
 		textMessage = WidgetHelper.getText(etTextMessage);
 		//
-		MessageData messageData = smsUnifyMessageSender.getMessageData();
+		MsgSendData messageData = smsUnifyMessageSender.getMessageData();
 		messageData.setPhoneNumberSender(numberSender);
 		messageData.setPhoneNumberReceiver(numberReceiver);
 		messageData.setTextMessage(textMessage);

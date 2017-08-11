@@ -1,7 +1,5 @@
 package com.risewide.bdebugapp.communication.reader.projection;
 
-import com.risewide.bdebugapp.communication.model.MessageItem;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -13,8 +11,11 @@ import java.util.List;
  */
 
 public abstract class ReadProjector<T> {
+
+	protected int[] idxColumn;
+
 	public abstract String[] getProjection();
 	public abstract Uri getUri();
-	public abstract List<T> query(Context context);
+	public abstract void storeColumnIndex(Cursor cursor);
 	public abstract T read(Context context, Cursor cursor);
 }

@@ -15,9 +15,9 @@ import android.support.v4.app.ActivityCompat;
 import android.telephony.SmsManager;
 import android.text.TextUtils;
 
-import com.risewide.bdebugapp.communication.model.MessageData;
+import com.risewide.bdebugapp.communication.model.MsgSendData;
 import com.risewide.bdebugapp.communication.helper.TToast;
-import com.risewide.bdebugapp.communication.model.SmsProtocolSendType;
+import com.risewide.bdebugapp.communication.model.SmsMmsMsgSendType;
 import com.risewide.bdebugapp.util.SVLog;
 
 import java.util.ArrayList;
@@ -36,13 +36,13 @@ public class SmsUnifyMessageSender extends AbsMessageSender {
 		Intent,
 	}
 
-	private SmsProtocolSendType protocolType;
+	private SmsMmsMsgSendType protocolType;
 	private CallMethodType callMethodType;
-	private MessageData messageData;
+	private MsgSendData messageData;
 
 	public SmsUnifyMessageSender() {
-		messageData = new MessageData();
-		protocolType = SmsProtocolSendType.SMS;
+		messageData = new MsgSendData();
+		protocolType = SmsMmsMsgSendType.SMS;
 		callMethodType = CallMethodType.DirectCall;
 	}
 
@@ -86,7 +86,7 @@ public class SmsUnifyMessageSender extends AbsMessageSender {
 		}
 		notifyOnEventListener("validation is ok.. send on protocol:"+protocolType);
 		// switch the delivery way of automatic or manual
-		if (SmsProtocolSendType.AUTO_ADJUST.equals(protocolType)) {
+		if (SmsMmsMsgSendType.AUTO_ADJUST.equals(protocolType)) {
 			TToast.show(context, "send on automatic-protocol");
 			sendOnAutomaticProtocol(context);
 		} else {
@@ -96,23 +96,23 @@ public class SmsUnifyMessageSender extends AbsMessageSender {
 	}
 
 	// setter
-	public void setProtocolType(SmsProtocolSendType type) {
+	public void setProtocolType(SmsMmsMsgSendType type) {
 		protocolType = type;
 	}
 	public void setCallMethodType(CallMethodType type) {
 		callMethodType = type;
 	}
-	public SmsProtocolSendType getProtocolType(){
+	public SmsMmsMsgSendType getProtocolType(){
 		return protocolType;
 	}
 	public CallMethodType getCallMethodType(){
 		return callMethodType;
 	}
 
-	public MessageData getMessageData() {
+	public MsgSendData getMessageData() {
 		return messageData;
 	}
-	public void setMessageData(MessageData data) {
+	public void setMessageData(MsgSendData data) {
 		messageData = data;
 	}
 
@@ -228,7 +228,7 @@ public class SmsUnifyMessageSender extends AbsMessageSender {
 		smsManager.sendMultimediaMessage(context, contentUri, destinationAddress, configOverrides, sentIntent);
 	}
 
-	private boolean isValidData(Context context, MessageData messageData) {
+	private boolean isValidData(Context context, MsgSendData messageData) {
 
 		if (TextUtils.isEmpty(messageData.phoneNumberReceiver)) {
 			notifyOnEventListener("Invalid [destinationAddress]");

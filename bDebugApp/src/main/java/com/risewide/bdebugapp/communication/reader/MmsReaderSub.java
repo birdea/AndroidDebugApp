@@ -100,7 +100,7 @@ public class MmsReaderSub {
 
 	public String getMmsText(ContentResolver resolver, String id) {
 		Uri uri = Telephony.Mms.CONTENT_URI.buildUpon().appendPath("part").appendPath(id).build();
-		//Uri uri = Uri.parse("content://mms/part/" + id);
+		//Uri uri = Uri.parse("content://mms/part/" + _id);
 		InputStream is = null;
 		StringBuilder sb = new StringBuilder();
 		try {
