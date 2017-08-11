@@ -32,6 +32,11 @@ public class SmsReadProject {
 		}
 
 		@Override
+		public String getSelection() {
+			return null;
+		}
+
+		@Override
 		public Uri getUri() {
 			return Telephony.Sms.CONTENT_URI;
 		}
@@ -63,6 +68,11 @@ public class SmsReadProject {
 		@Override
 		public String[] getProjection() {
 			return PROJECTION;
+		}
+
+		@Override
+		public String getSelection() {
+			return null;
 		}
 
 		@Override
@@ -104,6 +114,11 @@ public class SmsReadProject {
 		@Override
 		public String[] getProjection() {
 			return PROJECTION;
+		}
+
+		@Override
+		public String getSelection() {
+			return null;
 		}
 
 		@Override

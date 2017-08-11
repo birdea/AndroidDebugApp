@@ -15,6 +15,7 @@ public abstract class ReadProjector<T> {
 	protected int[] idxColumn;
 
 	public abstract String[] getProjection();
+	public abstract String getSelection();
 	public abstract Uri getUri();
 	public abstract void storeColumnIndex(Cursor cursor);
 	public abstract T read(Context context, Cursor cursor);

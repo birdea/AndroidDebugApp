@@ -34,6 +34,11 @@ public class MmsReadProject {
 		}
 
 		@Override
+		public String getSelection() {
+			return null;//"read!=1";;
+		}
+
+		@Override
 		public Uri getUri() {
 			return Telephony.Mms.CONTENT_URI;
 		}
@@ -101,6 +106,11 @@ public class MmsReadProject {
 		}
 
 		@Override
+		public String getSelection() {
+			return null;
+		}
+
+		@Override
 		public Uri getUri() {
 			return null;
 		}
@@ -120,6 +130,11 @@ public class MmsReadProject {
 		@Override
 		public String[] getProjection() {
 			return new String[0];
+		}
+
+		@Override
+		public String getSelection() {
+			return null;
 		}
 
 		@Override

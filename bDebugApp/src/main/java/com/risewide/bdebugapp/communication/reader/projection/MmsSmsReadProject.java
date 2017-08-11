@@ -25,6 +25,11 @@ public class MmsSmsReadProject {
 		}
 
 		@Override
+		public String getSelection() {
+			return null;
+		}
+
+		@Override
 		public Uri getUri() {
 			return Telephony.MmsSms.CONTENT_CONVERSATIONS_URI;
 		}

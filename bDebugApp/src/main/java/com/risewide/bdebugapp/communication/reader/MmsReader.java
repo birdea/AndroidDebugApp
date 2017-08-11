@@ -22,7 +22,7 @@ public class MmsReader {
 		ReadProjector<SmsMmsMsg> rp = new MmsReadProject.All();
 		List<SmsMmsMsg> dataList = new ArrayList<>();
 		ContentResolver resolver = context.getContentResolver();
-		String selection = null;//"read!=1";
+		String selection = rp.getSelection();
 		Cursor cursor = resolver.query(rp.getUri(), rp.getProjection(), selection, null, Telephony.Mms.DEFAULT_SORT_ORDER);
 		if (cursor != null && cursor.moveToFirst()) {
 			rp.storeColumnIndex(cursor);
