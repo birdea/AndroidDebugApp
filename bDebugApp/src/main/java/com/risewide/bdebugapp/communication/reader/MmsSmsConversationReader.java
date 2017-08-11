@@ -49,7 +49,7 @@ public class MmsSmsConversationReader {
 				}
 				SVLog.d("val:"+sb.toString());
 				//
-				SmsMmsMsg item = new SmsMmsMsg();
+				SmsMmsMsg item = new SmsMmsMsg(SmsMmsMsg.Type.CONVERSATION);
 				item._id = cursor.getLong(cursor.getColumnIndex(Telephony.MmsSms._ID));
 				item.date = cursor.getLong(cursor.getColumnIndex("date"));// * 1000;
 				item.body = cursor.getString(cursor.getColumnIndex("snippet"));

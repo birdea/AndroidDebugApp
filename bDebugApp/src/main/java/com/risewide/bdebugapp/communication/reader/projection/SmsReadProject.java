@@ -16,7 +16,7 @@ import java.util.List;
 
 public class SmsReadProject {
 
-	public static class All extends ReadProjector {
+	public static class All extends ReadProjector<SmsMmsMsg> {
 		private static final String[] PROJECTION = {
 				Telephony.Sms._ID,
 				Telephony.Sms.ADDRESS,
@@ -46,12 +46,12 @@ public class SmsReadProject {
 		}
 
 		@Override
-		public Object read(Context context, Cursor cursor) {
+		public SmsMmsMsg read(Context context, Cursor cursor) {
 			return null;
 		}
 	}
 
-	public static class Inbox extends ReadProjector {
+	public static class Inbox extends ReadProjector<SmsMmsMsg> {
 		private static final String[] PROJECTION = {
 				Telephony.Sms.Inbox._ID,
 				Telephony.Sms.Inbox.THREAD_ID,
@@ -86,7 +86,7 @@ public class SmsReadProject {
 
 		@Override
 		public SmsMmsMsg read(Context context, Cursor cursor) {
-			SmsMmsMsg item = new SmsMmsMsg();
+			SmsMmsMsg item = new SmsMmsMsg(SmsMmsMsg.Type.SMS);
 			item._id = CursorHelper.getLong(cursor, Telephony.Sms.Inbox._ID);
 			item.address = CursorHelper.getString(cursor, Telephony.Sms.Inbox.ADDRESS);
 			item.date = CursorHelper.getLong(cursor,Telephony.Sms.Inbox.DATE);
@@ -132,7 +132,7 @@ public class SmsReadProject {
 
 		@Override
 		public SmsMmsMsg read(Context context, Cursor cursor) {
-			SmsMmsMsg item = new SmsMmsMsg();
+			SmsMmsMsg item = new SmsMmsMsg(SmsMmsMsg.Type.SMS);
 			item._id = CursorHelper.getLong(cursor, Telephony.Sms.Sent._ID);
 			item.address = CursorHelper.getString(cursor, Telephony.Sms.Sent.ADDRESS);
 			item.date = CursorHelper.getLong(cursor,Telephony.Sms.Sent.DATE);

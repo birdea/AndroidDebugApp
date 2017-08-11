@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.risewide.bdebugapp.communication.helper.HandyThreadTask;
 import com.risewide.bdebugapp.communication.helper.IOCloser;
+import com.risewide.bdebugapp.util.SVLog;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
@@ -60,7 +61,9 @@ public class MmsReaderSub {
 			int idx_address = cursor.getColumnIndex(Telephony.Mms.Addr.ADDRESS);
 			//
 			while (cursor.moveToNext()) {
-				list.add(cursor.getString(idx_address));
+				String address = cursor.getString(idx_address);
+				SVLog.i("address:"+address);
+				list.add(address);
 			}
 		}
 		IOCloser.close(cursor);

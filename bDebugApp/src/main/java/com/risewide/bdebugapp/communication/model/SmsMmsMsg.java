@@ -9,15 +9,20 @@ import java.util.List;
  */
 
 public class SmsMmsMsg implements Comparable<SmsMmsMsg> {
+	// construct
+	public SmsMmsMsg(Type type) {
+		this.msgType = type;
+	}
 	// common column data
 	public long _id;
 	public int _count;
 	public long date;
 	public int read;
 	// msg type
-	private enum Type{
+	public enum Type{
 		SMS,
-		MMS
+		MMS,
+		CONVERSATION
 	}
 	public Type msgType = Type.SMS;
 	////////////////////////////////////
@@ -39,14 +44,33 @@ public class SmsMmsMsg implements Comparable<SmsMmsMsg> {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + "{" +
+		StringBuilder sb = new StringBuilder()
+		.append(getClass().getSimpleName()).append("{")
+		.append("_id").append("(").append(_id).append("),")
+		.append("date").append("(").append(date).append("),")
+		.append(DateUtil.getSimpleDate(date)).append(",")
+		.append("address").append("(").append(address).append("),")
+		.append("read").append("(").append(read).append("),")
+		.append("type").append("(").append(type).append("),")
+		.append("body").append("(").append(body).append("),")
+		.append("msg_box").append("(").append(msg_box).append("),")
+		.append("text_only").append("(").append(text_only).append("),")
+		.append("mms_version").append("(").append(mms_version).append("),")
+		.append("msg_type").append("(").append(msg_type).append("),")
+		.append("subject").append("(").append(subject).append("),")
+		.append("subject_charset").append("(").append(subject_charset).append("),")
+		.append("}")
+		;
+		/*return getClass().getSimpleName() + "{" +
 				"_id(" + _id + ")," +
+				"date" + date + "),"
 				"address(" + address + ")," +
 				"date(" + DateUtil.getSimpleDate(date) + ")," +
 				"read(" + read + ")," +
 				"type(" + type + ")," +
 				"body(" + body + ")," +
-				")}";
+				")}";*/
+		return sb.toString();
 	}
 
 	@Override

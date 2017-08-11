@@ -74,6 +74,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 	private void initCont() {
 		if(smsUnifyMessageReader.hasPermission(this)==false){
 			finish();
+			return;
 		}
 		refresh();
 	}
@@ -98,7 +99,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 				checker.end();
 				List<SmsMmsMsg> dstList = storeMessageList(list);
 				checker.end();
-				//printOutMessageList(dstList);
+				printOutMessageList(dstList);
 				loadMessageList(dstList);
 				checker.end();
 				isProcessing.set(false);

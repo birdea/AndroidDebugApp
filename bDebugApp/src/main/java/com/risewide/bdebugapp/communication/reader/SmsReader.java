@@ -29,7 +29,7 @@ public class SmsReader {
 		String selection = null;
 		Cursor cursor = resolver.query(rp.getUri(), rp.getProjection(), selection, null, Telephony.Sms.DEFAULT_SORT_ORDER);
 		while (cursor.moveToNext()) {
-			SmsMmsMsg item = new SmsMmsMsg();
+			SmsMmsMsg item = new SmsMmsMsg(SmsMmsMsg.Type.SMS);
 			item._id = CursorHelper.getLong(cursor,Telephony.Sms._ID);
 			item.address = CursorHelper.getString(cursor,Telephony.Sms.ADDRESS);
 			item.date = CursorHelper.getLong(cursor,Telephony.Sms.DATE);

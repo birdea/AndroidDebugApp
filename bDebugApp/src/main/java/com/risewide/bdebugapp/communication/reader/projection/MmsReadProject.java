@@ -56,7 +56,7 @@ public class MmsReadProject {
 
 		@Override
 		public SmsMmsMsg read(Context context, Cursor cursor) {
-			SmsMmsMsg item = new SmsMmsMsg();
+			SmsMmsMsg item = new SmsMmsMsg(SmsMmsMsg.Type.MMS);
 			item._id = cursor.getLong(idxColumn[0]);
 			item.date = cursor.getLong(idxColumn[1]);
 			item.read = cursor.getInt(idxColumn[2]);
