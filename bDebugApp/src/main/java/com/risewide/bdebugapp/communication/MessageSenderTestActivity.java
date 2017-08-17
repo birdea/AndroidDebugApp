@@ -11,6 +11,7 @@ import com.risewide.bdebugapp.communication.model.SmsMmsMsgSendType;
 import com.risewide.bdebugapp.util.DeviceInfo;
 import com.risewide.bdebugapp.util.SVLog;
 
+import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -61,7 +62,12 @@ public class MessageSenderTestActivity extends BaseActivity{
 		String deviceName = String.format("%s", DeviceInfo.getDeviceName());
 		String netOperator = DeviceInfo.getNetworkOperatorName(this);
 		SmsManager smsManager = SmsManager.getDefault();
-		String mmsInfo = String.format("_id:%d, %s", smsManager.getSubscriptionId(), smsManager.getCarrierConfigValues());
+		String mmsInfo;
+		try {
+			mmsInfo = String.format("_id:%d, %s", smsManager.getSubscriptionId(), smsManager.getCarrierConfigValues());
+		} catch(Throwable e) {
+			mmsInfo = "n/a";
+		}
 		sb.append(String.format("%s\n%s\n%s\n%s\n%s", phoneNumber, osInfo, deviceName, netOperator, mmsInfo));
 		//
 		tvDeviceInfo.setText(sb.toString());

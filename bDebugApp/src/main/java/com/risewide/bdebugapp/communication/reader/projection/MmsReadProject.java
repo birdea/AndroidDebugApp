@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.Telephony;
+import android.text.TextUtils;
 
 import com.risewide.bdebugapp.communication.model.MmsSmsMsg;
 import com.risewide.bdebugapp.communication.reader.MmsReaderSub;
@@ -19,6 +20,7 @@ public class MmsReadProject {
 
 		private static final String[] PROJECTION = {
 				Telephony.Mms._ID,
+				Telephony.Mms.MESSAGE_ID,
 				Telephony.Mms.DATE,
 				Telephony.Mms.READ,
 				Telephony.Mms.MESSAGE_BOX,
@@ -71,6 +73,7 @@ public class MmsReadProject {
 			final MmsSmsMsg item = new MmsSmsMsg(MmsSmsMsg.Type.MMS);
 			int idx = 0;
 			item._id = cursor.getLong(idxColumn[idx++]);
+			item.m_id = cursor.getString(idxColumn[idx++]);
 			item.setDate(cursor.getLong(idxColumn[idx++]));
 			item.read = cursor.getInt(idxColumn[idx++]);
 			item.msg_box = cursor.getInt(idxColumn[idx++]);
@@ -84,8 +87,13 @@ public class MmsReadProject {
 			if (isExtraLoadAddressData) {
 				item.listAddress = mmsReaderSub.getAddressNumber(cr, (int) item._id);
 			}
-			if (isExtraLoadMessageData) {
-				item.body = mmsReaderSub.getTextMessage(cr, String.valueOf(item._id));
+			if (TextUtils.isEmpty(item.m_id) || "null".equals(item.m_id)) {
+				item.body = cursor.getString(cursor.getColumnIndex("body"));
+			} else {
+				if (isExtraLoadMessageData) {
+					String mid = ""+item._id;//mmsReaderSub.getMessageId(context.getContentResolver(), item.thread_id, item.m_id);
+					item.body = mmsReaderSub.getTextMessage(context.getContentResolver(), mid);
+				}
 			}
 			return item;
 		}

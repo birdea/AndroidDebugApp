@@ -172,7 +172,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 				for (MmsSmsMsg info : messageItemList) {
 					String strDate = DateUtil.getSimpleDate(info.getDate());
 					HandyListAdapter.Param param = new HandyListAdapter.Param();
-					param.msgHead = String.format("Address(%s), lastTime(%s), read(%s)", info.getAddress(myPhoneNumber), strDate, info.getReadStatus());
+					param.msgHead = String.format("address(%s) date(%s) read(%s)", info.getAddress(myPhoneNumber), strDate, info.getReadStatus());
 					param.msgBody = String.format("%s", info.body);
 					list.add(param);
 				}

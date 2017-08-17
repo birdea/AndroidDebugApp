@@ -12,7 +12,7 @@
         android:layout_margin="2dp"
         android:text="@string/defContentDesc"
         android:textColor="#000"
-        android:textSize="15sp" />
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/tv_body"
@@ -20,9 +20,9 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:gravity="left"
-        android:maxLines="2"
+        android:maxLines="5"
         android:text="@string/defContentDesc"
         android:textColor="#456"
-        android:textSize="13sp" />
+        android:textSize="11sp" />
 
 </LinearLayout>

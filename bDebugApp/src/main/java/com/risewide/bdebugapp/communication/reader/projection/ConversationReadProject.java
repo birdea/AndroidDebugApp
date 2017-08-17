@@ -38,6 +38,7 @@ public class ConversationReadProject {
 			cursor = resolver.query(project.getUri(), project.getProjection(), project.getSelection(), project.getSelectionArgs(), sortOrder);
 			SVLog.i("** Conversation - getProject - Common(LG) URI");
 		} catch (Exception ignorable) {
+			ignorable.printStackTrace();
 			ReadProjector<MmsSmsMsg> projectSamsung = new SamsungProject();
 			projectSamsung.setExtraLoadMessageData(queryConfig.isExtraLoadMessageData());
 			projectSamsung.setExtraLoadAddressData(queryConfig.isExtraLoadAddressData());
@@ -185,7 +186,13 @@ public class ConversationReadProject {
 			item.type = cursor.getInt(cursor.getColumnIndex("type"));
 			//
 			String recipient_ids = cursor.getString(cursor.getColumnIndex("recipient_ids"));
-			item.address = mmsReaderSub.getRecipientAddress(context.getContentResolver(), Long.parseLong(recipient_ids));
+			if (isExtraLoadAddressData) {
+				item.address = mmsReaderSub.getRecipientAddress(context.getContentResolver(), Long.parseLong(recipient_ids));
+			}
+			if (isExtraLoadMessageData) {
+				//String mid = mmsReaderSub.getMessageId(context.getContentResolver(), item.thread_id, item.m_id);
+				item.body = mmsReaderSub.getTextMessage(context.getContentResolver(), String.valueOf(item._id));
+			}
 			return item;
 		}
 	}

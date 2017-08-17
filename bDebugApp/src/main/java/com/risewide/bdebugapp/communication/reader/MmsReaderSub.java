@@ -74,6 +74,13 @@ public class MmsReaderSub {
 
 	public String getTextMessage(ContentResolver resolver, String mid) {
 		String selection = Telephony.Mms.Part.MSG_ID + "=" + mid;
+		/*try {
+			long id = Long.parseLong(mid);
+			selection = Telephony.Mms.Part.MSG_ID + "=" + mid;
+		} catch (NumberFormatException e) {
+			//e.printStackTrace();
+			selection = Telephony.Mms.Part.MSG_ID + "=" + mid;
+		}*/
 		Uri uri = Telephony.Mms.CONTENT_URI.buildUpon().appendPath("part").build();
 		//Uri uri = Uri.parse("content://mms/part");
 		Cursor cursor = resolver.query(uri, null, selection, null, null);
@@ -145,13 +152,13 @@ public class MmsReaderSub {
 
 	public String getRecipientAddress(ContentResolver resolver, long recipientId) {
 		String number = null;
-		String[] projection = new String[] { "*" };
+		String[] projection = new String[] { "address" };
 		Cursor cursor = resolver.query(ContentUris.withAppendedId(Uri.parse("content://mms-sms/canonical-address"), recipientId),
 				projection, null, null, null);
-
 		if (cursor != null && cursor.moveToFirst()) {
+			int idxAddress = cursor.getColumnIndex("address");
 			do {
-				number = cursor.getString(0); // same as cursor.getString(cursor.getColumnIndex("address"))
+				number = cursor.getString(idxAddress);
 			} while (cursor.moveToNext());
 		}
 		IOCloser.close(cursor);

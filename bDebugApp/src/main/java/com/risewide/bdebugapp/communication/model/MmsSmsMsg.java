@@ -59,6 +59,8 @@ public class MmsSmsMsg implements Comparable<MmsSmsMsg> {
 		StringBuilder sb = new StringBuilder()
 		.append(getClass().getSimpleName()).append("{")
 		.append("_id").append("(").append(_id).append("),")
+		.append("m_id").append("(").append(m_id).append("),")
+		.append("thread_id").append("(").append(thread_id).append("),")
 		.append("date").append("(").append(date).append("),")
 		.append(DateUtil.getSimpleDate(date)).append(",")
 		.append("address").append("(").append(address).append("),")
