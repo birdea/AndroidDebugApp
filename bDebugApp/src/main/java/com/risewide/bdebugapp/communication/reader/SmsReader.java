@@ -5,8 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.provider.Telephony;
 
+import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
 import com.risewide.bdebugapp.communication.util.CursorUtil;
-import com.risewide.bdebugapp.communication.model.SmsMmsMsg;
+import com.risewide.bdebugapp.communication.model.MmsSmsMsg;
 import com.risewide.bdebugapp.communication.reader.projection.ReadProjector;
 import com.risewide.bdebugapp.communication.reader.projection.SmsReadProject;
 import com.risewide.bdebugapp.communication.util.IOCloser;
@@ -18,19 +19,27 @@ import java.util.List;
  * Created by birdea on 2017-08-03.
  */
 
-public class SmsReader {
+public class SmsReader extends AbsMsgReader {
 
-	public List<SmsMmsMsg> read(Context context) {
-//		ReadProjector rp = new SmsReadProject.All();
-		ReadProjector rp = new SmsReadProject.Inbox();
-//		ReadProjector rp = new SmsReadProject.Sent();
+	public SmsReader(QueryConfig config) {
+		super(config);
+	}
 
-		List<SmsMmsMsg> dataList = new ArrayList<>();
+	public List<MmsSmsMsg> read(Context context) {
+//		ReadProjector project = new SmsReadProject.All();
+		ReadProjector project = new SmsReadProject.Inbox();
+//		ReadProjector project = new SmsReadProject.Sent();
+		project.setExtraLoadMessageData(queryConfig.isExtraLoadMessageData());
+		project.setExtraLoadAddressData(queryConfig.isExtraLoadAddressData());
+		project.setSelectLoadOnlyUnread(queryConfig.isSelectLoadOnlyUnread());
+
+		List<MmsSmsMsg> dataList = new ArrayList<>();
 		ContentResolver resolver = context.getContentResolver();
-		Cursor cursor = resolver.query(rp.getUri(), rp.getProjection(), rp.getSelection(), null, Telephony.Sms.DEFAULT_SORT_ORDER);
+		String sortOrder = getConfigSortOrder();
+		Cursor cursor = resolver.query(project.getUri(), project.getProjection(), project.getSelection(), project.getSelectionArgs(), sortOrder);
 		if (cursor != null && cursor.moveToFirst()) {
 			do {
-				SmsMmsMsg item = new SmsMmsMsg(SmsMmsMsg.Type.SMS);
+				MmsSmsMsg item = new MmsSmsMsg(MmsSmsMsg.Type.SMS);
 				item._id = CursorUtil.getLong(cursor,Telephony.Sms._ID);
 				item.address = CursorUtil.getString(cursor,Telephony.Sms.ADDRESS);
 				item.setDate(CursorUtil.getLong(cursor,Telephony.Sms.DATE));

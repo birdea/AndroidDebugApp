@@ -7,49 +7,179 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="This is title area"
-        android:visibility="gone"
-        android:textSize="20sp"/>
-
-    <RadioGroup
-        android:id="@+id/rgProtocolType"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <RadioButton
-            android:id="@+id/rbProtocolTypeAll1"
-            style="@style/rbCommonLayout"
-            android:text="All"
-            />
-        <RadioButton
-            android:id="@+id/rbProtocolTypeMmsSms"
-            style="@style/rbCommonLayout"
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="DB Table"
+            android:textSize="13sp"/>
+
+        <RadioGroup
+            android:id="@+id/rgProtocolType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/rbProtocolTypeAll1"
+                style="@style/rbCommonLayout"
+                android:text="All"
+                />
+            <RadioButton
+                android:id="@+id/rbProtocolTypeMmsSms"
+                style="@style/rbCommonLayout"
+                android:text="MmsSms"/>
+            <RadioButton
+                android:id="@+id/rbProtocolTypeSms"
+                style="@style/rbCommonLayout"
+                android:text="SMS"
+                />
+            <RadioButton
+                android:id="@+id/rbProtocolTypeMms"
+                style="@style/rbCommonLayout"
+                android:text="MMS"
+                />
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Order"
+            android:textSize="13sp"/>
+
+        <RadioGroup
+            android:id="@+id/rgQuerySortOrder"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/rbQuerySortDesc"
+                style="@style/rbCommonLayout"
+                android:text="DESC"
+                />
+            <RadioButton
+                android:id="@+id/rbQuerySortAsc"
+                style="@style/rbCommonLayout"
+                android:text="ASC"/>
+        </RadioGroup>
+
+        <EditText
+            android:id="@+id/etQuerySortOrderColumn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:inputType="text"
+            android:textSize="12sp"
+            android:hint="a column name for sort-order"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Limit"
+                android:textSize="13sp"/>
+
+            <EditText
+                android:id="@+id/etQuerySelectLimitSize"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:hint="a number of query limit"
+                android:inputType="numberDecimal"
+                android:textSize="12sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/cbLoadOnlyUnread"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:checked="true"
+                android:text="Only Unread"
+                android:textSize="11sp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="Extra-Load"
+        android:textStyle="bold"
+        android:textSize="13sp"/>
+        <CheckBox
+            android:id="@+id/cbLoadAddressData"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:checked="true"
-            android:text="MmsSms"/>
-        <RadioButton
-            android:id="@+id/rbProtocolTypeSms"
-            style="@style/rbCommonLayout"
-            android:text="SMS"
+            android:text="Address"
+            android:textSize="11sp"
             />
-        <RadioButton
-            android:id="@+id/rbProtocolTypeMms"
-            style="@style/rbCommonLayout"
-            android:text="MMS"
+        <CheckBox
+            android:id="@+id/cbLoadMessageData"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:checked="true"
+            android:text="Message"
+            android:textSize="11sp"
             />
-    </RadioGroup>
+    </LinearLayout>
 
     <ListView
         android:id="@+id/lv_textmessage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"/>
+
+    <TextView
+        android:id="@+id/tvLastResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ddd"
+        android:padding="5dp"
+        android:gravity="center_vertical"
+        android:text="LastResult"
+        android:textStyle="normal"
+        android:textSize="13sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"

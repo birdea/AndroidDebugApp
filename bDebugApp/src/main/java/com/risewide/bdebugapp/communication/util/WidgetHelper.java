@@ -9,12 +9,25 @@ import android.widget.EditText;
 
 public class WidgetHelper {
 
-	public static String getText(EditText et) {
+	public static String getTextString(EditText et) {
 		String result = "";
 		try {
 			result = et.getText().toString();
 		} catch (Exception ignore){}
 		return result;
+	}
+
+	/**
+	 *
+	 * @param et
+	 * @return integer or 0 (default)
+	 */
+	public static int getTextInteger(EditText et) {
+		try {
+			return Integer.parseInt(et.getText().toString());
+		} catch (Exception ignore){
+		}
+		return 0;
 	}
 
 	public static int changeVisiblity(View view) {

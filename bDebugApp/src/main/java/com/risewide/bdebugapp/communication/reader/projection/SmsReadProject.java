@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.provider.Telephony;
 
 import com.risewide.bdebugapp.communication.util.CursorUtil;
-import com.risewide.bdebugapp.communication.model.SmsMmsMsg;
+import com.risewide.bdebugapp.communication.model.MmsSmsMsg;
 
 /**
  * Created by birdea on 2017-08-08.
@@ -14,7 +14,7 @@ import com.risewide.bdebugapp.communication.model.SmsMmsMsg;
 
 public class SmsReadProject {
 
-	public static class All extends ReadProjector<SmsMmsMsg> {
+	public static class All extends ReadProjector<MmsSmsMsg> {
 		private static final String[] PROJECTION = {
 				Telephony.Sms._ID,
 				Telephony.Sms.ADDRESS,
@@ -31,6 +31,17 @@ public class SmsReadProject {
 
 		@Override
 		public String getSelection() {
+			if (isSelectLoadOnlyUnread) {
+				return Telephony.Mms.READ+"!=?";
+			}
+			return null;
+		}
+
+		@Override
+		public String[] getSelectionArgs() {
+			if (isSelectLoadOnlyUnread) {
+				return new String[]{"1"};
+			}
 			return null;
 		}
 
@@ -44,12 +55,12 @@ public class SmsReadProject {
 		}
 
 		@Override
-		public SmsMmsMsg read(Context context, Cursor cursor) {
+		public MmsSmsMsg read(Context context, Cursor cursor) {
 			return null;
 		}
 	}
 
-	public static class Inbox extends ReadProjector<SmsMmsMsg> {
+	public static class Inbox extends ReadProjector<MmsSmsMsg> {
 		private static final String[] PROJECTION = {
 				Telephony.Sms.Inbox._ID,
 				Telephony.Sms.Inbox.THREAD_ID,
@@ -70,6 +81,17 @@ public class SmsReadProject {
 
 		@Override
 		public String getSelection() {
+			if (isSelectLoadOnlyUnread) {
+				return Telephony.Mms.READ+"!=?";
+			}
+			return null;
+		}
+
+		@Override
+		public String[] getSelectionArgs() {
+			if (isSelectLoadOnlyUnread) {
+				return new String[]{"1"};
+			}
 			return null;
 		}
 
@@ -83,8 +105,8 @@ public class SmsReadProject {
 		}
 
 		@Override
-		public SmsMmsMsg read(Context context, Cursor cursor) {
-			SmsMmsMsg item = new SmsMmsMsg(SmsMmsMsg.Type.SMS);
+		public MmsSmsMsg read(Context context, Cursor cursor) {
+			MmsSmsMsg item = new MmsSmsMsg(MmsSmsMsg.Type.SMS);
 			item._id = CursorUtil.getLong(cursor, Telephony.Sms.Inbox._ID);
 			item.address = CursorUtil.getString(cursor, Telephony.Sms.Inbox.ADDRESS);
 			item.setDate(CursorUtil.getLong(cursor,Telephony.Sms.Inbox.DATE));
@@ -116,6 +138,17 @@ public class SmsReadProject {
 
 		@Override
 		public String getSelection() {
+			if (isSelectLoadOnlyUnread) {
+				return Telephony.Mms.READ+"!=?";
+			}
+			return null;
+		}
+
+		@Override
+		public String[] getSelectionArgs() {
+			if (isSelectLoadOnlyUnread) {
+				return new String[]{"1"};
+			}
 			return null;
 		}
 
@@ -129,8 +162,8 @@ public class SmsReadProject {
 		}
 
 		@Override
-		public SmsMmsMsg read(Context context, Cursor cursor) {
-			SmsMmsMsg item = new SmsMmsMsg(SmsMmsMsg.Type.SMS);
+		public MmsSmsMsg read(Context context, Cursor cursor) {
+			MmsSmsMsg item = new MmsSmsMsg(MmsSmsMsg.Type.SMS);
 			item._id = CursorUtil.getLong(cursor, Telephony.Sms.Sent._ID);
 			item.address = CursorUtil.getString(cursor, Telephony.Sms.Sent.ADDRESS);
 			item.setDate(CursorUtil.getLong(cursor,Telephony.Sms.Sent.DATE));

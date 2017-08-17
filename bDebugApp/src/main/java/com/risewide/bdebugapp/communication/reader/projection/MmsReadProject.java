@@ -1,11 +1,12 @@
 package com.risewide.bdebugapp.communication.reader.projection;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.Telephony;
 
-import com.risewide.bdebugapp.communication.model.SmsMmsMsg;
+import com.risewide.bdebugapp.communication.model.MmsSmsMsg;
 import com.risewide.bdebugapp.communication.reader.MmsReaderSub;
 
 /**
@@ -14,7 +15,7 @@ import com.risewide.bdebugapp.communication.reader.MmsReaderSub;
 
 public class MmsReadProject {
 
-	public static class All extends ReadProjector<SmsMmsMsg> {
+	public static class All extends ReadProjector<MmsSmsMsg> {
 
 		private static final String[] PROJECTION = {
 				Telephony.Mms._ID,
@@ -35,7 +36,18 @@ public class MmsReadProject {
 
 		@Override
 		public String getSelection() {
-			return null;//"read!=1";;
+			if (isSelectLoadOnlyUnread) {
+				return Telephony.Mms.READ+"!=?";
+			}
+			return null;
+		}
+
+		@Override
+		public String[] getSelectionArgs() {
+			if (isSelectLoadOnlyUnread) {
+				return new String[]{"1"};
+			}
+			return null;
 		}
 
 		@Override
@@ -55,8 +67,8 @@ public class MmsReadProject {
 		private MmsReaderSub mmsReaderSub = new MmsReaderSub();
 
 		@Override
-		public SmsMmsMsg read(Context context, Cursor cursor) {
-			SmsMmsMsg item = new SmsMmsMsg(SmsMmsMsg.Type.MMS);
+		public MmsSmsMsg read(final Context context, Cursor cursor) {
+			final MmsSmsMsg item = new MmsSmsMsg(MmsSmsMsg.Type.MMS);
 			int idx = 0;
 			item._id = cursor.getLong(idxColumn[idx++]);
 			item.setDate(cursor.getLong(idxColumn[idx++]));
@@ -68,26 +80,19 @@ public class MmsReadProject {
 			item.subject = cursor.getString(idxColumn[idx++]);
 			item.subject_charset = cursor.getInt(idxColumn[idx++]);
 			//- handle in async
-			//item.listAddress = mmsReaderSub.getAddressNumber(context.getContentResolver(), (int) item._id);
-			//item.body = mmsReaderSub.getTextMessage(context, String.valueOf(item._id));
-				/*mmsReaderSub.getAddressNumberAsync(context, (int) item._id, new MmsReaderSub.OnReadListener() {
-					@Override
-					public void onRead(Object data) {
-						item.listAddress = (List<String>) data;
-					}
-				});
-				mmsReaderSub.getMessageOfMmsAsync(context, String.valueOf(item._id), new MmsReaderSub.OnReadListener() {
-					@Override
-					public void onRead(Object data) {
-						item.body = (String) data;
-					}
-				});*/
+			ContentResolver cr = context.getContentResolver();
+			if (isExtraLoadAddressData) {
+				item.listAddress = mmsReaderSub.getAddressNumber(cr, (int) item._id);
+			}
+			if (isExtraLoadMessageData) {
+				item.body = mmsReaderSub.getTextMessage(cr, String.valueOf(item._id));
+			}
 			return item;
 		}
 	}
 
 
-	public static class Inbox extends ReadProjector<SmsMmsMsg> {
+	public static class Inbox extends ReadProjector<MmsSmsMsg> {
 
 		private static final String[] PROJECTION = {
 				Telephony.Mms.Inbox._ID,
@@ -108,6 +113,17 @@ public class MmsReadProject {
 
 		@Override
 		public String getSelection() {
+			if (isSelectLoadOnlyUnread) {
+				return Telephony.Mms.READ+"!=?";
+			}
+			return null;
+		}
+
+		@Override
+		public String[] getSelectionArgs() {
+			if (isSelectLoadOnlyUnread) {
+				return new String[]{"1"};
+			}
 			return null;
 		}
 
@@ -121,13 +137,13 @@ public class MmsReadProject {
 		}
 
 		@Override
-		public SmsMmsMsg read(Context context, Cursor cursor) {
+		public MmsSmsMsg read(Context context, Cursor cursor) {
 			return null;
 		}
 	}
 
 
-	public static class Address extends ReadProjector<SmsMmsMsg> {
+	public static class Address extends ReadProjector<MmsSmsMsg> {
 		@Override
 		public String[] getProjection() {
 			return new String[0];
@@ -135,6 +151,17 @@ public class MmsReadProject {
 
 		@Override
 		public String getSelection() {
+			if (isSelectLoadOnlyUnread) {
+				return Telephony.Mms.READ+"!=?";
+			}
+			return null;
+		}
+
+		@Override
+		public String[] getSelectionArgs() {
+			if (isSelectLoadOnlyUnread) {
+				return new String[]{"1"};
+			}
 			return null;
 		}
 
@@ -148,7 +175,7 @@ public class MmsReadProject {
 		}
 
 		@Override
-		public SmsMmsMsg read(Context context, Cursor cursor) {
+		public MmsSmsMsg read(Context context, Cursor cursor) {
 			return null;
 		}
 	}

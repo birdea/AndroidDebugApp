@@ -59,8 +59,7 @@ public class HandyThreadTask {
 	}
 
 	public static void execute(Runnable runnable) {
-		//Log.d(TAG, "execute runnable:"+runnable);
-		Executors.defaultThreadFactory();
+		Log.d(TAG, "execute runnable:"+runnable);
 		THREAD_POOL_EXECUTOR.execute(runnable);
 	}
 }

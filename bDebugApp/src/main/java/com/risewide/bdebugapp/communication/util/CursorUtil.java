@@ -67,7 +67,7 @@ public class CursorUtil {
 				SVLog.d("*row : "+sb.toString());
 			}
 		}
-		IOCloser.close(cursor);
+		//IOCloser.close(cursor);
 	}
 
 	private static Object getCursorValue(Cursor cursor, int index) {

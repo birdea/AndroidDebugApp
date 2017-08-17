@@ -145,8 +145,9 @@ public class MmsReaderSub {
 
 	public String getRecipientAddress(ContentResolver resolver, long recipientId) {
 		String number = null;
+		String[] projection = new String[] { "*" };
 		Cursor cursor = resolver.query(ContentUris.withAppendedId(Uri.parse("content://mms-sms/canonical-address"), recipientId),
-				null, null, null, null);
+				projection, null, null, null);
 
 		if (cursor != null && cursor.moveToFirst()) {
 			do {
@@ -155,5 +156,27 @@ public class MmsReaderSub {
 		}
 		IOCloser.close(cursor);
 		return number;
+	}
+
+	public String getMessageId(ContentResolver resolver, long thread_id, String m_id) {
+		String id = null;
+		String[] projection = new String[] { "*" };
+		String selection = new StringBuilder()
+				.append(Telephony.Mms.Inbox.MESSAGE_ID).append("=?")
+				.append(" AND ")
+				.append(Telephony.Mms.Inbox.THREAD_ID).append("=?")
+				.toString();
+		String[] selectionArgs = new String[] { m_id, String.valueOf(thread_id) };
+		String sortOrder = Telephony.Mms.Inbox.DEFAULT_SORT_ORDER;
+		Uri uri = Telephony.Mms.Inbox.CONTENT_URI;
+		Cursor cursor = resolver.query(uri, projection, selection, selectionArgs, sortOrder);
+
+		if (cursor != null && cursor.moveToFirst()) {
+			do {
+				id = cursor.getString(cursor.getColumnIndex(Telephony.Mms.Inbox._ID)); // same as cursor.getString(cursor.getColumnIndex("address"))
+			} while (cursor.moveToNext());
+		}
+		IOCloser.close(cursor);
+		return id;
 	}
 }

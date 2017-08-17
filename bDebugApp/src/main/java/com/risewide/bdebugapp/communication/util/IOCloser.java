@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 
 /**
- * Common usage for closeable interface
+ * CommonProject usage for closeable interface
  * Created by birdea on 2017-02-09.
  */
 

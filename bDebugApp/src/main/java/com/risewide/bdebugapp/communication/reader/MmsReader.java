@@ -3,31 +3,40 @@ package com.risewide.bdebugapp.communication.reader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
 import com.risewide.bdebugapp.communication.util.IOCloser;
-import com.risewide.bdebugapp.communication.model.SmsMmsMsg;
+import com.risewide.bdebugapp.communication.model.MmsSmsMsg;
 import com.risewide.bdebugapp.communication.reader.projection.MmsReadProject;
 import com.risewide.bdebugapp.communication.reader.projection.ReadProjector;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
-import android.provider.Telephony;
 
 /**
  * Created by birdea on 2017-08-03.
  */
 
-public class MmsReader {
-	public List<SmsMmsMsg> read(Context context) {
-		ReadProjector<SmsMmsMsg> rp = new MmsReadProject.All();
-		List<SmsMmsMsg> dataList = new ArrayList<>();
+public class MmsReader extends AbsMsgReader {
+
+	public MmsReader(QueryConfig config) {
+		super(config);
+	}
+
+	public List<MmsSmsMsg> read(Context context) {
+		ReadProjector<MmsSmsMsg> project = new MmsReadProject.All();
+		project.setExtraLoadMessageData(queryConfig.isExtraLoadMessageData());
+		project.setExtraLoadAddressData(queryConfig.isExtraLoadAddressData());
+		project.setSelectLoadOnlyUnread(queryConfig.isSelectLoadOnlyUnread());
+		//
+		List<MmsSmsMsg> dataList = new ArrayList<>();
 		ContentResolver resolver = context.getContentResolver();
-		Cursor cursor = resolver.query(rp.getUri(), rp.getProjection(), rp.getSelection(), null, Telephony.Mms.DEFAULT_SORT_ORDER);
+		String sortOrder = getConfigSortOrder();
+		Cursor cursor = resolver.query(project.getUri(), project.getProjection(), project.getSelection(), project.getSelectionArgs(), sortOrder);
 		if (cursor != null && cursor.moveToFirst()) {
-			rp.storeColumnIndex(cursor);
+			project.storeColumnIndex(cursor);
 			do {
-				SmsMmsMsg item = rp.read(context, cursor);
+				MmsSmsMsg item = project.read(context, cursor);
 				dataList.add(item);
 			}while (cursor.moveToNext());
 		}

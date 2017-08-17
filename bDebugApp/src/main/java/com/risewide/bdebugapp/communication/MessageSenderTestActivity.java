@@ -278,9 +278,9 @@ public class MessageSenderTestActivity extends BaseActivity{
 		String numberSender, numberReceiver, textMessage;
 		//Uri image;
 		//
-		numberSender = WidgetHelper.getText(etSenderNumber);
-		numberReceiver = WidgetHelper.getText(etReceiverNumber);
-		textMessage = WidgetHelper.getText(etTextMessage);
+		numberSender = WidgetHelper.getTextString(etSenderNumber);
+		numberReceiver = WidgetHelper.getTextString(etReceiverNumber);
+		textMessage = WidgetHelper.getTextString(etTextMessage);
 		//
 		MsgSendData messageData = smsUnifyMessageSender.getMessageData();
 		messageData.setPhoneNumberSender(numberSender);

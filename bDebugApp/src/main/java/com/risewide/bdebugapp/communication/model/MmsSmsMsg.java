@@ -1,9 +1,6 @@
 package com.risewide.bdebugapp.communication.model;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import com.risewide.bdebugapp.communication.util.DateUtil;
@@ -12,7 +9,7 @@ import com.risewide.bdebugapp.communication.util.DateUtil;
  * Created by birdea on 2017-05-12.
  */
 
-public class SmsMmsMsg implements Comparable<SmsMmsMsg> {
+public class MmsSmsMsg implements Comparable<MmsSmsMsg> {
 	// construct
 	public enum Type{
 		SMS,
@@ -20,13 +17,15 @@ public class SmsMmsMsg implements Comparable<SmsMmsMsg> {
 		CONVERSATION
 	}
 	public Type msgType = Type.SMS;
-	public SmsMmsMsg(Type type) {
+	public MmsSmsMsg(Type type) {
 		this.msgType = type;
 	}
 	// common column data
 	public long _id;
 	public int _count;
-	public int read;
+	public int read = Integer.MIN_VALUE;
+	public long thread_id;
+	public String m_id; //Message-ID
 	// odd column data on some android devices
 	private long date;
 	///////////////////////////////////////////////////////////
@@ -77,7 +76,7 @@ public class SmsMmsMsg implements Comparable<SmsMmsMsg> {
 	}
 
 	@Override
-	public int compareTo(SmsMmsMsg another) {
+	public int compareTo(MmsSmsMsg another) {
 		//int cmp = a > b ? +1 : a < b ? -1 : 0;
 		return Long.compare(another.date, date);
 	}
@@ -122,7 +121,7 @@ public class SmsMmsMsg implements Comparable<SmsMmsMsg> {
 	// Getter, Setter for some picky data
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	public String getAddress(String myPhoneNumber) {
-		if (Type.MMS.equals(type) && listAddress != null) {
+		if (Type.MMS.equals(msgType) && listAddress != null) {
 			for (String address : listAddress) {
 				String phoneNumber = address.trim();
 				if (!address.startsWith("insert-") && !phoneNumber.equals(myPhoneNumber)) {
@@ -156,4 +155,12 @@ public class SmsMmsMsg implements Comparable<SmsMmsMsg> {
 		}
 		return null;
 	}
+
+	public String getReadStatus() {
+		if (read == Integer.MIN_VALUE) {
+			return "read:n/a";
+		}
+		return String.format("read:%d",read);
+	}
+
 }

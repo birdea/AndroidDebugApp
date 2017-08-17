@@ -6,7 +6,7 @@
     <string name="str_start">Start</string>
     <string name="str_stop">Stop</string>
 
-    <!-- Common Usages -->
+    <!-- CommonProject Usages -->
 
     <string name="common_ok">ok</string>
     <string name="common_cancel">cancel</string>
