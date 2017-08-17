@@ -78,7 +78,8 @@ public class MmsSmsMsg implements Comparable<MmsSmsMsg> {
 	@Override
 	public int compareTo(MmsSmsMsg another) {
 		//int cmp = a > b ? +1 : a < b ? -1 : 0;
-		return Long.compare(another.date, date);
+		//return Long.compare(another.date, date);
+		return Long.compare(date, another.date);
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////

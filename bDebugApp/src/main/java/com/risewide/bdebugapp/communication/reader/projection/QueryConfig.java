@@ -2,6 +2,7 @@ package com.risewide.bdebugapp.communication.reader.projection;
 
 import com.risewide.bdebugapp.util.SVLog;
 
+import android.provider.Telephony;
 import android.text.TextUtils;
 
 /**
@@ -56,6 +57,14 @@ public class QueryConfig {
 		return null;
 	}
 
+	/**
+	 * 특정 CP URI에서 해당 옵션(DESC, ASC)이 반대로 먹히는 경우가 있다
+	 * so that,
+	 *
+	 * 문자 메시지 생성 일자에 대한 sort는 리스트 데이터 가공 후 Collections interface 사용, NOT(cp query time),
+	 * 발생 단말 : G5 LG-F700S Android 7.0, CP : {@link Telephony.MmsSms.CONTENT_CONVERSATIONS_URI}
+	 * @return
+	 */
 	public String getComposedSortOrderClause() {
 		StringBuilder sb = new StringBuilder();
 		appendIfNotNull(sb, getSortOrder());

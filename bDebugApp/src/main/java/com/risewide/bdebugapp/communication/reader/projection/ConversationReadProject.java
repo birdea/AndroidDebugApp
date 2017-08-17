@@ -36,8 +36,8 @@ public class ConversationReadProject {
 		Cursor cursor;
 		try {
 			cursor = resolver.query(project.getUri(), project.getProjection(), project.getSelection(), project.getSelectionArgs(), sortOrder);
-			SVLog.i("** Conversation - getProject - Common URI");
-		} catch (Exception e) {
+			SVLog.i("** Conversation - getProject - Common(LG) URI");
+		} catch (Exception ignorable) {
 			ReadProjector<MmsSmsMsg> projectSamsung = new SamsungProject();
 			projectSamsung.setExtraLoadMessageData(queryConfig.isExtraLoadMessageData());
 			projectSamsung.setExtraLoadAddressData(queryConfig.isExtraLoadAddressData());
@@ -54,7 +54,15 @@ public class ConversationReadProject {
 	public static class CommonProject extends ReadProjector<MmsSmsMsg> {
 
 		private static final String[] PROJECTION = {
-				"*"
+				"*",
+				/*"_id",
+				"date",
+				"read",
+				"type",
+				"address",
+				Telephony.Mms.THREAD_ID,
+				Telephony.Mms.MESSAGE_ID,
+				"body",*/
 		};
 
 		@Override
@@ -62,19 +70,26 @@ public class ConversationReadProject {
 			return PROJECTION;
 		}
 
+		/**
+		 * content provider query param 형태를 selection, selectionArgs[] 별개로 할당시 WHERE clause 적용 안되는 경우 발생
+		 * So that, bypass to use hard code like below > "read!=1"
+		 * 오류 발생 단말기 : G5 LG-F700S Android 7.0
+		 * 정상 동작 단말기 : GalaxyS7 SM-G930S 7.0 using {@link SamsungProject}
+		 * @return
+		 */
 		@Override
 		public String getSelection() {
 			if (isSelectLoadOnlyUnread) {
-				return Telephony.Mms.READ+"!=?";
+				return "read!=1";//Telephony.Mms.READ+"!=?";
 			}
 			return null;
 		}
 
 		@Override
 		public String[] getSelectionArgs() {
-			if (isSelectLoadOnlyUnread) {
-				return new String[]{"1"};
-			}
+			//if (isSelectLoadOnlyUnread) {
+			//	return new String[]{"1"};
+			//}
 			return null;
 		}
 
@@ -100,7 +115,7 @@ public class ConversationReadProject {
 			item.thread_id = cursor.getLong(cursor.getColumnIndex(Telephony.Mms.THREAD_ID));
 			item.m_id = cursor.getString(cursor.getColumnIndex(Telephony.Mms.MESSAGE_ID));
 			//
-			String m_id = cursor.getString(cursor.getColumnIndex("m_id"));
+			String m_id = item.m_id;
 
 			if (TextUtils.isEmpty(m_id) || m_id.equals("null")) {
 				item.body = cursor.getString(cursor.getColumnIndex("body"));
