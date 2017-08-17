@@ -122,7 +122,7 @@ public class MmsSmsMsg implements Comparable<MmsSmsMsg> {
 	// Getter, Setter for some picky data
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	public String getAddress(String myPhoneNumber) {
-		if (Type.MMS.equals(msgType) && listAddress != null) {
+		if (listAddress != null) {
 			for (String address : listAddress) {
 				String phoneNumber = address.trim();
 				if (!address.startsWith("insert-") && !phoneNumber.equals(myPhoneNumber)) {

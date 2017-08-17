@@ -114,10 +114,17 @@ public class ConversationReadProject {
 			item.address = cursor.getString(cursor.getColumnIndex("address"));
 			item.thread_id = cursor.getLong(cursor.getColumnIndex(Telephony.Mms.THREAD_ID));
 			item.m_id = cursor.getString(cursor.getColumnIndex(Telephony.Mms.MESSAGE_ID));
-			//
+			// do extra task for fill empty slot
 			String m_id = item.m_id;
-
-			if (TextUtils.isEmpty(m_id) || m_id.equals("null")) {
+			String address = item.address;
+			ContentResolver cr = context.getContentResolver();
+			//
+			if (TextUtils.isEmpty(address) || "null".equals(address)) {
+				if (isExtraLoadAddressData) {
+					item.listAddress = mmsReaderSub.getAddressNumber(cr, (int) item._id);
+				}
+			}
+			if (TextUtils.isEmpty(m_id) || "null".equals(m_id)) {
 				item.body = cursor.getString(cursor.getColumnIndex("body"));
 			} else {
 				if (isExtraLoadMessageData) {
