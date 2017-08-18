@@ -208,7 +208,7 @@ public class ConversationReadProject {
 				String mid = mmsReaderSub.getMessageIdOnSamsungUri(resolver, item._id);
 				item.body = mmsReaderSub.getTextMessage(resolver, mid);
 				// 2.reading sms
-				MmsSmsMsg itemSms = smsReaderSub.getTextMessage(resolver, item.thread_id, MmsSmsMsg.Type.CONVERSATION);
+				MmsSmsMsg itemSms = smsReaderSub.getTextMessage(resolver, item._id, MmsSmsMsg.Type.CONVERSATION);
 				SVLog.i("compare[CONV] item:"+item.toString());
 				SVLog.i("compare[SMS] item:"+itemSms.toString());
 				MmsSmsMsg lastest = MmsSmsMsg.getLastestMsg(item, itemSms);

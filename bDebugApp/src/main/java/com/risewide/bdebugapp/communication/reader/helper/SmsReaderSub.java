@@ -1,6 +1,7 @@
 package com.risewide.bdebugapp.communication.reader.helper;
 
 import android.content.ContentResolver;
+import android.content.CursorLoader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.Telephony;
@@ -28,17 +29,16 @@ public class SmsReaderSub {
 	public MmsSmsMsg getTextMessage(ContentResolver resolver, long threadId, MmsSmsMsg.Type type) {
 		MmsSmsMsg msg = new MmsSmsMsg(type);
 		String[] projection = PROJECTION_INBOX;
-		String selection = new StringBuilder()
+		/*String selection = new StringBuilder()
 				.append(Telephony.Sms.THREAD_ID).append("=?")
-				.append(" AND ")
-				.append("LIMIT ").append("?")
 				.toString();
-		String[] selectionArgs = new String[] { String.valueOf(threadId), String.valueOf(1) };
-		String sortOrder = "date DESC";
+		String[] selectionArgs = new String[] { String.valueOf(threadId), String.valueOf(1) };*/
+		String selection = Telephony.Sms.THREAD_ID+"="+threadId;
+		String[] selectionArgs = null;
+		String sortOrder = "date DESC LIMIT 5";
 		Uri uri = Telephony.Sms.CONTENT_URI;
 
 		Cursor cursor = resolver.query(uri, projection, selection, selectionArgs, sortOrder);
-		//
 		if (cursor != null && cursor.moveToFirst()) {
 			//
 			int idx_id = cursor.getColumnIndex(projection[0]); //_ID
@@ -46,9 +46,9 @@ public class SmsReaderSub {
 			int idx_address = cursor.getColumnIndex(projection[2]); //ADDRESS
 			int idx_date = cursor.getColumnIndex(projection[3]); //DATE
 			int idx_status = cursor.getColumnIndex(projection[4]); //STATUS
-			int idx_type = cursor.getColumnIndex(projection[4]); //TYPE
-			int idx_body = cursor.getColumnIndex(projection[4]); //BODY
-			int idx_read = cursor.getColumnIndex(projection[4]); //READ
+			int idx_type = cursor.getColumnIndex(projection[5]); //TYPE
+			int idx_body = cursor.getColumnIndex(projection[6]); //BODY
+			int idx_read = cursor.getColumnIndex(projection[7]); //READ
 			//
 			do {
 				msg._id = cursor.getLong(idx_id);
