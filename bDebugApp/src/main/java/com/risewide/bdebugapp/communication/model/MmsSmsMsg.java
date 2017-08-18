@@ -34,6 +34,10 @@ public class MmsSmsMsg implements Comparable<MmsSmsMsg> {
 	public int type; //수신=1, 발신=2
 	public String body;
 	public String address;
+	/**
+	 * {@link android.provider.Telephony.Sms.Inbox.STATUS}
+	 */
+	public int status;
 	///////////////////////////////////////////////////////////
 	// mms column data from Uri.parse("content://mms");
 	///////////////////////////////////////////////////////////
@@ -166,4 +170,10 @@ public class MmsSmsMsg implements Comparable<MmsSmsMsg> {
 		return String.format("read:%d",read);
 	}
 
+	public static MmsSmsMsg getLastestMsg(MmsSmsMsg l, MmsSmsMsg r) {
+		if(Long.compare(l.date, r.date) >= 0) {
+			return l;
+		}
+		return r;
+	}
 }

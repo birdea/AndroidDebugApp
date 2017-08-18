@@ -8,7 +8,7 @@ import android.provider.Telephony;
 import android.text.TextUtils;
 
 import com.risewide.bdebugapp.communication.model.MmsSmsMsg;
-import com.risewide.bdebugapp.communication.reader.MmsReaderSub;
+import com.risewide.bdebugapp.communication.reader.helper.MmsReaderSub;
 
 /**
  * Created by birdea on 2017-08-09.

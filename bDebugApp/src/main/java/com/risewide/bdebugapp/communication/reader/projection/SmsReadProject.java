@@ -15,7 +15,7 @@ import com.risewide.bdebugapp.communication.model.MmsSmsMsg;
 public class SmsReadProject {
 
 	public static class All extends ReadProjector<MmsSmsMsg> {
-		private static final String[] PROJECTION = {
+		public static final String[] PROJECTION = {
 				Telephony.Sms._ID,
 				Telephony.Sms.ADDRESS,
 				Telephony.Sms.DATE,
@@ -61,7 +61,7 @@ public class SmsReadProject {
 	}
 
 	public static class Inbox extends ReadProjector<MmsSmsMsg> {
-		private static final String[] PROJECTION = {
+		public static final String[] PROJECTION = {
 				Telephony.Sms.Inbox._ID,
 				Telephony.Sms.Inbox.THREAD_ID,
 				Telephony.Sms.Inbox.ADDRESS,
@@ -118,7 +118,7 @@ public class SmsReadProject {
 	}
 
 	public static class Sent extends ReadProjector {
-		private static final String[] PROJECTION = {
+		public static final String[] PROJECTION = {
 				Telephony.Sms.Sent._ID,
 				Telephony.Sms.Sent.THREAD_ID,
 				Telephony.Sms.Sent.ADDRESS,

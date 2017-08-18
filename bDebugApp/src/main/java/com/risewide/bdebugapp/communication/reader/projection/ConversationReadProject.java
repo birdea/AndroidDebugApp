@@ -8,7 +8,8 @@ import android.provider.Telephony;
 import android.text.TextUtils;
 
 import com.risewide.bdebugapp.communication.model.MmsSmsMsg;
-import com.risewide.bdebugapp.communication.reader.MmsReaderSub;
+import com.risewide.bdebugapp.communication.reader.helper.MmsReaderSub;
+import com.risewide.bdebugapp.communication.reader.helper.SmsReaderSub;
 import com.risewide.bdebugapp.communication.util.CursorUtil;
 import com.risewide.bdebugapp.util.SVLog;
 
@@ -103,6 +104,7 @@ public class ConversationReadProject {
 		public void storeColumnIndex(Cursor cursor) {
 		}
 
+		private SmsReaderSub smsReaderSub = new SmsReaderSub();
 		private MmsReaderSub mmsReaderSub = new MmsReaderSub();
 
 		@Override
@@ -118,19 +120,28 @@ public class ConversationReadProject {
 			// do extra task for fill empty slot
 			String m_id = item.m_id;
 			String address = item.address;
-			ContentResolver cr = context.getContentResolver();
+			ContentResolver resolver = context.getContentResolver();
 			//
 			if (TextUtils.isEmpty(address) || "null".equals(address)) {
 				if (isExtraLoadAddressData) {
-					item.listAddress = mmsReaderSub.getAddressNumber(cr, (int) item._id);
+					item.listAddress = mmsReaderSub.getAddressNumber(resolver, (int) item._id);
 				}
 			}
 			if (TextUtils.isEmpty(m_id) || "null".equals(m_id)) {
 				item.body = cursor.getString(cursor.getColumnIndex("body"));
 			} else {
 				if (isExtraLoadMessageData) {
-					String mid = mmsReaderSub.getMessageId(context.getContentResolver(), item.thread_id, item.m_id);
-					item.body = mmsReaderSub.getTextMessage(context.getContentResolver(), mid);
+					//[TODO] the target msg could be mms or sms, need to figure out how to distinguish
+					// 1.reading mms
+					String mid = mmsReaderSub.getMessageIdOnCommonUri(resolver, item.thread_id, item.m_id);
+					String mms = mmsReaderSub.getTextMessage(resolver, mid);
+					item.body = mms;
+					MmsSmsMsg itemSms = smsReaderSub.getTextMessage(resolver, item.thread_id, MmsSmsMsg.Type.CONVERSATION);
+					SVLog.i("compare[CONV] item:"+item.toString());
+					SVLog.i("compare[SMS] item:"+itemSms.toString());
+					MmsSmsMsg lastest = MmsSmsMsg.getLastestMsg(item, itemSms);
+					item.body = lastest.body;
+					SVLog.i("compare[FINAL] item.body:"+item.body);
 				}
 			}
 			return item;
@@ -174,6 +185,7 @@ public class ConversationReadProject {
 
 		}
 
+		private SmsReaderSub smsReaderSub = new SmsReaderSub();
 		private MmsReaderSub mmsReaderSub = new MmsReaderSub();
 
 		@Override
@@ -190,8 +202,19 @@ public class ConversationReadProject {
 				item.address = mmsReaderSub.getRecipientAddress(context.getContentResolver(), Long.parseLong(recipient_ids));
 			}
 			if (isExtraLoadMessageData) {
-				//String mid = mmsReaderSub.getMessageId(context.getContentResolver(), item.thread_id, item.m_id);
-				item.body = mmsReaderSub.getTextMessage(context.getContentResolver(), String.valueOf(item._id));
+				//[TODO] the target msg could be mms or sms, need to figure out how to distinguish
+				ContentResolver resolver = context.getContentResolver();
+				// 1.reading mms
+				String mid = mmsReaderSub.getMessageIdOnSamsungUri(resolver, item._id);
+				item.body = mmsReaderSub.getTextMessage(resolver, mid);
+				// 2.reading sms
+				MmsSmsMsg itemSms = smsReaderSub.getTextMessage(resolver, item.thread_id, MmsSmsMsg.Type.CONVERSATION);
+				SVLog.i("compare[CONV] item:"+item.toString());
+				SVLog.i("compare[SMS] item:"+itemSms.toString());
+				MmsSmsMsg lastest = MmsSmsMsg.getLastestMsg(item, itemSms);
+				item.body = lastest.body;
+				SVLog.i("compare[FINAL] item.body:"+item.body);
+
 			}
 			return item;
 		}
