@@ -5,13 +5,13 @@ import com.risewide.bdebugapp.R;
 import com.risewide.bdebugapp.adapter.HandyListAdapter;
 import com.risewide.bdebugapp.communication.model.MsgSendData;
 import com.risewide.bdebugapp.communication.util.IntentActionHelper;
+import com.risewide.bdebugapp.communication.util.OnHandyEventListener;
 import com.risewide.bdebugapp.communication.util.TToast;
 import com.risewide.bdebugapp.communication.util.WidgetHelper;
 import com.risewide.bdebugapp.communication.model.SmsMmsMsgSendType;
 import com.risewide.bdebugapp.util.DeviceInfo;
 import com.risewide.bdebugapp.util.SVLog;
 
-import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;

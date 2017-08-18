@@ -1,4 +1,4 @@
-package com.risewide.bdebugapp.communication;
+package com.risewide.bdebugapp.communication.util;
 
 /**
  * Handy Event Listener

@@ -1,13 +1,12 @@
 package com.risewide.bdebugapp.communication.reader.helper;
 
+import com.risewide.bdebugapp.communication.model.MmsSmsMsg;
+import com.risewide.bdebugapp.communication.util.IOCloser;
+
 import android.content.ContentResolver;
-import android.content.CursorLoader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.Telephony;
-
-import com.risewide.bdebugapp.communication.model.MmsSmsMsg;
-import com.risewide.bdebugapp.communication.util.IOCloser;
 
 /**
  * Created by birdea on 2017-08-18.
@@ -29,13 +28,9 @@ public class SmsReaderSub {
 	public MmsSmsMsg getTextMessage(ContentResolver resolver, long threadId, MmsSmsMsg.Type type) {
 		MmsSmsMsg msg = new MmsSmsMsg(type);
 		String[] projection = PROJECTION_INBOX;
-		/*String selection = new StringBuilder()
-				.append(Telephony.Sms.THREAD_ID).append("=?")
-				.toString();
-		String[] selectionArgs = new String[] { String.valueOf(threadId), String.valueOf(1) };*/
-		String selection = Telephony.Sms.THREAD_ID+"="+threadId;
+		String selection = Telephony.Sms.THREAD_ID+"="+threadId+" AND read!=1";
 		String[] selectionArgs = null;
-		String sortOrder = "date DESC LIMIT 5";
+		String sortOrder = "date DESC LIMIT 1";
 		Uri uri = Telephony.Sms.CONTENT_URI;
 
 		Cursor cursor = resolver.query(uri, projection, selection, selectionArgs, sortOrder);

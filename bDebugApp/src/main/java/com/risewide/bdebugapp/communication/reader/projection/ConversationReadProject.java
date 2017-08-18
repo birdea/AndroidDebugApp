@@ -136,11 +136,11 @@ public class ConversationReadProject {
 					String mid = mmsReaderSub.getMessageIdOnCommonUri(resolver, item.thread_id, item.m_id);
 					String mms = mmsReaderSub.getTextMessage(resolver, mid);
 					item.body = mms;
-					MmsSmsMsg itemSms = smsReaderSub.getTextMessage(resolver, item.thread_id, MmsSmsMsg.Type.CONVERSATION);
+					/*MmsSmsMsg itemSms = smsReaderSub.getTextMessage(resolver, item.thread_id, MmsSmsMsg.Type.CONVERSATION);
 					SVLog.i("compare[CONV] item:"+item.toString());
 					SVLog.i("compare[SMS] item:"+itemSms.toString());
-					MmsSmsMsg lastest = MmsSmsMsg.getLastestMsg(item, itemSms);
-					item.body = lastest.body;
+					MmsSmsMsg lastest = MmsSmsMsg.getLastestMsgWithExistBody(item, itemSms);
+					item.body = lastest.body;*/
 					SVLog.i("compare[FINAL] item.body:"+item.body);
 				}
 			}
@@ -211,10 +211,9 @@ public class ConversationReadProject {
 				MmsSmsMsg itemSms = smsReaderSub.getTextMessage(resolver, item._id, MmsSmsMsg.Type.CONVERSATION);
 				SVLog.i("compare[CONV] item:"+item.toString());
 				SVLog.i("compare[SMS] item:"+itemSms.toString());
-				MmsSmsMsg lastest = MmsSmsMsg.getLastestMsg(item, itemSms);
+				MmsSmsMsg lastest = MmsSmsMsg.getLastestMsgWithExistBody(item, itemSms);
 				item.body = lastest.body;
 				SVLog.i("compare[FINAL] item.body:"+item.body);
-
 			}
 			return item;
 		}

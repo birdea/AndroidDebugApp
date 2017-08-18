@@ -82,7 +82,6 @@ public class MmsReaderSub {
 			selection = Telephony.Mms.Part.MSG_ID + "=" + mid;
 		}*/
 		Uri uri = Telephony.Mms.CONTENT_URI.buildUpon().appendPath("part").build();
-		//Uri uri = Uri.parse("content://mms/part");
 		Cursor cursor = resolver.query(uri, null, selection, null, null);
 		//
 		StringBuilder sb = new StringBuilder();

@@ -1,5 +1,7 @@
 package com.risewide.bdebugapp.communication.model;
 
+import android.text.TextUtils;
+
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
@@ -52,11 +54,6 @@ public class MmsSmsMsg implements Comparable<MmsSmsMsg> {
 	// mms column data from Uri.parse("content://mms/{?}/addr");
 	///////////////////////////////////////////////////////////
 	public List<String> listAddress;
-
-	///////////////////////////////////////////////////////////
-	// mms column data from Uri.parse("content://mms/part");
-	///////////////////////////////////////////////////////////
-	public String text; // mms 문자 메시지
 
 	@Override
 	public String toString() {
@@ -151,16 +148,7 @@ public class MmsSmsMsg implements Comparable<MmsSmsMsg> {
 	}
 
 	public String getBodyMessage() {
-		if (Type.SMS.equals(type)) {
-			return body;
-		}
-		if (Type.MMS.equals(type)) {
-			return text;
-		}
-		if (Type.CONVERSATION.equals(type)) {
-
-		}
-		return null;
+		return body;
 	}
 
 	public String getReadStatus() {
@@ -170,10 +158,30 @@ public class MmsSmsMsg implements Comparable<MmsSmsMsg> {
 		return String.format("read:%d",read);
 	}
 
-	public static MmsSmsMsg getLastestMsg(MmsSmsMsg l, MmsSmsMsg r) {
-		if(Long.compare(l.date, r.date) >= 0) {
-			return l;
+	public static MmsSmsMsg getLastestMsgWithExistBody(MmsSmsMsg base, MmsSmsMsg candi) {
+		if (base != null && candi != null) {
+			if(!TextUtils.isEmpty(base.body) && !TextUtils.isEmpty(candi.body)) {
+				if (Long.compare(base.date, candi.date) >= 0) {
+					return base;
+				}
+				return candi;
+			}
+			if (TextUtils.isEmpty(base.body) && TextUtils.isEmpty(candi.body)) {
+				return base;
+			}
+			if (TextUtils.isEmpty(base.body)) {
+				return candi;
+			}
+			if (TextUtils.isEmpty(candi.body)) {
+				return base;
+			}
 		}
-		return r;
+		if (base != null && !TextUtils.isEmpty(base.body)) {
+			return base;
+		}
+		if (candi != null && !TextUtils.isEmpty(candi.body)) {
+			return candi;
+		}
+		return base;
 	}
 }
