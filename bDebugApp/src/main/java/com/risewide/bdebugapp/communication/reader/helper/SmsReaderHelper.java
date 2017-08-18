@@ -1,6 +1,6 @@
 package com.risewide.bdebugapp.communication.reader.helper;
 
-import com.risewide.bdebugapp.communication.model.MmsSmsMsg;
+import com.risewide.bdebugapp.communication.model.CommMsgData;
 import com.risewide.bdebugapp.communication.util.IOCloser;
 
 import android.content.ContentResolver;
@@ -12,7 +12,7 @@ import android.provider.Telephony;
  * Created by birdea on 2017-08-18.
  */
 
-public class SmsReaderSub {
+public class SmsReaderHelper {
 
 	public static final String[] PROJECTION_INBOX = {
 			Telephony.Sms.Inbox._ID,
@@ -25,8 +25,8 @@ public class SmsReaderSub {
 			Telephony.Sms.Inbox.READ,
 	};
 
-	public MmsSmsMsg getTextMessage(ContentResolver resolver, long threadId, MmsSmsMsg.Type type) {
-		MmsSmsMsg msg = new MmsSmsMsg(type);
+	public CommMsgData getTextMessage(ContentResolver resolver, long threadId, long timeStamp, CommMsgData.Type type) {
+		CommMsgData msg = new CommMsgData(type);
 		String[] projection = PROJECTION_INBOX;
 		String selection = Telephony.Sms.THREAD_ID+"="+threadId+" AND read!=1";
 		String[] selectionArgs = null;
@@ -55,6 +55,9 @@ public class SmsReaderSub {
 				msg.body = cursor.getString(idx_body);
 				msg.read = cursor.getInt(idx_read);
 			} while (cursor.moveToNext());
+		}
+		if (CommMsgData.isEqualDateValueOnNormalize(timeStamp, msg.getDate())==false) {
+			msg = null;
 		}
 		IOCloser.close(cursor);
 		return msg;

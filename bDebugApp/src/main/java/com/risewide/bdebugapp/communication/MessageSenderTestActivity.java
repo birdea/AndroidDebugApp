@@ -8,7 +8,7 @@ import com.risewide.bdebugapp.communication.util.IntentActionHelper;
 import com.risewide.bdebugapp.communication.util.OnHandyEventListener;
 import com.risewide.bdebugapp.communication.util.TToast;
 import com.risewide.bdebugapp.communication.util.WidgetHelper;
-import com.risewide.bdebugapp.communication.model.SmsMmsMsgSendType;
+import com.risewide.bdebugapp.communication.model.CommMsgSendType;
 import com.risewide.bdebugapp.util.DeviceInfo;
 import com.risewide.bdebugapp.util.SVLog;
 
@@ -35,7 +35,7 @@ import android.widget.TextView;
 
 public class MessageSenderTestActivity extends BaseActivity{
 
-	SmsUnifyMessageSender smsUnifyMessageSender;
+	CommUnifyMessageSender smsUnifyMessageSender;
 	HandyListAdapter handyListAdapter;
 	//
 	TextView tvDeviceInfo, tvMsgSize, tvMsgTitle;
@@ -81,16 +81,16 @@ public class MessageSenderTestActivity extends BaseActivity{
 			public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
 				switch (checkedId) {
 					case R.id.rbProtocolTypeAuto:
-						smsUnifyMessageSender.setProtocolType(SmsMmsMsgSendType.AUTO_ADJUST);
+						smsUnifyMessageSender.setProtocolType(CommMsgSendType.AUTO_ADJUST);
 						break;
 					case R.id.rbProtocolTypeSms:
-						smsUnifyMessageSender.setProtocolType(SmsMmsMsgSendType.SMS);
+						smsUnifyMessageSender.setProtocolType(CommMsgSendType.SMS);
 						break;
 					case R.id.rbProtocolTypeLms:
-						smsUnifyMessageSender.setProtocolType(SmsMmsMsgSendType.LMS);
+						smsUnifyMessageSender.setProtocolType(CommMsgSendType.LMS);
 						break;
 					case R.id.rbProtocolTypeMms:
-						smsUnifyMessageSender.setProtocolType(SmsMmsMsgSendType.MMS);
+						smsUnifyMessageSender.setProtocolType(CommMsgSendType.MMS);
 						break;
 				}
 				addEventMessage("rgProtocolType.checked:"+checkedId+","+ smsUnifyMessageSender.getProtocolType());
@@ -103,10 +103,10 @@ public class MessageSenderTestActivity extends BaseActivity{
 			public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
 				switch (checkedId) {
 					case R.id.rbMethodTypeDirectCall:
-						smsUnifyMessageSender.setCallMethodType(SmsUnifyMessageSender.CallMethodType.DirectCall);
+						smsUnifyMessageSender.setCallMethodType(CommUnifyMessageSender.CallMethodType.DirectCall);
 						break;
 					case R.id.rbMethodTypeUseIntent:
-						smsUnifyMessageSender.setCallMethodType(SmsUnifyMessageSender.CallMethodType.Intent);
+						smsUnifyMessageSender.setCallMethodType(CommUnifyMessageSender.CallMethodType.Intent);
 						break;
 				}
 				addEventMessage("rgMethodType.checked:"+checkedId+","+ smsUnifyMessageSender.getCallMethodType());
@@ -133,7 +133,7 @@ public class MessageSenderTestActivity extends BaseActivity{
 					bytes = s.toString().getBytes().length;
 				}
 				tvMsgSize.setText(String.format("%d(%d bytes)", charLength, bytes));
-				tvMsgTitle.setText(String.format("msg[%d]", SmsUnifyMessageSender.getCountOfDivideMessage(s.toString())));
+				tvMsgTitle.setText(String.format("msg[%d]", CommUnifyMessageSender.getCountOfDivideMessage(s.toString())));
 			}
 		});
 
@@ -151,7 +151,7 @@ public class MessageSenderTestActivity extends BaseActivity{
 	}
 
 	private void initCont() {
-		smsUnifyMessageSender = new SmsUnifyMessageSender();
+		smsUnifyMessageSender = new CommUnifyMessageSender();
 		smsUnifyMessageSender.setOnHandyEventListener(new OnHandyEventListener() {
 			@Override
 			public void onEvent(String msg) {
@@ -293,6 +293,15 @@ public class MessageSenderTestActivity extends BaseActivity{
 		messageData.setPhoneNumberReceiver(numberReceiver);
 		messageData.setTextMessage(textMessage);
 		//
-		smsUnifyMessageSender.send(this);
+		smsUnifyMessageSender.send(this, new AbsMessageSender.OnSendTextMessageListener() {
+			@Override
+			public void onSent(boolean success) {
+				SVLog.i("smsUnifyMessageSender.onSent:"+success);
+			}
+			@Override
+			public void onReceived(boolean success) {
+				SVLog.i("smsUnifyMessageSender.onReceived:"+success);
+			}
+		});
 	}
 }

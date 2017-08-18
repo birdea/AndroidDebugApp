@@ -7,9 +7,9 @@ import android.net.Uri;
 import android.provider.Telephony;
 import android.text.TextUtils;
 
-import com.risewide.bdebugapp.communication.model.MmsSmsMsg;
-import com.risewide.bdebugapp.communication.reader.helper.MmsReaderSub;
-import com.risewide.bdebugapp.communication.reader.helper.SmsReaderSub;
+import com.risewide.bdebugapp.communication.model.CommMsgData;
+import com.risewide.bdebugapp.communication.reader.helper.MmsReaderHelper;
+import com.risewide.bdebugapp.communication.reader.helper.SmsReaderHelper;
 import com.risewide.bdebugapp.communication.util.CursorUtil;
 import com.risewide.bdebugapp.util.SVLog;
 
@@ -17,7 +17,7 @@ import com.risewide.bdebugapp.util.SVLog;
  * Created by birdea on 2017-08-09.
  */
 
-public class ConversationReadProject {
+public class QueryConversationProject {
 
 	/**
 	 * 삼성 단말기에서 Telephony.MmsSms.CONTENT_CONVERSATIONS_URI 로 접근이 불가하기 때문에 Project 정보 구분
@@ -27,8 +27,8 @@ public class ConversationReadProject {
 	 * @param sortOrder
 	 * @return
 	 */
-	public static ReadProjector<MmsSmsMsg> getProject(Context context, QueryConfig queryConfig, String sortOrder) {
-		ReadProjector<MmsSmsMsg> project = new CommonProject();
+	public static AbsQueryProject<CommMsgData> getProject(Context context, QueryConfig queryConfig, String sortOrder) {
+		AbsQueryProject<CommMsgData> project = new CommonProject();
 		project.setExtraLoadMessageData(queryConfig.isExtraLoadMessageData());
 		project.setExtraLoadAddressData(queryConfig.isExtraLoadAddressData());
 		project.setSelectLoadOnlyUnread(queryConfig.isSelectLoadOnlyUnread());
@@ -40,7 +40,7 @@ public class ConversationReadProject {
 			SVLog.i("** Conversation - getProject - Common(LG) URI");
 		} catch (Exception ignorable) {
 			ignorable.printStackTrace();
-			ReadProjector<MmsSmsMsg> projectSamsung = new SamsungProject();
+			AbsQueryProject<CommMsgData> projectSamsung = new SamsungProject();
 			projectSamsung.setExtraLoadMessageData(queryConfig.isExtraLoadMessageData());
 			projectSamsung.setExtraLoadAddressData(queryConfig.isExtraLoadAddressData());
 			projectSamsung.setSelectLoadOnlyUnread(queryConfig.isSelectLoadOnlyUnread());
@@ -53,7 +53,7 @@ public class ConversationReadProject {
 		return project;
 	}
 
-	public static class CommonProject extends ReadProjector<MmsSmsMsg> {
+	public static class CommonProject extends AbsQueryProject<CommMsgData> {
 
 		private static final String[] PROJECTION = {
 				"*",
@@ -104,12 +104,12 @@ public class ConversationReadProject {
 		public void storeColumnIndex(Cursor cursor) {
 		}
 
-		private SmsReaderSub smsReaderSub = new SmsReaderSub();
-		private MmsReaderSub mmsReaderSub = new MmsReaderSub();
+		private SmsReaderHelper smsReaderSub = new SmsReaderHelper();
+		private MmsReaderHelper mmsReaderSub = new MmsReaderHelper();
 
 		@Override
-		public MmsSmsMsg read(Context context, Cursor cursor) {
-			MmsSmsMsg item = new MmsSmsMsg(MmsSmsMsg.Type.CONVERSATION);
+		public CommMsgData read(Context context, Cursor cursor) {
+			CommMsgData item = new CommMsgData(CommMsgData.Type.CONVERSATION);
 			item._id = cursor.getLong(cursor.getColumnIndex(Telephony.MmsSms._ID));
 			item.setDate(cursor.getLong(cursor.getColumnIndex("date")));
 			item.read = cursor.getInt(cursor.getColumnIndex("read"));
@@ -136,19 +136,13 @@ public class ConversationReadProject {
 					String mid = mmsReaderSub.getMessageIdOnCommonUri(resolver, item.thread_id, item.m_id);
 					String mms = mmsReaderSub.getTextMessage(resolver, mid);
 					item.body = mms;
-					/*MmsSmsMsg itemSms = smsReaderSub.getTextMessage(resolver, item.thread_id, MmsSmsMsg.Type.CONVERSATION);
-					SVLog.i("compare[CONV] item:"+item.toString());
-					SVLog.i("compare[SMS] item:"+itemSms.toString());
-					MmsSmsMsg lastest = MmsSmsMsg.getLastestMsgWithExistBody(item, itemSms);
-					item.body = lastest.body;*/
-					SVLog.i("compare[FINAL] item.body:"+item.body);
 				}
 			}
 			return item;
 		}
 	}
 
-	public static class SamsungProject extends ReadProjector<MmsSmsMsg> {
+	public static class SamsungProject extends AbsQueryProject<CommMsgData> {
 
 		private static final String[] PROJECTION = {
 				"*"
@@ -185,12 +179,12 @@ public class ConversationReadProject {
 
 		}
 
-		private SmsReaderSub smsReaderSub = new SmsReaderSub();
-		private MmsReaderSub mmsReaderSub = new MmsReaderSub();
+		private SmsReaderHelper smsReaderSub = new SmsReaderHelper();
+		private MmsReaderHelper mmsReaderSub = new MmsReaderHelper();
 
 		@Override
-		public MmsSmsMsg read(Context context, Cursor cursor) {
-			MmsSmsMsg item = new MmsSmsMsg(MmsSmsMsg.Type.CONVERSATION);
+		public CommMsgData read(Context context, Cursor cursor) {
+			CommMsgData item = new CommMsgData(CommMsgData.Type.CONVERSATION);
 			item._id = cursor.getLong(cursor.getColumnIndex(Telephony.MmsSms._ID));
 			item.setDate(cursor.getLong(cursor.getColumnIndex("date")));
 			item.body = cursor.getString(cursor.getColumnIndex("snippet"));
@@ -205,15 +199,12 @@ public class ConversationReadProject {
 				//[TODO] the target msg could be mms or sms, need to figure out how to distinguish
 				ContentResolver resolver = context.getContentResolver();
 				// 1.reading mms
-				String mid = mmsReaderSub.getMessageIdOnSamsungUri(resolver, item._id);
+				String mid = mmsReaderSub.getMessageIdOnSamsungUri(resolver, item._id, item.getDate());
 				item.body = mmsReaderSub.getTextMessage(resolver, mid);
 				// 2.reading sms
-				MmsSmsMsg itemSms = smsReaderSub.getTextMessage(resolver, item._id, MmsSmsMsg.Type.CONVERSATION);
-				SVLog.i("compare[CONV] item:"+item.toString());
-				SVLog.i("compare[SMS] item:"+itemSms.toString());
-				MmsSmsMsg lastest = MmsSmsMsg.getLastestMsgWithExistBody(item, itemSms);
-				item.body = lastest.body;
-				SVLog.i("compare[FINAL] item.body:"+item.body);
+				CommMsgData itemSms = smsReaderSub.getTextMessage(resolver, item._id, item.getDate(), CommMsgData.Type.CONVERSATION);
+				CommMsgData selected = CommMsgData.getLastestMsgWithExistBody(item, itemSms);
+				item.body = selected.body;
 			}
 			return item;
 		}

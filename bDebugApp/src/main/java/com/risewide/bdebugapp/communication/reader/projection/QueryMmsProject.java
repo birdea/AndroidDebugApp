@@ -7,16 +7,16 @@ import android.net.Uri;
 import android.provider.Telephony;
 import android.text.TextUtils;
 
-import com.risewide.bdebugapp.communication.model.MmsSmsMsg;
-import com.risewide.bdebugapp.communication.reader.helper.MmsReaderSub;
+import com.risewide.bdebugapp.communication.model.CommMsgData;
+import com.risewide.bdebugapp.communication.reader.helper.MmsReaderHelper;
 
 /**
  * Created by birdea on 2017-08-09.
  */
 
-public class MmsReadProject {
+public class QueryMmsProject {
 
-	public static class All extends ReadProjector<MmsSmsMsg> {
+	public static class All extends AbsQueryProject<CommMsgData> {
 
 		private static final String[] PROJECTION = {
 				Telephony.Mms._ID,
@@ -66,11 +66,11 @@ public class MmsReadProject {
 			}
 		}
 
-		private MmsReaderSub mmsReaderSub = new MmsReaderSub();
+		private MmsReaderHelper mmsReaderSub = new MmsReaderHelper();
 
 		@Override
-		public MmsSmsMsg read(final Context context, Cursor cursor) {
-			final MmsSmsMsg item = new MmsSmsMsg(MmsSmsMsg.Type.MMS);
+		public CommMsgData read(final Context context, Cursor cursor) {
+			final CommMsgData item = new CommMsgData(CommMsgData.Type.MMS);
 			int idx = 0;
 			item._id = cursor.getLong(idxColumn[idx++]);
 			item.m_id = cursor.getString(idxColumn[idx++]);
@@ -100,7 +100,7 @@ public class MmsReadProject {
 	}
 
 
-	public static class Inbox extends ReadProjector<MmsSmsMsg> {
+	public static class Inbox extends AbsQueryProject<CommMsgData> {
 
 		private static final String[] PROJECTION = {
 				Telephony.Mms.Inbox._ID,
@@ -145,13 +145,13 @@ public class MmsReadProject {
 		}
 
 		@Override
-		public MmsSmsMsg read(Context context, Cursor cursor) {
+		public CommMsgData read(Context context, Cursor cursor) {
 			return null;
 		}
 	}
 
 
-	public static class Address extends ReadProjector<MmsSmsMsg> {
+	public static class Address extends AbsQueryProject<CommMsgData> {
 		@Override
 		public String[] getProjection() {
 			return new String[0];
@@ -183,7 +183,7 @@ public class MmsReadProject {
 		}
 
 		@Override
-		public MmsSmsMsg read(Context context, Cursor cursor) {
+		public CommMsgData read(Context context, Cursor cursor) {
 			return null;
 		}
 	}

@@ -3,13 +3,11 @@ package com.risewide.bdebugapp.communication.reader;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
-import android.provider.Telephony;
 
 import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
-import com.risewide.bdebugapp.communication.util.CursorUtil;
-import com.risewide.bdebugapp.communication.model.MmsSmsMsg;
-import com.risewide.bdebugapp.communication.reader.projection.ReadProjector;
-import com.risewide.bdebugapp.communication.reader.projection.SmsReadProject;
+import com.risewide.bdebugapp.communication.reader.projection.AbsQueryProject;
+import com.risewide.bdebugapp.communication.model.CommMsgData;
+import com.risewide.bdebugapp.communication.reader.projection.QuerySmsProject;
 import com.risewide.bdebugapp.communication.util.IOCloser;
 
 import java.util.ArrayList;
@@ -25,27 +23,23 @@ public class SmsReader extends AbsMsgReader {
 		super(config);
 	}
 
-	public List<MmsSmsMsg> read(Context context) {
-//		ReadProjector project = new SmsReadProject.All();
-		ReadProjector project = new SmsReadProject.Inbox();
-//		ReadProjector project = new SmsReadProject.Sent();
+	@Override
+	public List<CommMsgData> read(Context context) {
+//		AbsQueryProject project = new QuerySmsProject.All();
+		AbsQueryProject<CommMsgData> project = new QuerySmsProject.Inbox();
+//		AbsQueryProject project = new QuerySmsProject.Sent();
 		project.setExtraLoadMessageData(queryConfig.isExtraLoadMessageData());
 		project.setExtraLoadAddressData(queryConfig.isExtraLoadAddressData());
 		project.setSelectLoadOnlyUnread(queryConfig.isSelectLoadOnlyUnread());
 
-		List<MmsSmsMsg> dataList = new ArrayList<>();
+		List<CommMsgData> dataList = new ArrayList<>();
 		ContentResolver resolver = context.getContentResolver();
 		String sortOrder = getConfigSortOrder();
 		Cursor cursor = resolver.query(project.getUri(), project.getProjection(), project.getSelection(), project.getSelectionArgs(), sortOrder);
 		if (cursor != null && cursor.moveToFirst()) {
+			project.storeColumnIndex(cursor);
 			do {
-				MmsSmsMsg item = new MmsSmsMsg(MmsSmsMsg.Type.SMS);
-				item._id = CursorUtil.getLong(cursor,Telephony.Sms._ID);
-				item.address = CursorUtil.getString(cursor,Telephony.Sms.ADDRESS);
-				item.setDate(CursorUtil.getLong(cursor,Telephony.Sms.DATE));
-				item.read = CursorUtil.getInt(cursor,Telephony.Sms.READ);
-				item.type = CursorUtil.getInt(cursor,Telephony.Sms.TYPE);
-				item.body = CursorUtil.getString(cursor,Telephony.Sms.BODY);
+				CommMsgData item = project.read(context, cursor);
 				dataList.add(item);
 			} while (cursor.moveToNext());
 		}

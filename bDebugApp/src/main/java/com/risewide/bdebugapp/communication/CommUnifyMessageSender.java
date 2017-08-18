@@ -18,7 +18,7 @@ import android.text.TextUtils;
 import com.risewide.bdebugapp.communication.model.MsgSendData;
 import com.risewide.bdebugapp.communication.util.OnHandyEventListener;
 import com.risewide.bdebugapp.communication.util.TToast;
-import com.risewide.bdebugapp.communication.model.SmsMmsMsgSendType;
+import com.risewide.bdebugapp.communication.model.CommMsgSendType;
 import com.risewide.bdebugapp.util.SVLog;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import java.util.List;
  * Created by birdea on 2017-08-02.
  */
 
-public class SmsUnifyMessageSender extends AbsMessageSender {
+public class CommUnifyMessageSender extends AbsMessageSender {
 
 	public static final boolean IS_SUPPORT_MMS = false;
 
@@ -37,13 +37,13 @@ public class SmsUnifyMessageSender extends AbsMessageSender {
 		Intent,
 	}
 
-	private SmsMmsMsgSendType protocolType;
+	private CommMsgSendType protocolType;
 	private CallMethodType callMethodType;
 	private MsgSendData messageData;
 
-	public SmsUnifyMessageSender() {
+	public CommUnifyMessageSender() {
 		messageData = new MsgSendData();
-		protocolType = SmsMmsMsgSendType.SMS;
+		protocolType = CommMsgSendType.SMS;
 		callMethodType = CallMethodType.DirectCall;
 	}
 
@@ -52,7 +52,7 @@ public class SmsUnifyMessageSender extends AbsMessageSender {
 	}
 	private OnHandyEventListener onHandyEventListener;
 	private void notifyOnEventListener(String msg) {
-		SVLog.i("SmsUnifyMessageSender", msg);
+		SVLog.i("CommUnifyMessageSender", msg);
 		if(onHandyEventListener ==null) {
 			return;
 		}
@@ -77,17 +77,32 @@ public class SmsUnifyMessageSender extends AbsMessageSender {
 		return true;
 	}
 
+	private OnSendTextMessageListener onSendTextMessageListener;
+	private void notifySentMessageEvent(boolean success) {
+		if(onSendTextMessageListener==null) {
+			return;
+		}
+		onSendTextMessageListener.onSent(success);
+	}
+	private void notifyReceiveMessageEvent(boolean success) {
+		if(onSendTextMessageListener==null) {
+			return;
+		}
+		onSendTextMessageListener.onReceived(success);
+	}
+
 	@Override
-	public void send(Context context) {
+	public void send(Context context, OnSendTextMessageListener listener) {
 		// check for data to be ready to send
 		if (!isValidData(context, messageData)) {
 			notifyOnEventListener("validation fails..");
 			TToast.show(context, "invalid data, check again plz..");
 			return;
 		}
+		onSendTextMessageListener = listener;
 		notifyOnEventListener("validation is ok.. send on protocol:"+protocolType);
 		// switch the delivery way of automatic or manual
-		if (SmsMmsMsgSendType.AUTO_ADJUST.equals(protocolType)) {
+		if (CommMsgSendType.AUTO_ADJUST.equals(protocolType)) {
 			TToast.show(context, "send on automatic-protocol");
 			sendOnAutomaticProtocol(context);
 		} else {
@@ -97,13 +112,13 @@ public class SmsUnifyMessageSender extends AbsMessageSender {
 	}
 
 	// setter
-	public void setProtocolType(SmsMmsMsgSendType type) {
+	public void setProtocolType(CommMsgSendType type) {
 		protocolType = type;
 	}
 	public void setCallMethodType(CallMethodType type) {
 		callMethodType = type;
 	}
-	public SmsMmsMsgSendType getProtocolType(){
+	public CommMsgSendType getProtocolType(){
 		return protocolType;
 	}
 	public CallMethodType getCallMethodType(){

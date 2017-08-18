@@ -6,15 +6,15 @@ import android.net.Uri;
 import android.provider.Telephony;
 
 import com.risewide.bdebugapp.communication.util.CursorUtil;
-import com.risewide.bdebugapp.communication.model.MmsSmsMsg;
+import com.risewide.bdebugapp.communication.model.CommMsgData;
 
 /**
  * Created by birdea on 2017-08-08.
  */
 
-public class SmsReadProject {
+public class QuerySmsProject {
 
-	public static class All extends ReadProjector<MmsSmsMsg> {
+	public static class All extends AbsQueryProject<CommMsgData> {
 		public static final String[] PROJECTION = {
 				Telephony.Sms._ID,
 				Telephony.Sms.ADDRESS,
@@ -55,12 +55,12 @@ public class SmsReadProject {
 		}
 
 		@Override
-		public MmsSmsMsg read(Context context, Cursor cursor) {
+		public CommMsgData read(Context context, Cursor cursor) {
 			return null;
 		}
 	}
 
-	public static class Inbox extends ReadProjector<MmsSmsMsg> {
+	public static class Inbox extends AbsQueryProject<CommMsgData> {
 		public static final String[] PROJECTION = {
 				Telephony.Sms.Inbox._ID,
 				Telephony.Sms.Inbox.THREAD_ID,
@@ -105,8 +105,8 @@ public class SmsReadProject {
 		}
 
 		@Override
-		public MmsSmsMsg read(Context context, Cursor cursor) {
-			MmsSmsMsg item = new MmsSmsMsg(MmsSmsMsg.Type.SMS);
+		public CommMsgData read(Context context, Cursor cursor) {
+			CommMsgData item = new CommMsgData(CommMsgData.Type.SMS);
 			item._id = CursorUtil.getLong(cursor, Telephony.Sms.Inbox._ID);
 			item.address = CursorUtil.getString(cursor, Telephony.Sms.Inbox.ADDRESS);
 			item.setDate(CursorUtil.getLong(cursor,Telephony.Sms.Inbox.DATE));
@@ -117,7 +117,7 @@ public class SmsReadProject {
 		}
 	}
 
-	public static class Sent extends ReadProjector {
+	public static class Sent extends AbsQueryProject {
 		public static final String[] PROJECTION = {
 				Telephony.Sms.Sent._ID,
 				Telephony.Sms.Sent.THREAD_ID,
@@ -162,8 +162,8 @@ public class SmsReadProject {
 		}
 
 		@Override
-		public MmsSmsMsg read(Context context, Cursor cursor) {
-			MmsSmsMsg item = new MmsSmsMsg(MmsSmsMsg.Type.SMS);
+		public CommMsgData read(Context context, Cursor cursor) {
+			CommMsgData item = new CommMsgData(CommMsgData.Type.SMS);
 			item._id = CursorUtil.getLong(cursor, Telephony.Sms.Sent._ID);
 			item.address = CursorUtil.getString(cursor, Telephony.Sms.Sent.ADDRESS);
 			item.setDate(CursorUtil.getLong(cursor,Telephony.Sms.Sent.DATE));

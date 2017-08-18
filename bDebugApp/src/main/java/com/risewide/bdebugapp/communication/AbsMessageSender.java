@@ -8,5 +8,11 @@ import android.content.Context;
 
 public abstract class AbsMessageSender {
 
-	public abstract void send(Context context);
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	public interface OnSendTextMessageListener {
+		void onSent(boolean success);
+		void onReceived(boolean success);
+	}
+
+	public abstract void send(Context context, OnSendTextMessageListener listener);
 }

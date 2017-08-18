@@ -8,13 +8,13 @@ import android.net.Uri;
  * Created by birdea on 2017-08-09.
  */
 
-public abstract class ReadProjector<T> {
+public abstract class AbsQueryProject<T> {
 
 	protected int[] idxColumn;
 	protected boolean isExtraLoadMessageData = false;
 	protected boolean isExtraLoadAddressData = false;
 	protected boolean isSelectLoadOnlyUnread = false;
-	protected Cursor quriedCursor;
+	protected Cursor queriedCursor;
 
 	public abstract String[] getProjection();
 	public abstract String getSelection();
@@ -36,9 +36,9 @@ public abstract class ReadProjector<T> {
 	}
 
 	public void setQueriedCursor(Cursor cursor) {
-		quriedCursor = cursor;
+		queriedCursor = cursor;
 	}
 	public Cursor getQueriedCursor() {
-		return quriedCursor;
+		return queriedCursor;
 	}
 }

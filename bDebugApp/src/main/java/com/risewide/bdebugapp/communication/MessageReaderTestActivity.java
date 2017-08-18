@@ -19,10 +19,10 @@ import com.risewide.bdebugapp.R;
 import com.risewide.bdebugapp.adapter.HandyListAdapter;
 import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
 import com.risewide.bdebugapp.communication.util.DelayChecker;
-import com.risewide.bdebugapp.communication.model.MmsSmsMsg;
+import com.risewide.bdebugapp.communication.model.CommMsgData;
 import com.risewide.bdebugapp.communication.util.DateUtil;
 import com.risewide.bdebugapp.communication.util.TToast;
-import com.risewide.bdebugapp.communication.model.SmsMmsMsgReadType;
+import com.risewide.bdebugapp.communication.model.CommMsgReadType;
 import com.risewide.bdebugapp.communication.util.WidgetHelper;
 import com.risewide.bdebugapp.util.DeviceInfo;
 import com.risewide.bdebugapp.util.SVLog;
@@ -34,9 +34,9 @@ import com.risewide.bdebugapp.util.SVLog;
 public class MessageReaderTestActivity extends BaseActivity {
 
 	private HandyListAdapter handyListAdapter;
-	private SmsUnifyMessageReader smsUnifyMessageReader = new SmsUnifyMessageReader();
+	private CommUnifyMessageReader smsUnifyMessageReader = new CommUnifyMessageReader();
 	//
-	private List<MmsSmsMsg> srcList = new ArrayList<>();
+	private List<CommMsgData> srcList = new ArrayList<>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,16 +54,16 @@ public class MessageReaderTestActivity extends BaseActivity {
 			public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
 				switch (checkedId) {
 					case R.id.rbProtocolTypeAll1:
-						smsUnifyMessageReader.setSmsProtocolReadType(SmsMmsMsgReadType.ALL_SEQUENTIAL);
+						smsUnifyMessageReader.setSmsProtocolReadType(CommMsgReadType.ALL_SEQUENTIAL);
 						break;
 					case R.id.rbProtocolTypeMmsSms:
-						smsUnifyMessageReader.setSmsProtocolReadType(SmsMmsMsgReadType.MMS_SMS_CONVERSATION);
+						smsUnifyMessageReader.setSmsProtocolReadType(CommMsgReadType.CONVERSATION);
 						break;
 					case R.id.rbProtocolTypeSms:
-						smsUnifyMessageReader.setSmsProtocolReadType(SmsMmsMsgReadType.SMS);
+						smsUnifyMessageReader.setSmsProtocolReadType(CommMsgReadType.SMS);
 						break;
 					case R.id.rbProtocolTypeMms:
-						smsUnifyMessageReader.setSmsProtocolReadType(SmsMmsMsgReadType.MMS);
+						smsUnifyMessageReader.setSmsProtocolReadType(CommMsgReadType.MMS);
 						break;
 				}
 			}
@@ -134,15 +134,15 @@ public class MessageReaderTestActivity extends BaseActivity {
 		queryConfig.setSelectLoadOnlyUnread(cbLoadOnlyUnread.isChecked());
 		//
 		//smsUnifyMessageReader.setQueryConfig(queryConfig);
-		smsUnifyMessageReader.read(this, new SmsUnifyMessageReader.OnReadTextMessageListener() {
+		smsUnifyMessageReader.read(this, new CommUnifyMessageReader.OnReadTextMessageListener() {
 			@Override
-			public void onComplete(List<MmsSmsMsg> list) {
+			public void onComplete(List<CommMsgData> list) {
 //				if (list == null || list.isEmpty()) {
 //					TToast.show(getBaseContext(), "load complete, size:0");
 //					return;
 //				}
 				long timeDelay = checker.end();
-				List<MmsSmsMsg> dstList = storeMessageList(list);
+				List<CommMsgData> dstList = storeMessageList(list);
 				//checker.end();
 				//printOutMessageList(dstList);
 				loadMessageList(dstList);
@@ -156,20 +156,20 @@ public class MessageReaderTestActivity extends BaseActivity {
 		});
 	}
 
-	private List<MmsSmsMsg> storeMessageList(List<MmsSmsMsg> list) {
+	private List<CommMsgData> storeMessageList(List<CommMsgData> list) {
 		srcList.clear();
 		srcList.addAll(list);
 		return srcList;
 	}
 
-	private void loadMessageList(final List<MmsSmsMsg> messageItemList) {
+	private void loadMessageList(final List<CommMsgData> messageItemList) {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				handyListAdapter.clear();
 				List<HandyListAdapter.Param> list = new ArrayList<>();
 				String myPhoneNumber = DeviceInfo.getPhoneNumber(MessageReaderTestActivity.this);
-				for (MmsSmsMsg info : messageItemList) {
+				for (CommMsgData info : messageItemList) {
 					String strDate = DateUtil.getSimpleDate(info.getDate());
 					HandyListAdapter.Param param = new HandyListAdapter.Param();
 					param.msgHead = String.format("address(%s) date(%s) read(%s) type(%s)", info.getAddress(myPhoneNumber), strDate, info.getReadStatus(), info.msgType);
@@ -203,11 +203,11 @@ public class MessageReaderTestActivity extends BaseActivity {
 					  });
 	}
 
-	private void printOutMessageList(List<MmsSmsMsg> messageItemList) {
+	private void printOutMessageList(List<CommMsgData> messageItemList) {
 		if (messageItemList==null) {
 			return;
 		}
-		for (MmsSmsMsg info : messageItemList) {
+		for (CommMsgData info : messageItemList) {
 			SVLog.d(info.toString());
 		}
 	}

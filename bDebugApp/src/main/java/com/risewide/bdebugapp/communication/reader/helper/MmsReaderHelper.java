@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.risewide.bdebugapp.communication.model.CommMsgData;
 import com.risewide.bdebugapp.communication.util.HandyThreadTask;
 import com.risewide.bdebugapp.communication.util.IOCloser;
 import com.risewide.bdebugapp.util.SVLog;
@@ -24,7 +25,7 @@ import android.provider.Telephony;
  * Created by birdea on 2017-08-09.
  */
 
-public class MmsReaderSub {
+public class MmsReaderHelper {
 
 	public interface OnReadListener {
 		void onRead(Object data);
@@ -74,13 +75,6 @@ public class MmsReaderSub {
 
 	public String getTextMessage(ContentResolver resolver, String mid) {
 		String selection = Telephony.Mms.Part.MSG_ID + "=" + mid;
-		/*try {
-			long id = Long.parseLong(mid);
-			selection = Telephony.Mms.Part.MSG_ID + "=" + mid;
-		} catch (NumberFormatException e) {
-			//e.printStackTrace();
-			selection = Telephony.Mms.Part.MSG_ID + "=" + mid;
-		}*/
 		Uri uri = Telephony.Mms.CONTENT_URI.buildUpon().appendPath("part").build();
 		Cursor cursor = resolver.query(uri, null, selection, null, null);
 		//
@@ -186,23 +180,32 @@ public class MmsReaderSub {
 		return id;
 	}
 
-	public String getMessageIdOnSamsungUri(ContentResolver resolver, long thread_id) {
-		String id = null;
-		String[] projection = new String[] { "*" };
+	public String getMessageIdOnSamsungUri(ContentResolver resolver, long thread_id, long timeStamp) {
+		String[] projection = new String[] {
+				Telephony.Mms.Inbox._ID,
+				Telephony.Mms.Inbox.DATE,
+		};
 		String selection = new StringBuilder()
-				//.append(Telephony.Mms.Inbox.MESSAGE_ID).append("=?")
-				//.append(" AND ")
 				.append(Telephony.Mms.Inbox.THREAD_ID).append("=?")
 				.toString();
-		String[] selectionArgs = new String[] { /*m_id,*/String.valueOf(thread_id) };
+		String[] selectionArgs = new String[] { String.valueOf(thread_id) };
 		String sortOrder = Telephony.Mms.Inbox.DEFAULT_SORT_ORDER + " LIMIT 1 ";
 		Uri uri = Telephony.Mms.Inbox.CONTENT_URI;
 		Cursor cursor = resolver.query(uri, projection, selection, selectionArgs, sortOrder);
 
+		String id = null;
+		long date = 0;
 		if (cursor != null && cursor.moveToFirst()) {
+			int idx_id = cursor.getColumnIndex(Telephony.Mms.Inbox._ID);
+			int idx_date = cursor.getColumnIndex(Telephony.Mms.Inbox.DATE);
 			do {
-				id = cursor.getString(cursor.getColumnIndex(Telephony.Mms.Inbox._ID)); // same as cursor.getString(cursor.getColumnIndex("address"))
+				id = cursor.getString(idx_id);
+				date = cursor.getLong(idx_date);
 			} while (cursor.moveToNext());
+		}
+
+		if(CommMsgData.isEqualDateValueOnNormalize(timeStamp, date) == false) {
+			id = null;
 		}
 		IOCloser.close(cursor);
 		return id;

@@ -1,14 +1,12 @@
 package com.risewide.bdebugapp.communication.reader;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 
-import com.risewide.bdebugapp.communication.model.MmsSmsMsg;
-import com.risewide.bdebugapp.communication.reader.projection.ConversationReadProject;
+import com.risewide.bdebugapp.communication.model.CommMsgData;
+import com.risewide.bdebugapp.communication.reader.projection.AbsQueryProject;
+import com.risewide.bdebugapp.communication.reader.projection.QueryConversationProject;
 import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
-import com.risewide.bdebugapp.communication.reader.projection.ReadProjector;
 import com.risewide.bdebugapp.communication.util.IOCloser;
 
 import java.util.ArrayList;
@@ -24,14 +22,15 @@ public class ConversationReader extends AbsMsgReader {
 		super(config);
 	}
 
-	public List<MmsSmsMsg> read(Context context) {
-		List<MmsSmsMsg> dataList = new ArrayList<>();
-		ReadProjector<MmsSmsMsg> projector = ConversationReadProject.getProject(context, queryConfig, getConfigSortOrder());
-		Cursor cursor = projector.getQueriedCursor();
+	@Override
+	public List<CommMsgData> read(Context context) {
+		AbsQueryProject<CommMsgData> project = QueryConversationProject.getProject(context, queryConfig, getConfigSortOrder());
+		List<CommMsgData> dataList = new ArrayList<>();
+		Cursor cursor = project.getQueriedCursor();
 		if (cursor != null && cursor.moveToFirst()) {
-			projector.storeColumnIndex(cursor);
+			project.storeColumnIndex(cursor);
 			do {
-				MmsSmsMsg item = projector.read(context, cursor);
+				CommMsgData item = project.read(context, cursor);
 				dataList.add(item);
 			} while (cursor.moveToNext());
 		}

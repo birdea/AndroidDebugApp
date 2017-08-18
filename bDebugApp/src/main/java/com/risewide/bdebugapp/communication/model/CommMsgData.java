@@ -6,12 +6,13 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import com.risewide.bdebugapp.communication.util.DateUtil;
+import com.risewide.bdebugapp.util.SVLog;
 
 /**
  * Created by birdea on 2017-05-12.
  */
 
-public class MmsSmsMsg implements Comparable<MmsSmsMsg> {
+public class CommMsgData implements Comparable<CommMsgData> {
 	// construct
 	public enum Type{
 		SMS,
@@ -19,7 +20,7 @@ public class MmsSmsMsg implements Comparable<MmsSmsMsg> {
 		CONVERSATION
 	}
 	public Type msgType = Type.SMS;
-	public MmsSmsMsg(Type type) {
+	public CommMsgData(Type type) {
 		this.msgType = type;
 	}
 	// common column data
@@ -79,9 +80,8 @@ public class MmsSmsMsg implements Comparable<MmsSmsMsg> {
 	}
 
 	@Override
-	public int compareTo(MmsSmsMsg another) {
+	public int compareTo(CommMsgData another) {
 		//int cmp = a > b ? +1 : a < b ? -1 : 0;
-		//return Long.compare(another.date, date);
 		return Long.compare(date, another.date);
 	}
 
@@ -93,30 +93,20 @@ public class MmsSmsMsg implements Comparable<MmsSmsMsg> {
 		this.date = date;
 	}
 
-	private String strDate;
+	private boolean hasNormalizedDateValue = false;
 
 	/**
-	 * 삼성 갤럭시S7 단말기의 mms long date 데이터가 짤려있음. OMG.
+	 * mms long date 데이터가 짤려있음. OMG.
+	 * 단말/통신사별 메시지 규격이 다르기 때문에 발생하는 것으로 추정됨.
 	 * maybe the but : down-cast from long value to int value.
 	 * - 정상	:	"1,467,195,120,000"	(13자리)
-	 * - 비정상	:	"1,502,158,253"		(9자리)
+	 * - 비정상	:	"1,502,158,253"		(10자리)
 	 * @return
 	 */
 	public long getDate() {
-		if (strDate == null) {
-			strDate = String.valueOf(date);
-			int length = strDate.length();
-			if (length >= 13) {
-				// ok
-			} else {
-				// not-ok
-				if (date > 0) {
-					int diff = 13 - length;
-					for (int i=0;i<diff;i++) {
-						date *= 10;
-					}
-				}
-			}
+		if (hasNormalizedDateValue == false) {
+			hasNormalizedDateValue = true;
+			date = getNormalizeDateValue(date);
 		}
 		return date;
 	}
@@ -158,7 +148,7 @@ public class MmsSmsMsg implements Comparable<MmsSmsMsg> {
 		return String.format("read:%d",read);
 	}
 
-	public static MmsSmsMsg getLastestMsgWithExistBody(MmsSmsMsg base, MmsSmsMsg candi) {
+	public static CommMsgData getLastestMsgWithExistBody(CommMsgData base, CommMsgData candi) {
 		if (base != null && candi != null) {
 			if(!TextUtils.isEmpty(base.body) && !TextUtils.isEmpty(candi.body)) {
 				if (Long.compare(base.date, candi.date) >= 0) {
@@ -183,5 +173,29 @@ public class MmsSmsMsg implements Comparable<MmsSmsMsg> {
 			return candi;
 		}
 		return base;
+	}
+
+	public static boolean isEqualDateValueOnNormalize(long base, long candi) {
+		long normalBase = getNormalizeDateValue(base);
+		long normalCandi = getNormalizeDateValue(candi);
+		SVLog.d("isEqualDateValue:"+normalBase+" vs "+normalCandi);
+		return (normalBase==normalCandi);
+	}
+
+	private static long getNormalizeDateValue(long val) {
+		String strDate = String.valueOf(val);
+		int length = strDate.length();
+		if (length >= 13) {
+			// ok
+		} else {
+			// not-ok
+			if (val > 0) {
+				int diff = 13 - length;
+				for (int i=0;i<diff;i++) {
+					val *= 10;
+				}
+			}
+		}
+		return val;
 	}
 }
