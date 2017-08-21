@@ -13,7 +13,7 @@ public class CursorUtil {
 	private static final String TAG = CursorUtil.class.getSimpleName();
 
 	public static int getInt(Cursor cursor, String colName) {
-		int val = -1;
+		int val = Integer.MIN_VALUE;
 		try {
 			val = cursor.getInt(cursor.getColumnIndex(colName));
 		} catch (Exception e) {
@@ -21,11 +21,29 @@ public class CursorUtil {
 		}
 		return val;
 	}
+	public static int getInt(Cursor cursor, int index) {
+		int val = Integer.MIN_VALUE;
+		try {
+			val = cursor.getInt(index);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return val;
+	}
 
 	public static long getLong(Cursor cursor, String colName) {
-		long val = -1;
+		long val = Long.MIN_VALUE;
 		try {
 			val = cursor.getLong(cursor.getColumnIndex(colName));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return val;
+	}
+	public static long getLong(Cursor cursor, int index) {
+		long val = Long.MIN_VALUE;
+		try {
+			val = cursor.getLong(index);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -41,6 +59,17 @@ public class CursorUtil {
 		}
 		return val;
 	}
+
+	public static String getString(Cursor cursor, int index) {
+		String val = null;
+		try {
+			val = cursor.getString(index);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return val;
+	}
+
 
 	public static void printOutCursorInfo(Cursor cursor) {
 		if (cursor == null) {
@@ -67,7 +96,6 @@ public class CursorUtil {
 				SVLog.d("*row : "+sb.toString());
 			}
 		}
-		//IOCloser.close(cursor);
 	}
 
 	private static Object getCursorValue(Cursor cursor, int index) {

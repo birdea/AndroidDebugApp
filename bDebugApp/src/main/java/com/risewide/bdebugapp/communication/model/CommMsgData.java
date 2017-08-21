@@ -37,9 +37,7 @@ public class CommMsgData implements Comparable<CommMsgData> {
 	public int type; //수신=1, 발신=2
 	public String body;
 	public String address;
-	/**
-	 * {@link android.provider.Telephony.Sms.Inbox.STATUS}
-	 */
+	//{@link android.provider.Telephony.Sms.Inbox.STATUS}
 	public int status;
 	///////////////////////////////////////////////////////////
 	// mms column data from Uri.parse("content://mms");
@@ -56,6 +54,14 @@ public class CommMsgData implements Comparable<CommMsgData> {
 	///////////////////////////////////////////////////////////
 	public List<String> listAddress;
 
+	///////////////////////////////////////////////////////////
+	// samsung
+	///////////////////////////////////////////////////////////
+	public String recipient_ids;
+	public String snippet;
+	public int snippet_cs;
+	//public int snippet_type;
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder()
@@ -69,6 +75,8 @@ public class CommMsgData implements Comparable<CommMsgData> {
 		.append("read").append("(").append(read).append("),")
 		.append("type").append("(").append(type).append("),")
 		.append("body").append("(").append(body).append("),")
+		.append("snippet").append("(").append(snippet).append("),")
+		.append("snippet_cs").append("(").append(snippet_cs).append("),")
 		.append("msg_box").append("(").append(msg_box).append("),")
 		.append("text_only").append("(").append(text_only).append("),")
 		.append("mms_version").append("(").append(mms_version).append("),")

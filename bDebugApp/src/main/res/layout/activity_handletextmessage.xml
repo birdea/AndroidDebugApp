@@ -28,11 +28,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <RadioButton
+            <!--<RadioButton
                 android:id="@+id/rbProtocolTypeAll1"
                 style="@style/rbCommonLayout"
                 android:text="All"
-                />
+                />-->
             <RadioButton
                 android:id="@+id/rbProtocolTypeMmsSms"
                 style="@style/rbCommonLayout"

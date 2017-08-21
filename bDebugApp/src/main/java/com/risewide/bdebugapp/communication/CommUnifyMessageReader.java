@@ -100,11 +100,11 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 				*/
 				long startTime = System.currentTimeMillis();
 				// 1st get sms
-				SmsReader smsReader = new SmsReader(queryConfig);
+				SmsReader smsReader = new SmsReader(context, queryConfig);
 				List<CommMsgData> smsList = smsReader.read(context);
 				SVLog.i("timechecker", "delayed(1):"+ (System.currentTimeMillis() - startTime));
 				// 2nd get mms
-				MmsReader mmsReader = new MmsReader(queryConfig);
+				MmsReader mmsReader = new MmsReader(context, queryConfig);
 				List<CommMsgData> mmsList = mmsReader.read(context);
 				SVLog.i("timechecker", "delayed(2):"+ (System.currentTimeMillis() - startTime));
 				// 3rd unify msgs
@@ -125,7 +125,7 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 		HandyThreadTask.execute(new Runnable() {
 			@Override
 			public void run() {
-				SmsReader smsReader = new SmsReader(queryConfig);
+				SmsReader smsReader = new SmsReader(context, queryConfig);
 				listener.onComplete(smsReader.read(context));
 			}
 		});
@@ -135,7 +135,7 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 		HandyThreadTask.execute(new Runnable() {
 			@Override
 			public void run() {
-				MmsReader mmsReader = new MmsReader(queryConfig);
+				MmsReader mmsReader = new MmsReader(context, queryConfig);
 				listener.onComplete(mmsReader.read(context));
 			}
 		});
@@ -145,7 +145,7 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 		HandyThreadTask.execute(new Runnable() {
 			@Override
 			public void run() {
-				ConversationReader mmsReader = new ConversationReader(queryConfig);
+				ConversationReader mmsReader = new ConversationReader(context, queryConfig);
 				listener.onComplete(mmsReader.read(context));
 			}
 		});

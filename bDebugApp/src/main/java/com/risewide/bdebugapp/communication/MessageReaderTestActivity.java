@@ -53,9 +53,9 @@ public class MessageReaderTestActivity extends BaseActivity {
 			@Override
 			public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
 				switch (checkedId) {
-					case R.id.rbProtocolTypeAll1:
-						smsUnifyMessageReader.setSmsProtocolReadType(CommMsgReadType.ALL_SEQUENTIAL);
-						break;
+//					case R.id.rbProtocolTypeAll1:
+//						smsUnifyMessageReader.setSmsProtocolReadType(CommMsgReadType.ALL_SEQUENTIAL);
+//						break;
 					case R.id.rbProtocolTypeMmsSms:
 						smsUnifyMessageReader.setSmsProtocolReadType(CommMsgReadType.CONVERSATION);
 						break;
@@ -109,10 +109,10 @@ public class MessageReaderTestActivity extends BaseActivity {
 	private AtomicBoolean isProcessing = new AtomicBoolean(false);
 	private void refresh() {
 		if (isProcessing.get()) {
-			TToast.show(this, "already started.. wait for a while to done task");
+			TToast.show(this, "Already started.. wait for a sec");
 			return;
 		}
-		TToast.show(this, "start to refrese.. wait for a sec");
+		TToast.show(this, "Start loading.. wait for a sec");
 		isProcessing.set(true);
 		final DelayChecker checker = new DelayChecker();
 		checker.start("smsUnifyMessageReader");
@@ -148,9 +148,9 @@ public class MessageReaderTestActivity extends BaseActivity {
 				loadMessageList(dstList);
 				//checker.end();
 				isProcessing.set(false);
-				TToast.show(getBaseContext(), "load complete, size:"+dstList.size());
-				SVLog.d("load complete, size:"+dstList.size());
-				checker.showToast(getBaseContext());
+				TToast.show(getBaseContext(), "Complete loading - "+dstList.size());
+				SVLog.d("Complete loading - "+dstList.size());
+				//checker.showToast(getBaseContext());
 				notifyLastResultInfo(timeDelay, dstList.size());
 			}
 		});

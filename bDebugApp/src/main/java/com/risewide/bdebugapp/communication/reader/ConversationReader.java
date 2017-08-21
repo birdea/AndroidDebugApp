@@ -1,6 +1,7 @@
 package com.risewide.bdebugapp.communication.reader;
 
 import android.content.Context;
+import android.database.ContentObserver;
 import android.database.Cursor;
 
 import com.risewide.bdebugapp.communication.model.CommMsgData;
@@ -18,24 +19,14 @@ import java.util.List;
 
 public class ConversationReader extends AbsMsgReader {
 
-	public ConversationReader(QueryConfig config) {
-		super(config);
+	public ConversationReader(Context context, QueryConfig config) {
+		super(context, config);
+		project = QueryConversationProject.getProject(context, queryConfig, getConfigSortOrder());
 	}
 
 	@Override
 	public List<CommMsgData> read(Context context) {
-		AbsQueryProject<CommMsgData> project = QueryConversationProject.getProject(context, queryConfig, getConfigSortOrder());
-		List<CommMsgData> dataList = new ArrayList<>();
-		Cursor cursor = project.getQueriedCursor();
-		if (cursor != null && cursor.moveToFirst()) {
-			project.storeColumnIndex(cursor);
-			do {
-				CommMsgData item = project.read(context, cursor);
-				dataList.add(item);
-			} while (cursor.moveToNext());
-		}
-		IOCloser.close(cursor);
-		//
-		return dataList;
+		//- execute to readAll
+		return project.readAll(context);
 	}
 }

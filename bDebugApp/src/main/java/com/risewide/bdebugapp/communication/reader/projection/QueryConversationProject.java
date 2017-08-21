@@ -11,7 +11,11 @@ import com.risewide.bdebugapp.communication.model.CommMsgData;
 import com.risewide.bdebugapp.communication.reader.helper.MmsReaderHelper;
 import com.risewide.bdebugapp.communication.reader.helper.SmsReaderHelper;
 import com.risewide.bdebugapp.communication.util.CursorUtil;
+import com.risewide.bdebugapp.communication.util.IOCloser;
 import com.risewide.bdebugapp.util.SVLog;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by birdea on 2017-08-09.
@@ -31,7 +35,8 @@ public class QueryConversationProject {
 		AbsQueryProject<CommMsgData> project = new CommonProject();
 		project.setExtraLoadMessageData(queryConfig.isExtraLoadMessageData());
 		project.setExtraLoadAddressData(queryConfig.isExtraLoadAddressData());
-		project.setSelectLoadOnlyUnread(queryConfig.isSelectLoadOnlyUnread());
+		project.setLoadOnlyUnreadData(queryConfig.isSelectLoadOnlyUnread());
+		project.setConfigSortOrder(sortOrder);
 		//
 		ContentResolver resolver = context.getContentResolver();
 		Cursor cursor;
@@ -43,7 +48,8 @@ public class QueryConversationProject {
 			AbsQueryProject<CommMsgData> projectSamsung = new SamsungProject();
 			projectSamsung.setExtraLoadMessageData(queryConfig.isExtraLoadMessageData());
 			projectSamsung.setExtraLoadAddressData(queryConfig.isExtraLoadAddressData());
-			projectSamsung.setSelectLoadOnlyUnread(queryConfig.isSelectLoadOnlyUnread());
+			projectSamsung.setLoadOnlyUnreadData(queryConfig.isSelectLoadOnlyUnread());
+			projectSamsung.setConfigSortOrder(sortOrder);
 			cursor = resolver.query(projectSamsung.getUri(), projectSamsung.getProjection(), projectSamsung.getSelection(), projectSamsung.getSelectionArgs(), sortOrder);
 			project = projectSamsung;
 			SVLog.i("** Conversation - getProject - Samsung URI");
@@ -55,8 +61,11 @@ public class QueryConversationProject {
 
 	public static class CommonProject extends AbsQueryProject<CommMsgData> {
 
+		private SmsReaderHelper smsReaderSub = new SmsReaderHelper();
+		private MmsReaderHelper mmsReaderSub = new MmsReaderHelper();
+
 		private static final String[] PROJECTION = {
-				"_id",
+				Telephony.MmsSms._ID,
 				"date",
 				"read",
 				"type",
@@ -65,6 +74,54 @@ public class QueryConversationProject {
 				Telephony.Mms.MESSAGE_ID,
 				"body",
 		};
+
+		private int idx_id, idx_date, idx_read, idx_type, idx_address, idx_threadId, idx_m_id, idx_body;
+		@Override
+		public void storeProjectColumnIndex(Cursor cursor) {
+			idx_id = cursor.getColumnIndex(Telephony.MmsSms._ID);
+			idx_date = cursor.getColumnIndex("date");
+			idx_read = cursor.getColumnIndex("read");
+			idx_type = cursor.getColumnIndex("type");
+
+			idx_address = cursor.getColumnIndex("address");
+			idx_threadId = cursor.getColumnIndex(Telephony.Mms.THREAD_ID);
+			idx_m_id = cursor.getColumnIndex(Telephony.Mms.MESSAGE_ID);
+			idx_body = cursor.getColumnIndex("body");
+		}
+
+		@Override
+		public CommMsgData read(Context context, Cursor cursor) {
+			CommMsgData item = new CommMsgData(CommMsgData.Type.CONVERSATION);
+			item._id = CursorUtil.getLong(cursor, idx_id);
+			item.setDate(CursorUtil.getLong(cursor, idx_date));
+			item.read = CursorUtil.getInt(cursor, idx_read);
+			item.type = CursorUtil.getInt(cursor, idx_type);
+			item.address = CursorUtil.getString(cursor, idx_address);
+			item.thread_id = CursorUtil.getLong(cursor, idx_threadId);
+			item.m_id = CursorUtil.getString(cursor, idx_m_id);
+			// do extra task for fill empty slot
+			String m_id = item.m_id;
+			String address = item.address;
+			ContentResolver resolver = context.getContentResolver();
+			//
+			if (TextUtils.isEmpty(address) || "null".equals(address)) {
+				if (isExtraLoadAddressData) {
+					item.listAddress = mmsReaderSub.getAddressNumber(resolver, (int) item._id);
+				}
+			}
+			if (TextUtils.isEmpty(m_id) || "null".equals(m_id)) {
+				item.body = CursorUtil.getString(cursor, idx_body);
+			} else {
+				if (isExtraLoadMessageData) {
+					// read a text message on MMS
+					String mid = mmsReaderSub.getMessageIdOnCommonUri(resolver, item.thread_id, item.m_id);
+					String mms = mmsReaderSub.getTextMessage(resolver, mid);
+					item.body = mms;
+				}
+			}
+			return item;
+		}
+
 
 		@Override
 		public String[] getProjection() {
@@ -80,7 +137,7 @@ public class QueryConversationProject {
 		 */
 		@Override
 		public String getSelection() {
-			if (isSelectLoadOnlyUnread) {
+			if (isLoadOnlyUnreadData) {
 				return "read!=1";//Telephony.Mms.READ+"!=?";
 			}
 			return null;
@@ -88,7 +145,7 @@ public class QueryConversationProject {
 
 		@Override
 		public String[] getSelectionArgs() {
-			//if (isSelectLoadOnlyUnread) {
+			//if (isLoadOnlyUnreadData) {
 			//	return new String[]{"1"};
 			//}
 			return null;
@@ -100,48 +157,25 @@ public class QueryConversationProject {
 		}
 
 		@Override
-		public void storeColumnIndex(Cursor cursor) {
-		}
-
-		private SmsReaderHelper smsReaderSub = new SmsReaderHelper();
-		private MmsReaderHelper mmsReaderSub = new MmsReaderHelper();
-
-		@Override
-		public CommMsgData read(Context context, Cursor cursor) {
-			CommMsgData item = new CommMsgData(CommMsgData.Type.CONVERSATION);
-			item._id = cursor.getLong(cursor.getColumnIndex(Telephony.MmsSms._ID));
-			item.setDate(cursor.getLong(cursor.getColumnIndex("date")));
-			item.read = cursor.getInt(cursor.getColumnIndex("read"));
-			item.type = cursor.getInt(cursor.getColumnIndex("type"));
-			item.address = cursor.getString(cursor.getColumnIndex("address"));
-			item.thread_id = cursor.getLong(cursor.getColumnIndex(Telephony.Mms.THREAD_ID));
-			item.m_id = cursor.getString(cursor.getColumnIndex(Telephony.Mms.MESSAGE_ID));
-			// do extra task for fill empty slot
-			String m_id = item.m_id;
-			String address = item.address;
-			ContentResolver resolver = context.getContentResolver();
-			//
-			if (TextUtils.isEmpty(address) || "null".equals(address)) {
-				if (isExtraLoadAddressData) {
-					item.listAddress = mmsReaderSub.getAddressNumber(resolver, (int) item._id);
-				}
+		public List<CommMsgData> readAll(Context context) {
+			Cursor cursor = getQueriedCursor();
+			List<CommMsgData> list = new ArrayList<>();
+			if (cursor != null && cursor.moveToFirst()) {
+				storeProjectColumnIndex(cursor);
+				do {
+					CommMsgData item = read(context, cursor);
+					list.add(item);
+				} while (cursor.moveToNext());
 			}
-			if (TextUtils.isEmpty(m_id) || "null".equals(m_id)) {
-				item.body = cursor.getString(cursor.getColumnIndex("body"));
-			} else {
-				if (isExtraLoadMessageData) {
-					//[TODO] the target msg could be mms or sms, need to figure out how to distinguish
-					// 1.reading mms
-					String mid = mmsReaderSub.getMessageIdOnCommonUri(resolver, item.thread_id, item.m_id);
-					String mms = mmsReaderSub.getTextMessage(resolver, mid);
-					item.body = mms;
-				}
-			}
-			return item;
+			IOCloser.close(cursor);
+			return list;
 		}
 	}
 
 	public static class SamsungProject extends AbsQueryProject<CommMsgData> {
+
+		private SmsReaderHelper smsReaderSub = new SmsReaderHelper();
+		private MmsReaderHelper mmsReaderSub = new MmsReaderHelper();
 
 		private static final String[] PROJECTION = {
 				Telephony.MmsSms._ID,
@@ -149,10 +183,48 @@ public class QueryConversationProject {
 				"recipient_ids",
 				"snippet",
 				"snippet_cs",
-				"snippet_type",
+				//"snippet_type",
 				"read",
-				"*"
 		};
+
+		private int idxId, idxDate, idxRecipientIds, idxSnippet, idxSnippetCs, idxRead;//, idxSnippetType;
+		@Override
+		public void storeProjectColumnIndex(Cursor cursor) {
+			idxId = cursor.getColumnIndex(Telephony.MmsSms._ID);
+			idxDate = cursor.getColumnIndex("date");
+			idxRecipientIds = cursor.getColumnIndex("recipient_ids");
+			idxSnippet = cursor.getColumnIndex("snippet");
+			idxSnippetCs = cursor.getColumnIndex("snippet_cs");
+			//idxSnippetType = cursor.getColumnIndex("snippet_type");
+			idxRead = cursor.getColumnIndex("read");
+		}
+
+		@Override
+		public CommMsgData read(Context context, Cursor cursor) {
+			CommMsgData item = new CommMsgData(CommMsgData.Type.CONVERSATION);
+			item._id = CursorUtil.getLong(cursor, idxId);
+			item.setDate(CursorUtil.getLong(cursor, idxDate));
+			item.recipient_ids = CursorUtil.getString(cursor, idxRecipientIds);
+			item.snippet = CursorUtil.getString(cursor, idxSnippet);
+			item.snippet_cs = CursorUtil.getInt(cursor, idxSnippetCs);
+			//item.snippet_type = CursorUtil.getInt(cursor, idxSnippetType);
+			item.read = CursorUtil.getInt(cursor, idxRead);
+			//
+			if (isExtraLoadAddressData) {
+				item.address = mmsReaderSub.getRecipientAddress(context.getContentResolver(), Long.parseLong(item.recipient_ids));
+			}
+			if (isExtraLoadMessageData) {
+				ContentResolver resolver = context.getContentResolver();
+				// read a text message on MMS
+				String mid = mmsReaderSub.getMessageIdOnSamsungUri(resolver, item._id, item.getDate());
+				item.body = mmsReaderSub.getTextMessage(resolver, mid);
+				// read a text message on SMS
+				CommMsgData itemSms = smsReaderSub.getTextMessage(resolver, item._id, item.getDate(), CommMsgData.Type.CONVERSATION);
+				CommMsgData selected = CommMsgData.getLastestMsgWithExistBody(item, itemSms);
+				item.body = selected.body;
+			}
+			return item;
+		}
 
 		@Override
 		public String[] getProjection() {
@@ -161,7 +233,7 @@ public class QueryConversationProject {
 
 		@Override
 		public String getSelection() {
-			if (isSelectLoadOnlyUnread) {
+			if (isLoadOnlyUnreadData) {
 				return Telephony.Mms.READ+"!=?";
 			}
 			return null;
@@ -169,7 +241,7 @@ public class QueryConversationProject {
 
 		@Override
 		public String[] getSelectionArgs() {
-			if (isSelectLoadOnlyUnread) {
+			if (isLoadOnlyUnreadData) {
 				return new String[]{"1"};
 			}
 			return null;
@@ -181,38 +253,19 @@ public class QueryConversationProject {
 		}
 
 		@Override
-		public void storeColumnIndex(Cursor cursor) {
+		public List<CommMsgData> readAll(Context context) {
+			Cursor cursor = getQueriedCursor();
 
-		}
-
-		private SmsReaderHelper smsReaderSub = new SmsReaderHelper();
-		private MmsReaderHelper mmsReaderSub = new MmsReaderHelper();
-
-		@Override
-		public CommMsgData read(Context context, Cursor cursor) {
-			CommMsgData item = new CommMsgData(CommMsgData.Type.CONVERSATION);
-			item._id = cursor.getLong(cursor.getColumnIndex(Telephony.MmsSms._ID));
-			item.setDate(cursor.getLong(cursor.getColumnIndex("date")));
-			item.body = cursor.getString(cursor.getColumnIndex("snippet"));
-			item.read = cursor.getInt(cursor.getColumnIndex("read"));
-			item.type = cursor.getInt(cursor.getColumnIndex("type"));
-			//
-			String recipient_ids = cursor.getString(cursor.getColumnIndex("recipient_ids"));
-			if (isExtraLoadAddressData) {
-				item.address = mmsReaderSub.getRecipientAddress(context.getContentResolver(), Long.parseLong(recipient_ids));
+			List<CommMsgData> list = new ArrayList<>();
+			if (cursor != null && cursor.moveToFirst()) {
+				storeProjectColumnIndex(cursor);
+				do {
+					CommMsgData item = read(context, cursor);
+					list.add(item);
+				} while (cursor.moveToNext());
 			}
-			if (isExtraLoadMessageData) {
-				//[TODO] the target msg could be mms or sms, need to figure out how to distinguish
-				ContentResolver resolver = context.getContentResolver();
-				// 1.reading mms
-				String mid = mmsReaderSub.getMessageIdOnSamsungUri(resolver, item._id, item.getDate());
-				item.body = mmsReaderSub.getTextMessage(resolver, mid);
-				// 2.reading sms
-				CommMsgData itemSms = smsReaderSub.getTextMessage(resolver, item._id, item.getDate(), CommMsgData.Type.CONVERSATION);
-				CommMsgData selected = CommMsgData.getLastestMsgWithExistBody(item, itemSms);
-				item.body = selected.body;
-			}
-			return item;
+			IOCloser.close(cursor);
+			return list;
 		}
 	}
 }
