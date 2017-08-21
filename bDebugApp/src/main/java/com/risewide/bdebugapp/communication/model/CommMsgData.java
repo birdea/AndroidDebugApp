@@ -57,6 +57,7 @@ public class CommMsgData implements Comparable<CommMsgData> {
 	///////////////////////////////////////////////////////////
 	// samsung
 	///////////////////////////////////////////////////////////
+	public boolean isSamsungProjection = false;
 	public String recipient_ids;
 	public String snippet;
 	public int snippet_cs;

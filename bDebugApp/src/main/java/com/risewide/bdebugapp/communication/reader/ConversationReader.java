@@ -5,6 +5,7 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
+import android.text.TextUtils;
 
 import com.risewide.bdebugapp.communication.model.CommMsgData;
 import com.risewide.bdebugapp.communication.reader.projection.AbsQueryProject;
@@ -14,7 +15,9 @@ import com.risewide.bdebugapp.communication.util.IOCloser;
 import com.risewide.bdebugapp.util.SVLog;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by birdea on 2017-08-03.
@@ -22,9 +25,12 @@ import java.util.List;
 
 public class ConversationReader extends AbsMsgReader {
 
+	CanonicalAddressReader canonicalAddressReader;
+
 	public ConversationReader(Context context, QueryConfig config) {
 		super(context, config);
 		project = QueryConversationProject.getProject(context);
+		canonicalAddressReader = new CanonicalAddressReader(context, queryConfig);
 	}
 
 	@Override
@@ -35,6 +41,51 @@ public class ConversationReader extends AbsMsgReader {
 		project.setLoadOnlyUnreadData(queryConfig.isSelectLoadOnlyUnread());
 		project.setConfigSortOrder(getConfigSortOrder());
 		//- execute to readAll
-		return project.readAll(context);
+		List<CommMsgData> conversations = project.readAll(context);
+		//- get canonical address data map (id, address)
+		if (queryConfig.isExtraLoadAddressData()) {
+			canonicalAddressReader.setQueryConfig(queryConfig);
+			Map<Long, String> map = getAddresses(context);
+			//- assign address with _id;
+			for (CommMsgData data : conversations) {
+				long key;
+				if (data.isSamsungProjection) {
+					key = Long.parseLong(data.recipient_ids);
+				} else {
+					key = data.thread_id;
+				}
+				if (!TextUtils.isEmpty(data.address)) {
+					SVLog.d("already has address:"+data.address+", _id:"+data._id);
+					continue;
+				}
+				if (map.containsKey(key)) {
+					String address = map.get(key);
+					data.address = address;
+					SVLog.d("assign ["+key+"] address:"+address);
+				} else {
+					SVLog.d("no assign ["+key+"]");
+				}
+			}
+		}
+		return conversations;
+	}
+
+	private Map<Long, String> getAddresses(Context context) {
+		if(canonicalAddressReader == null) {
+			canonicalAddressReader = new CanonicalAddressReader(context, queryConfig);
+		}
+		canonicalAddressReader.setQueryConfig(queryConfig);
+		List<CommMsgData> addressList = canonicalAddressReader.read(context);
+		Map<Long, String> map = new HashMap<>();
+		for(CommMsgData data : addressList) {
+			long key = data._id;
+			if (map.containsKey(key)) {
+				SVLog.d("build map - key["+key+"] is contained..");
+			} else {
+				SVLog.d("build map - key["+key+"] address:"+data.address);
+				map.put(key, data.address);
+			}
+		}
+		return map;
 	}
 }

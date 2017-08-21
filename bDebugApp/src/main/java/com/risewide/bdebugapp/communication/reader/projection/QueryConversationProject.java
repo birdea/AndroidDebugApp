@@ -1,5 +1,6 @@
 package com.risewide.bdebugapp.communication.reader.projection;
 
+import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -12,6 +13,7 @@ import com.risewide.bdebugapp.communication.model.CommMsgData;
 import com.risewide.bdebugapp.communication.reader.helper.MmsReaderHelper;
 import com.risewide.bdebugapp.communication.reader.helper.SmsReaderHelper;
 import com.risewide.bdebugapp.communication.util.CursorUtil;
+import com.risewide.bdebugapp.communication.util.HandyThreadTask;
 import com.risewide.bdebugapp.communication.util.IOCloser;
 import com.risewide.bdebugapp.util.SVLog;
 
@@ -35,6 +37,7 @@ public class QueryConversationProject {
 		AbsQueryProject<CommMsgData> project = null;
 		Cursor cursor = null;
 		ContentResolver resolver = context.getContentResolver();
+		//ContentProviderClient cpc = resolver.acquireContentProviderClient(project.getUri());
 		try {
 			if (SamsungProject.isTargetDevice()) {
 				project = new SamsungProject();
@@ -54,8 +57,6 @@ public class QueryConversationProject {
 	}
 
 	public static class CommonProject extends AbsQueryProject<CommMsgData> {
-
-		public static final String MANUFACTURE = "common";
 
 		private SmsReaderHelper smsReaderSub = new SmsReaderHelper();
 		private MmsReaderHelper mmsReaderSub = new MmsReaderHelper();
@@ -99,11 +100,11 @@ public class QueryConversationProject {
 			String address = item.address;
 			ContentResolver resolver = context.getContentResolver();
 			//
-			if (TextUtils.isEmpty(address) || "null".equals(address)) {
+			/*if (TextUtils.isEmpty(address) || "null".equals(address)) {
 				if (isExtraLoadAddressData) {
 					item.listAddress = mmsReaderSub.getAddressNumber(resolver, (int) item._id);
 				}
-			}
+			}*/
 			if (TextUtils.isEmpty(m_id) || "null".equals(m_id)) {
 				item.body = CursorUtil.getString(cursor, idx_body);
 			} else {
@@ -206,7 +207,9 @@ public class QueryConversationProject {
 
 		@Override
 		public CommMsgData read(Context context, Cursor cursor) {
-			CommMsgData item = new CommMsgData(CommMsgData.Type.CONVERSATION);
+			final ContentResolver resolver = context.getContentResolver();
+			final CommMsgData item = new CommMsgData(CommMsgData.Type.CONVERSATION);
+			item.isSamsungProjection = true;
 			item._id = CursorUtil.getLong(cursor, idxId);
 			item.setDate(CursorUtil.getLong(cursor, idxDate));
 			item.recipient_ids = CursorUtil.getString(cursor, idxRecipientIds);
@@ -215,11 +218,10 @@ public class QueryConversationProject {
 			//item.snippet_type = CursorUtil.getInt(cursor, idxSnippetType);
 			item.read = CursorUtil.getInt(cursor, idxRead);
 			//
-			if (isExtraLoadAddressData) {
-				item.address = mmsReaderSub.getRecipientAddress(context.getContentResolver(), Long.parseLong(item.recipient_ids));
-			}
+			//if (isExtraLoadAddressData) {
+			//	item.address = mmsReaderSub.getRecipientAddress(resolver, Long.parseLong(item.recipient_ids));
+			//}
 			if (isExtraLoadMessageData) {
-				ContentResolver resolver = context.getContentResolver();
 				// read a text message on MMS
 				String mid = mmsReaderSub.getMessageIdOnSamsungUri(resolver, item._id, item.getDate());
 				item.body = mmsReaderSub.getTextMessage(resolver, mid);
