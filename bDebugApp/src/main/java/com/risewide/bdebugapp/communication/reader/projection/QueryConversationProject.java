@@ -1,6 +1,16 @@
 package com.risewide.bdebugapp.communication.reader.projection;
 
-import android.content.ContentProviderClient;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import com.risewide.bdebugapp.communication.model.CommMsgData;
+import com.risewide.bdebugapp.communication.reader.helper.MmsReaderHelper;
+import com.risewide.bdebugapp.communication.reader.helper.SmsReaderHelper;
+import com.risewide.bdebugapp.communication.util.CursorUtil;
+import com.risewide.bdebugapp.communication.util.IOCloser;
+import com.risewide.bdebugapp.util.SVLog;
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -8,18 +18,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Telephony;
 import android.text.TextUtils;
-
-import com.risewide.bdebugapp.communication.model.CommMsgData;
-import com.risewide.bdebugapp.communication.reader.helper.MmsReaderHelper;
-import com.risewide.bdebugapp.communication.reader.helper.SmsReaderHelper;
-import com.risewide.bdebugapp.communication.util.CursorUtil;
-import com.risewide.bdebugapp.communication.util.HandyThreadTask;
-import com.risewide.bdebugapp.communication.util.IOCloser;
-import com.risewide.bdebugapp.util.SVLog;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by birdea on 2017-08-09.

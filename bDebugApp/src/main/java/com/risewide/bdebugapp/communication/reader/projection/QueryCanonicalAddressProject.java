@@ -1,17 +1,17 @@
 package com.risewide.bdebugapp.communication.reader.projection;
 
-import android.content.ContentResolver;
-import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.Telephony;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.risewide.bdebugapp.communication.model.CommMsgData;
 import com.risewide.bdebugapp.communication.util.CursorUtil;
 import com.risewide.bdebugapp.communication.util.IOCloser;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.Telephony;
 
 /**
  * Created by birdea on 2017-08-21.

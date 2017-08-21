@@ -4,11 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.risewide.bdebugapp.BaseActivity;
+import com.risewide.bdebugapp.R;
+import com.risewide.bdebugapp.adapter.HandyListAdapter;
+import com.risewide.bdebugapp.communication.model.CommMsgData;
+import com.risewide.bdebugapp.communication.model.CommMsgReadType;
+import com.risewide.bdebugapp.communication.reader.AbsMsgReader;
+import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
+import com.risewide.bdebugapp.communication.util.DateUtil;
+import com.risewide.bdebugapp.communication.util.DelayChecker;
+import com.risewide.bdebugapp.communication.util.TToast;
+import com.risewide.bdebugapp.communication.util.WidgetHelper;
+import com.risewide.bdebugapp.util.DeviceInfo;
+import com.risewide.bdebugapp.util.SVLog;
+
 import android.content.Intent;
-import android.database.ContentObserver;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.view.View;
 import android.widget.CheckBox;
@@ -16,20 +27,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-
-import com.risewide.bdebugapp.BaseActivity;
-import com.risewide.bdebugapp.R;
-import com.risewide.bdebugapp.adapter.HandyListAdapter;
-import com.risewide.bdebugapp.communication.reader.AbsMsgReader;
-import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
-import com.risewide.bdebugapp.communication.util.DelayChecker;
-import com.risewide.bdebugapp.communication.model.CommMsgData;
-import com.risewide.bdebugapp.communication.util.DateUtil;
-import com.risewide.bdebugapp.communication.util.TToast;
-import com.risewide.bdebugapp.communication.model.CommMsgReadType;
-import com.risewide.bdebugapp.communication.util.WidgetHelper;
-import com.risewide.bdebugapp.util.DeviceInfo;
-import com.risewide.bdebugapp.util.SVLog;
 
 /**
  * Created by birdea on 2017-05-12.

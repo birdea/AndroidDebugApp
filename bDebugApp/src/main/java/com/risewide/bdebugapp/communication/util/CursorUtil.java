@@ -1,8 +1,8 @@
 package com.risewide.bdebugapp.communication.util;
 
-import android.database.Cursor;
-
 import com.risewide.bdebugapp.util.SVLog;
+
+import android.database.Cursor;
 
 /**
  * Created by birdea on 2017-08-08.

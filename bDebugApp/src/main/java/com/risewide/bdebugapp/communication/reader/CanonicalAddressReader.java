@@ -1,12 +1,12 @@
 package com.risewide.bdebugapp.communication.reader;
 
-import android.content.Context;
+import java.util.List;
 
 import com.risewide.bdebugapp.communication.model.CommMsgData;
 import com.risewide.bdebugapp.communication.reader.projection.QueryCanonicalAddressProject;
 import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
 
-import java.util.List;
+import android.content.Context;
 
 /**
  * Created by birdea on 2017-08-21.

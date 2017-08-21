@@ -1,31 +1,19 @@
 package com.risewide.bdebugapp.communication;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.risewide.bdebugapp.communication.model.CommMsgReadType;
 import com.risewide.bdebugapp.communication.reader.AbsMsgReader;
-import com.risewide.bdebugapp.communication.reader.CanonicalAddressReader;
+import com.risewide.bdebugapp.communication.reader.ConversationReader;
+import com.risewide.bdebugapp.communication.reader.MmsReader;
+import com.risewide.bdebugapp.communication.reader.SmsReader;
 import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
 import com.risewide.bdebugapp.communication.util.HandyThreadTask;
-import com.risewide.bdebugapp.communication.model.CommMsgData;
-import com.risewide.bdebugapp.communication.model.CommMsgReadType;
-import com.risewide.bdebugapp.communication.reader.MmsReader;
-import com.risewide.bdebugapp.communication.reader.ConversationReader;
-import com.risewide.bdebugapp.communication.reader.SmsReader;
-import com.risewide.bdebugapp.util.SVLog;
 
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.database.ContentObserver;
 import android.os.Build;
-import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
-import android.text.TextUtils;
 
 /**
  * Created by birdea on 2017-08-08.

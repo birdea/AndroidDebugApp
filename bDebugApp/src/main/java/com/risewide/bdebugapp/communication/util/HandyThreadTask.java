@@ -1,17 +1,16 @@
 package com.risewide.bdebugapp.communication.util;
 
-import android.os.AsyncTask;
-import android.util.Log;
-
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import android.os.AsyncTask;
+import android.util.Log;
 
 /**
  * Created by birdea on 2017-08-10.

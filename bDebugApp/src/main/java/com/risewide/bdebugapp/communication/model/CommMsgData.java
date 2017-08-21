@@ -1,12 +1,12 @@
 package com.risewide.bdebugapp.communication.model;
 
-import android.text.TextUtils;
-
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import com.risewide.bdebugapp.communication.util.DateUtil;
 import com.risewide.bdebugapp.util.SVLog;
+
+import android.text.TextUtils;
 
 /**
  * Created by birdea on 2017-05-12.

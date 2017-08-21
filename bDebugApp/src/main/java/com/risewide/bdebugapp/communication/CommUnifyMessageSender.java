@@ -1,5 +1,14 @@
 package com.risewide.bdebugapp.communication;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.risewide.bdebugapp.communication.model.CommMsgSendType;
+import com.risewide.bdebugapp.communication.model.MsgSendData;
+import com.risewide.bdebugapp.communication.util.OnHandyEventListener;
+import com.risewide.bdebugapp.communication.util.TToast;
+import com.risewide.bdebugapp.util.SVLog;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -14,15 +23,6 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.SmsManager;
 import android.text.TextUtils;
-
-import com.risewide.bdebugapp.communication.model.MsgSendData;
-import com.risewide.bdebugapp.communication.util.OnHandyEventListener;
-import com.risewide.bdebugapp.communication.util.TToast;
-import com.risewide.bdebugapp.communication.model.CommMsgSendType;
-import com.risewide.bdebugapp.util.SVLog;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by birdea on 2017-08-02.

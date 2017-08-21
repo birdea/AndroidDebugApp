@@ -1,8 +1,8 @@
 package com.risewide.bdebugapp.communication.util;
 
-import android.content.Context;
-
 import com.risewide.bdebugapp.util.SVLog;
+
+import android.content.Context;
 
 /**
  * Created by birdea on 2017-08-09.

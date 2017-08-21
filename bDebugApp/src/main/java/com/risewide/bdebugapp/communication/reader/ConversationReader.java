@@ -1,23 +1,16 @@
 package com.risewide.bdebugapp.communication.reader;
 
-import android.content.Context;
-import android.database.ContentObserver;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Handler;
-import android.text.TextUtils;
-
-import com.risewide.bdebugapp.communication.model.CommMsgData;
-import com.risewide.bdebugapp.communication.reader.projection.AbsQueryProject;
-import com.risewide.bdebugapp.communication.reader.projection.QueryConversationProject;
-import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
-import com.risewide.bdebugapp.communication.util.IOCloser;
-import com.risewide.bdebugapp.util.SVLog;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.risewide.bdebugapp.communication.model.CommMsgData;
+import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
+import com.risewide.bdebugapp.communication.reader.projection.QueryConversationProject;
+import com.risewide.bdebugapp.util.SVLog;
+
+import android.content.Context;
+import android.text.TextUtils;
 
 /**
  * Created by birdea on 2017-08-03.

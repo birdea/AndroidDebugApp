@@ -1,12 +1,11 @@
 package com.risewide.bdebugapp.communication;
 
-import android.content.Context;
-import android.database.ContentObserver;
+import java.util.List;
 
 import com.risewide.bdebugapp.communication.model.CommMsgData;
 import com.risewide.bdebugapp.communication.reader.AbsMsgReader;
 
-import java.util.List;
+import android.content.Context;
 
 /**
  * Created by birdea on 2017-08-08.
