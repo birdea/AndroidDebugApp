@@ -182,29 +182,31 @@ public class MmsReaderHelper {
 
 	public String getMessageIdOnSamsungUri(ContentResolver resolver, long thread_id, long timeStamp) {
 		String[] projection = new String[] {
-				Telephony.Mms.Inbox._ID,
-				Telephony.Mms.Inbox.DATE,
+				Telephony.Mms._ID,
+				Telephony.Mms.DATE,
 		};
 		String selection = new StringBuilder()
-				.append(Telephony.Mms.Inbox.THREAD_ID).append("=?")
+				.append(Telephony.Mms.THREAD_ID).append("=?")
 				.toString();
 		String[] selectionArgs = new String[] { String.valueOf(thread_id) };
-		String sortOrder = Telephony.Mms.Inbox.DEFAULT_SORT_ORDER + " LIMIT 1 ";
-		Uri uri = Telephony.Mms.Inbox.CONTENT_URI;
+		String sortOrder = Telephony.Mms.DEFAULT_SORT_ORDER;// + " LIMIT 1 ";
+		Uri uri = Telephony.Mms.CONTENT_URI;
 		Cursor cursor = resolver.query(uri, projection, selection, selectionArgs, sortOrder);
 
 		String id = null;
 		long date = 0;
 		if (cursor != null && cursor.moveToFirst()) {
-			int idx_id = cursor.getColumnIndex(Telephony.Mms.Inbox._ID);
-			int idx_date = cursor.getColumnIndex(Telephony.Mms.Inbox.DATE);
+			int idx_id = cursor.getColumnIndex(Telephony.Mms._ID);
+			int idx_date = cursor.getColumnIndex(Telephony.Mms.DATE);
 			do {
-				id = cursor.getString(idx_id);
 				date = cursor.getLong(idx_date);
+				if(CommMsgData.isEqualDateValueOnNormalize(timeStamp, date)) {
+					id = cursor.getString(idx_id);
+					break;
+				}
 			} while (cursor.moveToNext());
 		}
-
-		if(CommMsgData.isEqualDateValueOnNormalize(timeStamp, date) == false) {
+		if (CommMsgData.isEqualDateValueOnNormalize(timeStamp, date) == false) {
 			id = null;
 		}
 		IOCloser.close(cursor);

@@ -1,7 +1,9 @@
 package com.risewide.bdebugapp.communication.reader.helper;
 
 import com.risewide.bdebugapp.communication.model.CommMsgData;
+import com.risewide.bdebugapp.communication.util.DateUtil;
 import com.risewide.bdebugapp.communication.util.IOCloser;
+import com.risewide.bdebugapp.util.SVLog;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
@@ -15,22 +17,22 @@ import android.provider.Telephony;
 public class SmsReaderHelper {
 
 	public static final String[] PROJECTION_INBOX = {
-			Telephony.Sms.Inbox._ID,
-			Telephony.Sms.Inbox.THREAD_ID,
-			Telephony.Sms.Inbox.ADDRESS,
-			Telephony.Sms.Inbox.DATE,
-			Telephony.Sms.Inbox.STATUS,
-			Telephony.Sms.Inbox.TYPE,
-			Telephony.Sms.Inbox.BODY,
-			Telephony.Sms.Inbox.READ,
+			Telephony.Sms._ID,
+			Telephony.Sms.THREAD_ID,
+			Telephony.Sms.ADDRESS,
+			Telephony.Sms.DATE,
+			Telephony.Sms.STATUS,
+			Telephony.Sms.TYPE,
+			Telephony.Sms.BODY,
+			Telephony.Sms.READ,
 	};
 
 	public CommMsgData getTextMessage(ContentResolver resolver, long threadId, long timeStamp, CommMsgData.Type type) {
 		CommMsgData msg = new CommMsgData(type);
 		String[] projection = PROJECTION_INBOX;
-		String selection = Telephony.Sms.THREAD_ID+"="+threadId+" AND read!=1";
+		String selection = Telephony.Sms.THREAD_ID+"="+threadId;//+" AND read!=1";
 		String[] selectionArgs = null;
-		String sortOrder = "date DESC LIMIT 1";
+		String sortOrder = "date DESC";// LIMIT 1";
 		Uri uri = Telephony.Sms.CONTENT_URI;
 
 		Cursor cursor = resolver.query(uri, projection, selection, selectionArgs, sortOrder);
@@ -45,15 +47,23 @@ public class SmsReaderHelper {
 			int idx_body = cursor.getColumnIndex(projection[6]); //BODY
 			int idx_read = cursor.getColumnIndex(projection[7]); //READ
 			//
+			long date;
+			SVLog.i("*getBodyFor:"+DateUtil.getSimpleDate(timeStamp)+", raw:"+timeStamp);
 			do {
-				msg._id = cursor.getLong(idx_id);
-				msg.thread_id = cursor.getLong(idx_threadId);
-				msg.address = cursor.getString(idx_address);
-				msg.setDate(cursor.getLong(idx_date));
-				msg.status = cursor.getInt(idx_status);
-				msg.type = cursor.getInt(idx_type);
+				date = cursor.getLong(idx_date);
 				msg.body = cursor.getString(idx_body);
-				msg.read = cursor.getInt(idx_read);
+				SVLog.i("*body:"+msg.body+", date:"+date);
+				if (CommMsgData.isEqualDateValueOnNormalize(timeStamp, date)) {
+					msg.setDate(date);
+					msg._id = cursor.getLong(idx_id);
+					msg.thread_id = cursor.getLong(idx_threadId);
+					msg.address = cursor.getString(idx_address);
+					msg.status = cursor.getInt(idx_status);
+					msg.type = cursor.getInt(idx_type);
+					msg.body = cursor.getString(idx_body);
+					msg.read = cursor.getInt(idx_read);
+					break;
+				}
 			} while (cursor.moveToNext());
 		}
 		if (CommMsgData.isEqualDateValueOnNormalize(timeStamp, msg.getDate())==false) {

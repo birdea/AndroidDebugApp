@@ -56,15 +56,14 @@ public class QueryConversationProject {
 	public static class CommonProject extends AbsQueryProject<CommMsgData> {
 
 		private static final String[] PROJECTION = {
-				"*",
-				/*"_id",
+				"_id",
 				"date",
 				"read",
 				"type",
 				"address",
 				Telephony.Mms.THREAD_ID,
 				Telephony.Mms.MESSAGE_ID,
-				"body",*/
+				"body",
 		};
 
 		@Override
@@ -145,6 +144,13 @@ public class QueryConversationProject {
 	public static class SamsungProject extends AbsQueryProject<CommMsgData> {
 
 		private static final String[] PROJECTION = {
+				Telephony.MmsSms._ID,
+				"date",
+				"recipient_ids",
+				"snippet",
+				"snippet_cs",
+				"snippet_type",
+				"read",
 				"*"
 		};
 

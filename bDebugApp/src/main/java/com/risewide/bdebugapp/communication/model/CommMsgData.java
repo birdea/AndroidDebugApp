@@ -178,7 +178,8 @@ public class CommMsgData implements Comparable<CommMsgData> {
 	public static boolean isEqualDateValueOnNormalize(long base, long candi) {
 		long normalBase = getNormalizeDateValue(base);
 		long normalCandi = getNormalizeDateValue(candi);
-		SVLog.d("isEqualDateValue:"+normalBase+" vs "+normalCandi);
+		boolean result = (normalBase==normalCandi);
+		SVLog.d("isEqualDateValue["+result+"]:"+normalBase+" vs "+normalCandi);
 		return (normalBase==normalCandi);
 	}
 

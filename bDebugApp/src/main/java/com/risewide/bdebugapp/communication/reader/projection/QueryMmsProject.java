@@ -104,14 +104,15 @@ public class QueryMmsProject {
 
 		private static final String[] PROJECTION = {
 				Telephony.Mms.Inbox._ID,
-				Telephony.Mms.Inbox.THREAD_ID,
-				Telephony.Mms.Inbox.CREATOR,
+				Telephony.Mms.Inbox.MESSAGE_ID,
 				Telephony.Mms.Inbox.DATE,
-				Telephony.Mms.Inbox.DATE_SENT,
 				Telephony.Mms.Inbox.READ,
-				Telephony.Mms.Inbox.STATUS,
+				Telephony.Mms.Inbox.MESSAGE_BOX,
+				Telephony.Mms.Inbox.TEXT_ONLY,
+				Telephony.Mms.Inbox.MMS_VERSION,
+				Telephony.Mms.Inbox.MESSAGE_TYPE,
 				Telephony.Mms.Inbox.SUBJECT,
-				Telephony.Mms.Inbox.LOCKED,
+				Telephony.Mms.Inbox.SUBJECT_CHARSET,
 		};
 
 		@Override
@@ -137,16 +138,48 @@ public class QueryMmsProject {
 
 		@Override
 		public Uri getUri() {
-			return null;
+			return Telephony.Mms.Inbox.CONTENT_URI;
 		}
 
 		@Override
 		public void storeColumnIndex(Cursor cursor) {
+			int count = cursor.getColumnCount();
+			idxColumn = new int[count];
+			for (int i=0;i<count;i++) {
+				idxColumn[i] = cursor.getColumnIndex(PROJECTION[i]);
+			}
 		}
+
+		private MmsReaderHelper mmsReaderSub = new MmsReaderHelper();
 
 		@Override
 		public CommMsgData read(Context context, Cursor cursor) {
-			return null;
+			final CommMsgData item = new CommMsgData(CommMsgData.Type.MMS);
+			int idx = 0;
+			item._id = cursor.getLong(idxColumn[idx++]);
+			item.m_id = cursor.getString(idxColumn[idx++]);
+			item.setDate(cursor.getLong(idxColumn[idx++]));
+			item.read = cursor.getInt(idxColumn[idx++]);
+			item.msg_box = cursor.getInt(idxColumn[idx++]);
+			item.text_only = cursor.getInt(idxColumn[idx++]);
+			item.mms_version = cursor.getInt(idxColumn[idx++]);
+			item.msg_type = cursor.getInt(idxColumn[idx++]);
+			item.subject = cursor.getString(idxColumn[idx++]);
+			item.subject_charset = cursor.getInt(idxColumn[idx++]);
+			//- handle in async
+			ContentResolver cr = context.getContentResolver();
+			if (isExtraLoadAddressData) {
+				item.listAddress = mmsReaderSub.getAddressNumber(cr, (int) item._id);
+			}
+			if (TextUtils.isEmpty(item.m_id) || "null".equals(item.m_id)) {
+				item.body = cursor.getString(cursor.getColumnIndex("body"));
+			} else {
+				if (isExtraLoadMessageData) {
+					String mid = ""+item._id;//mmsReaderSub.getMessageId(context.getContentResolver(), item.thread_id, item.m_id);
+					item.body = mmsReaderSub.getTextMessage(context.getContentResolver(), mid);
+				}
+			}
+			return item;
 		}
 	}
 
