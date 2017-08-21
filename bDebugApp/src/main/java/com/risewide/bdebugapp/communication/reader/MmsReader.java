@@ -9,6 +9,8 @@ import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
 
 import android.content.Context;
 import android.database.ContentObserver;
+import android.net.Uri;
+import android.os.Handler;
 
 /**
  * Created by birdea on 2017-08-03.

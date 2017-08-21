@@ -3,6 +3,8 @@ package com.risewide.bdebugapp.communication.reader;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
+import android.net.Uri;
+import android.os.Handler;
 
 import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
 import com.risewide.bdebugapp.communication.reader.projection.AbsQueryProject;

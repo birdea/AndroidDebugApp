@@ -16,6 +16,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.IdRes;
@@ -60,6 +61,7 @@ public class MessageSenderTestActivity extends BaseActivity{
 		String phoneNumber = String.format("phonenumber = %s", DeviceInfo.getPhoneNumber(this));
 		String osInfo = String.format("%s", DeviceInfo.getDeviceAndroidOsInfo());
 		String deviceName = String.format("%s", DeviceInfo.getDeviceName());
+		String manufacturer = Build.MANUFACTURER;
 		String netOperator = DeviceInfo.getNetworkOperatorName(this);
 		SmsManager smsManager = SmsManager.getDefault();
 		String mmsInfo;
@@ -68,7 +70,7 @@ public class MessageSenderTestActivity extends BaseActivity{
 		} catch(Throwable e) {
 			mmsInfo = "n/a";
 		}
-		sb.append(String.format("%s\n%s\n%s\n%s\n%s", phoneNumber, osInfo, deviceName, netOperator, mmsInfo));
+		sb.append(String.format("%s\n%s\n%s\n%s\n%s\n%s", phoneNumber, osInfo, deviceName, manufacturer, netOperator, mmsInfo));
 		//
 		tvDeviceInfo.setText(sb.toString());
 		//

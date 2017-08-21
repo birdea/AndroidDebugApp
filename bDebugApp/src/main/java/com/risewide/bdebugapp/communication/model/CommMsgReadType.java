@@ -5,7 +5,6 @@ package com.risewide.bdebugapp.communication.model;
  */
 
 public enum CommMsgReadType {
-	ALL_SEQUENTIAL,
 	CONVERSATION,
 	SMS,
 	MMS,

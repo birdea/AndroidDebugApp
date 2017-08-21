@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.Telephony;
 import android.text.TextUtils;
 
@@ -16,6 +17,7 @@ import com.risewide.bdebugapp.util.SVLog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by birdea on 2017-08-09.
@@ -27,39 +29,33 @@ public class QueryConversationProject {
 	 * 삼성 단말기에서 Telephony.MmsSms.CONTENT_CONVERSATIONS_URI 로 접근이 불가하기 때문에 Project 정보 구분
 	 *
 	 * @param context
-	 * @param queryConfig
-	 * @param sortOrder
 	 * @return
 	 */
-	public static AbsQueryProject<CommMsgData> getProject(Context context, QueryConfig queryConfig, String sortOrder) {
-		AbsQueryProject<CommMsgData> project = new CommonProject();
-		project.setExtraLoadMessageData(queryConfig.isExtraLoadMessageData());
-		project.setExtraLoadAddressData(queryConfig.isExtraLoadAddressData());
-		project.setLoadOnlyUnreadData(queryConfig.isSelectLoadOnlyUnread());
-		project.setConfigSortOrder(sortOrder);
-		//
+	public static synchronized AbsQueryProject<CommMsgData> getProject(Context context) {
+		AbsQueryProject<CommMsgData> project = null;
+		Cursor cursor = null;
 		ContentResolver resolver = context.getContentResolver();
-		Cursor cursor;
 		try {
-			cursor = resolver.query(project.getUri(), project.getProjection(), project.getSelection(), project.getSelectionArgs(), sortOrder);
-			SVLog.i("** Conversation - getProject - Common(LG) URI");
-		} catch (Exception ignorable) {
-			ignorable.printStackTrace();
-			AbsQueryProject<CommMsgData> projectSamsung = new SamsungProject();
-			projectSamsung.setExtraLoadMessageData(queryConfig.isExtraLoadMessageData());
-			projectSamsung.setExtraLoadAddressData(queryConfig.isExtraLoadAddressData());
-			projectSamsung.setLoadOnlyUnreadData(queryConfig.isSelectLoadOnlyUnread());
-			projectSamsung.setConfigSortOrder(sortOrder);
-			cursor = resolver.query(projectSamsung.getUri(), projectSamsung.getProjection(), projectSamsung.getSelection(), projectSamsung.getSelectionArgs(), sortOrder);
-			project = projectSamsung;
-			SVLog.i("** Conversation - getProject - Samsung URI");
+			if (SamsungProject.isTargetDevice()) {
+				project = new SamsungProject();
+				cursor = resolver.query(project.getUri(), project.getProjection(), project.getSelection(), project.getSelectionArgs(), null);
+				SVLog.i("** Conversation - getProject - Samsung URI");
+			} else {
+				project = new CommonProject();
+				cursor = resolver.query(project.getUri(), project.getProjection(), project.getSelection(), project.getSelectionArgs(), null);
+				SVLog.i("** Conversation - getProject - Common URI");
+			}
+		} catch (Exception ignore) {
+			ignore.printStackTrace();
 		}
-		project.setQueriedCursor(cursor);
-		CursorUtil.printOutCursorInfo(cursor);
+		//CursorUtil.printOutCursorInfo(cursor);
+		IOCloser.close(cursor);
 		return project;
 	}
 
 	public static class CommonProject extends AbsQueryProject<CommMsgData> {
+
+		public static final String MANUFACTURE = "common";
 
 		private SmsReaderHelper smsReaderSub = new SmsReaderHelper();
 		private MmsReaderHelper mmsReaderSub = new MmsReaderHelper();
@@ -82,7 +78,6 @@ public class QueryConversationProject {
 			idx_date = cursor.getColumnIndex("date");
 			idx_read = cursor.getColumnIndex("read");
 			idx_type = cursor.getColumnIndex("type");
-
 			idx_address = cursor.getColumnIndex("address");
 			idx_threadId = cursor.getColumnIndex(Telephony.Mms.THREAD_ID);
 			idx_m_id = cursor.getColumnIndex(Telephony.Mms.MESSAGE_ID);
@@ -158,7 +153,9 @@ public class QueryConversationProject {
 
 		@Override
 		public List<CommMsgData> readAll(Context context) {
-			Cursor cursor = getQueriedCursor();
+			ContentResolver resolver = context.getContentResolver();
+			Cursor cursor = resolver.query(getUri(), getProjection(), getSelection(), getSelectionArgs(), sortOrder);
+
 			List<CommMsgData> list = new ArrayList<>();
 			if (cursor != null && cursor.moveToFirst()) {
 				storeProjectColumnIndex(cursor);
@@ -173,6 +170,14 @@ public class QueryConversationProject {
 	}
 
 	public static class SamsungProject extends AbsQueryProject<CommMsgData> {
+
+		public static boolean isTargetDevice() {
+			String manufacture = Build.MANUFACTURER.toLowerCase(Locale.US);
+			if ("samsung".contains(manufacture)) {
+				return true;
+			}
+			return false;
+		}
 
 		private SmsReaderHelper smsReaderSub = new SmsReaderHelper();
 		private MmsReaderHelper mmsReaderSub = new MmsReaderHelper();
@@ -254,7 +259,8 @@ public class QueryConversationProject {
 
 		@Override
 		public List<CommMsgData> readAll(Context context) {
-			Cursor cursor = getQueriedCursor();
+			ContentResolver resolver = context.getContentResolver();
+			Cursor cursor = resolver.query(getUri(), getProjection(), getSelection(), getSelectionArgs(), sortOrder);
 
 			List<CommMsgData> list = new ArrayList<>();
 			if (cursor != null && cursor.moveToFirst()) {

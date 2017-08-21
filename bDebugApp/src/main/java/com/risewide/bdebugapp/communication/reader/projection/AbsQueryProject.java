@@ -15,7 +15,6 @@ public abstract class AbsQueryProject<T> {
 	protected boolean isExtraLoadMessageData = false;
 	protected boolean isExtraLoadAddressData = false;
 	protected boolean isLoadOnlyUnreadData = false;
-	protected Cursor queriedCursor;
 	protected String sortOrder;
 	protected abstract void storeProjectColumnIndex(Cursor cursor);
 	protected abstract T read(Context context, Cursor cursor);
@@ -41,12 +40,5 @@ public abstract class AbsQueryProject<T> {
 	}
 	public String getConfigSortOrder(){
 		return sortOrder;
-	}
-
-	public void setQueriedCursor(Cursor cursor) {
-		queriedCursor = cursor;
-	}
-	public Cursor getQueriedCursor() {
-		return queriedCursor;
 	}
 }

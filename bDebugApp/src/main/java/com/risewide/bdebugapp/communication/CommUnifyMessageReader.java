@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.risewide.bdebugapp.communication.reader.AbsMsgReader;
 import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
 import com.risewide.bdebugapp.communication.util.HandyThreadTask;
 import com.risewide.bdebugapp.communication.model.CommMsgData;
@@ -17,7 +18,9 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.database.ContentObserver;
 import android.os.Build;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 
 /**
@@ -27,6 +30,10 @@ import android.support.v4.app.ActivityCompat;
 public class CommUnifyMessageReader extends AbsMessageReader{
 
 	private CommMsgReadType smsProtocolReadType;
+	private SmsReader smsReader;
+	private MmsReader mmsReader;
+	private ConversationReader conversationReader;
+
 	private QueryConfig queryConfig = new QueryConfig();
 
 	public CommUnifyMessageReader() {
@@ -52,9 +59,6 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 	@Override
 	public void read(Context context, OnReadTextMessageListener listener) {
 		switch (smsProtocolReadType) {
-			case ALL_SEQUENTIAL:
-				readAllMessageOnSequence(context, listener);
-				break;
 			case CONVERSATION:
 				readMmsSmsConversationMessage(context, listener);
 				break;
@@ -67,6 +71,53 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 			default:
 				break;
 		}
+	}
+
+	private SmsReader getSmsReader(Context context) {
+		if(smsReader == null) {
+			synchronized (CommUnifyMessageReader.class) {
+				if(smsReader == null) {
+					smsReader = new SmsReader(context, queryConfig);
+				}
+			}
+		}
+		return smsReader;
+	}
+
+	private MmsReader getMmsReader(Context context) {
+		if(mmsReader == null) {
+			synchronized (CommUnifyMessageReader.class) {
+				if(mmsReader == null) {
+					mmsReader = new MmsReader(context, queryConfig);
+				}
+			}
+		}
+		return mmsReader;
+	}
+
+	private ConversationReader getConversationReader(Context context) {
+		if(conversationReader == null) {
+			synchronized (CommUnifyMessageReader.class) {
+				if(conversationReader == null) {
+					conversationReader = new ConversationReader(context, queryConfig);
+				}
+			}
+		}
+		return conversationReader;
+	}
+
+	@Override
+	public void registerContentObserver(Context context, boolean notifyForDescendents, AbsMsgReader.OnContentObserver observer) {
+		//getSmsReader(context).registerContentObserver(context, notifyForDescendents, observer);
+		//getMmsReader(context).registerContentObserver(context, notifyForDescendents, observer);
+		getConversationReader(context).registerContentObserver(context, notifyForDescendents, observer);
+	}
+
+	@Override
+	public void unregisterContentObserver(Context context, AbsMsgReader.OnContentObserver observer) {
+		//smsReader.unregisterContentObserver(context, observer);
+		//mmsReader.unregisterContentObserver(context, observer);
+		getConversationReader(context).unregisterContentObserver(context, observer);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -88,44 +139,12 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 		return true;
 	}
 
-	////////////////////////////////////////////////////////////////////////////////////////////////
-
-	private void readAllMessageOnSequence(final Context context, final OnReadTextMessageListener listener) {
-		HandyThreadTask.execute(new Runnable() {
-			@Override
-			public void run() {
-				/*
-				ConversationReader commReader = new ConversationReader();
-				listener.onComplete(commReader.read(context));
-				*/
-				long startTime = System.currentTimeMillis();
-				// 1st get sms
-				SmsReader smsReader = new SmsReader(context, queryConfig);
-				List<CommMsgData> smsList = smsReader.read(context);
-				SVLog.i("timechecker", "delayed(1):"+ (System.currentTimeMillis() - startTime));
-				// 2nd get mms
-				MmsReader mmsReader = new MmsReader(context, queryConfig);
-				List<CommMsgData> mmsList = mmsReader.read(context);
-				SVLog.i("timechecker", "delayed(2):"+ (System.currentTimeMillis() - startTime));
-				// 3rd unify msgs
-				List<CommMsgData> allList = new ArrayList<>();
-				allList.addAll(smsList);
-				allList.addAll(mmsList);
-				SVLog.i("timechecker", "delayed(3):"+ (System.currentTimeMillis() - startTime));
-				// 4th sort msgs
-				Collections.sort(allList);
-				SVLog.i("timechecker", "delayed(4):"+ (System.currentTimeMillis() - startTime));
-				// 5th notify data
-				listener.onComplete(allList);
-			}
-		});
-	}
-
 	private void readSmsMessage(final Context context, final OnReadTextMessageListener listener) {
 		HandyThreadTask.execute(new Runnable() {
 			@Override
 			public void run() {
-				SmsReader smsReader = new SmsReader(context, queryConfig);
+				SmsReader smsReader = getSmsReader(context);
+				smsReader.setQueryConfig(queryConfig);
 				listener.onComplete(smsReader.read(context));
 			}
 		});
@@ -135,7 +154,8 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 		HandyThreadTask.execute(new Runnable() {
 			@Override
 			public void run() {
-				MmsReader mmsReader = new MmsReader(context, queryConfig);
+				MmsReader mmsReader = getMmsReader(context);
+				mmsReader.setQueryConfig(queryConfig);
 				listener.onComplete(mmsReader.read(context));
 			}
 		});
@@ -145,8 +165,9 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 		HandyThreadTask.execute(new Runnable() {
 			@Override
 			public void run() {
-				ConversationReader mmsReader = new ConversationReader(context, queryConfig);
-				listener.onComplete(mmsReader.read(context));
+				ConversationReader conversationReader = getConversationReader(context);
+				conversationReader.setQueryConfig(queryConfig);
+				listener.onComplete(conversationReader.read(context));
 			}
 		});
 	}

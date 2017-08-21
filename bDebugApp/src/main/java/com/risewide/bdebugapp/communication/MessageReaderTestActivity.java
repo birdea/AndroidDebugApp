@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.content.Intent;
+import android.database.ContentObserver;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.view.View;
 import android.widget.CheckBox;
@@ -17,6 +20,7 @@ import android.widget.TextView;
 import com.risewide.bdebugapp.BaseActivity;
 import com.risewide.bdebugapp.R;
 import com.risewide.bdebugapp.adapter.HandyListAdapter;
+import com.risewide.bdebugapp.communication.reader.AbsMsgReader;
 import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
 import com.risewide.bdebugapp.communication.util.DelayChecker;
 import com.risewide.bdebugapp.communication.model.CommMsgData;
@@ -34,9 +38,7 @@ import com.risewide.bdebugapp.util.SVLog;
 public class MessageReaderTestActivity extends BaseActivity {
 
 	private HandyListAdapter handyListAdapter;
-	private CommUnifyMessageReader smsUnifyMessageReader = new CommUnifyMessageReader();
-	//
-	private List<CommMsgData> srcList = new ArrayList<>();
+	private CommUnifyMessageReader commUnifyMessageReader = new CommUnifyMessageReader();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,17 +55,14 @@ public class MessageReaderTestActivity extends BaseActivity {
 			@Override
 			public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
 				switch (checkedId) {
-//					case R.id.rbProtocolTypeAll1:
-//						smsUnifyMessageReader.setSmsProtocolReadType(CommMsgReadType.ALL_SEQUENTIAL);
-//						break;
 					case R.id.rbProtocolTypeMmsSms:
-						smsUnifyMessageReader.setSmsProtocolReadType(CommMsgReadType.CONVERSATION);
+						commUnifyMessageReader.setSmsProtocolReadType(CommMsgReadType.CONVERSATION);
 						break;
 					case R.id.rbProtocolTypeSms:
-						smsUnifyMessageReader.setSmsProtocolReadType(CommMsgReadType.SMS);
+						commUnifyMessageReader.setSmsProtocolReadType(CommMsgReadType.SMS);
 						break;
 					case R.id.rbProtocolTypeMms:
-						smsUnifyMessageReader.setSmsProtocolReadType(CommMsgReadType.MMS);
+						commUnifyMessageReader.setSmsProtocolReadType(CommMsgReadType.MMS);
 						break;
 				}
 			}
@@ -76,15 +75,15 @@ public class MessageReaderTestActivity extends BaseActivity {
 			public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
 				switch (checkedId) {
 					case R.id.rbQuerySortDesc: {
-						QueryConfig config = smsUnifyMessageReader.getQueryConfig();
+						QueryConfig config = commUnifyMessageReader.getQueryConfig();
 						config.setSortOrder(QueryConfig.Order.DESC);
-						//smsUnifyMessageReader.setQueryConfig(config);
+						//commUnifyMessageReader.setQueryConfig(config);
 						break;
 					}
 					case R.id.rbQuerySortAsc: {
-						QueryConfig config = smsUnifyMessageReader.getQueryConfig();
+						QueryConfig config = commUnifyMessageReader.getQueryConfig();
 						config.setSortOrder(QueryConfig.Order.ASC);
-						//smsUnifyMessageReader.setQueryConfig(config);
+						//commUnifyMessageReader.setQueryConfig(config);
 						break;
 					}
 				}
@@ -99,23 +98,41 @@ public class MessageReaderTestActivity extends BaseActivity {
 	}
 
 	private void initCont() {
-		if(smsUnifyMessageReader.hasPermission(this)==false){
+		if(commUnifyMessageReader.hasPermission(this)==false){
 			finish();
 			return;
 		}
 		refresh();
+		//
+		commUnifyMessageReader.registerContentObserver(this, true, contentObserver);
 	}
 
-	private AtomicBoolean isProcessing = new AtomicBoolean(false);
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		commUnifyMessageReader.unregisterContentObserver(this, contentObserver);
+	}
+
+	private AbsMsgReader.OnContentObserver contentObserver = new AbsMsgReader.OnContentObserver() {
+		@Override
+		public void onChange() {
+			SVLog.i("*OnContentObserver.onChange()");
+			refresh();
+		}
+	};
+
+	private AtomicBoolean isRefreshing = new AtomicBoolean(false);
 	private void refresh() {
-		if (isProcessing.get()) {
-			TToast.show(this, "Already started.. wait for a sec");
+		if (isRefreshing.get()) {
+			//TToast.show(this, "*refresh - Already started.. wait for a sec");
+			SVLog.d("*refresh - Already started.. wait for a sec");
 			return;
 		}
-		TToast.show(this, "Start loading.. wait for a sec");
-		isProcessing.set(true);
+		isRefreshing.set(true);
+		//TToast.show(this, "*refresh - Start loading.. wait for a sec");
+		SVLog.d("*refresh - Start loading.. wait for a sec");
 		final DelayChecker checker = new DelayChecker();
-		checker.start("smsUnifyMessageReader");
+		checker.start("commUnifyMessageReader");
 		//
 		EditText etQuerySortOrderColumn = (EditText)findViewById(R.id.etQuerySortOrderColumn);
 		EditText etQuerySelectLimitSize = (EditText)findViewById(R.id.etQuerySelectLimitSize);
@@ -126,40 +143,31 @@ public class MessageReaderTestActivity extends BaseActivity {
 		String columnName = WidgetHelper.getTextString(etQuerySortOrderColumn);
 		int limitSize = WidgetHelper.getTextInteger(etQuerySelectLimitSize);
 
-		QueryConfig queryConfig = smsUnifyMessageReader.getQueryConfig();
+		QueryConfig queryConfig = commUnifyMessageReader.getQueryConfig();
 		queryConfig.setLimitSize(limitSize);
 		queryConfig.setSortOrderColumn(columnName);
 		queryConfig.setExtraLoadMessageData(cbLoadMessageData.isChecked());
 		queryConfig.setExtraLoadAddressData(cbLoadAddressData.isChecked());
 		queryConfig.setSelectLoadOnlyUnread(cbLoadOnlyUnread.isChecked());
 		//
-		//smsUnifyMessageReader.setQueryConfig(queryConfig);
-		smsUnifyMessageReader.read(this, new CommUnifyMessageReader.OnReadTextMessageListener() {
+		//commUnifyMessageReader.setQueryConfig(queryConfig);
+		commUnifyMessageReader.read(this, new CommUnifyMessageReader.OnReadTextMessageListener() {
 			@Override
 			public void onComplete(List<CommMsgData> list) {
-//				if (list == null || list.isEmpty()) {
-//					TToast.show(getBaseContext(), "load complete, size:0");
-//					return;
-//				}
 				long timeDelay = checker.end();
-				List<CommMsgData> dstList = storeMessageList(list);
 				//checker.end();
 				//printOutMessageList(dstList);
-				loadMessageList(dstList);
+				loadMessageList(list);
 				//checker.end();
-				isProcessing.set(false);
-				TToast.show(getBaseContext(), "Complete loading - "+dstList.size());
-				SVLog.d("Complete loading - "+dstList.size());
+				int length = (list==null)?0:list.size();
+				TToast.show(getBaseContext(), "Complete loading > size: "+length+" ea");
+				SVLog.d("Complete loading > size: "+length+" ea");
 				//checker.showToast(getBaseContext());
-				notifyLastResultInfo(timeDelay, dstList.size());
+				notifyLastResultInfo(timeDelay, length);
+				SVLog.d("*refresh - Complete loading!");
+				isRefreshing.set(false);
 			}
 		});
-	}
-
-	private List<CommMsgData> storeMessageList(List<CommMsgData> list) {
-		srcList.clear();
-		srcList.addAll(list);
-		return srcList;
 	}
 
 	private void loadMessageList(final List<CommMsgData> messageItemList) {
@@ -189,11 +197,11 @@ public class MessageReaderTestActivity extends BaseActivity {
 							  TextView tvLastResult = (TextView)findViewById(R.id.tvLastResult);
 							  String strDelay = String.valueOf(timeDelay);
 							  String strSize = String.valueOf(size);
-							  String strType = String.valueOf(smsUnifyMessageReader.getSmsProtocolReadType().name());
-							  String strLimit = String.valueOf(smsUnifyMessageReader.getQueryConfig().getLimitSize());
-							  String strPlusAddress = String.valueOf(smsUnifyMessageReader.getQueryConfig().isExtraLoadAddressData());
-							  String strPlusMessage = String.valueOf(smsUnifyMessageReader.getQueryConfig().isExtraLoadMessageData());
-							  String strOnlyUnread = String.valueOf(smsUnifyMessageReader.getQueryConfig().isSelectLoadOnlyUnread());
+							  String strType = String.valueOf(commUnifyMessageReader.getSmsProtocolReadType().name());
+							  String strLimit = String.valueOf(commUnifyMessageReader.getQueryConfig().getLimitSize());
+							  String strPlusAddress = String.valueOf(commUnifyMessageReader.getQueryConfig().isExtraLoadAddressData());
+							  String strPlusMessage = String.valueOf(commUnifyMessageReader.getQueryConfig().isExtraLoadMessageData());
+							  String strOnlyUnread = String.valueOf(commUnifyMessageReader.getQueryConfig().isSelectLoadOnlyUnread());
 
 							  String result = String.format("Delayed(ms)[%s]\non\nSize[%s], Type[%s], Limit[%s], +Address[%s], +Message[%s], +Unread[%s]"
 									  , strDelay, strSize, strType, strLimit, strPlusAddress, strPlusMessage, strOnlyUnread
@@ -215,7 +223,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 	public void onClickView(View view) {
 		switch (view.getId()) {
 			case R.id.btn_check: {
-				TToast.show(getBaseContext(), String.format("전체 %s", srcList.size()));
+				TToast.show(getBaseContext(), String.format("전체 %s", handyListAdapter.getCount()));
 				break;
 			}
 			case R.id.btn_refresh: {
