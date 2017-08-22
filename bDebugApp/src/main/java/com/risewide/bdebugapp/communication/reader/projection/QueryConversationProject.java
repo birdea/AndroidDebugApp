@@ -68,9 +68,11 @@ public class QueryConversationProject {
 				Telephony.Mms.THREAD_ID,
 				Telephony.Mms.MESSAGE_ID,
 				"body",
+				"sub",
+				"sub_cs"
 		};
 
-		private int idx_id, idx_date, idx_read, idx_type, idx_address, idx_threadId, idx_m_id, idx_body;
+		private int idx_id, idx_date, idx_read, idx_type, idx_address, idx_threadId, idx_m_id, idx_body, idx_sub, idx_sub_cs;
 		@Override
 		public void storeProjectColumnIndex(Cursor cursor) {
 			idx_id = cursor.getColumnIndex(Telephony.MmsSms._ID);
@@ -81,6 +83,8 @@ public class QueryConversationProject {
 			idx_threadId = cursor.getColumnIndex(Telephony.Mms.THREAD_ID);
 			idx_m_id = cursor.getColumnIndex(Telephony.Mms.MESSAGE_ID);
 			idx_body = cursor.getColumnIndex("body");
+			idx_sub = cursor.getColumnIndex("sub");
+			idx_sub_cs = cursor.getColumnIndex("sub_cs");
 		}
 
 		@Override
@@ -93,6 +97,8 @@ public class QueryConversationProject {
 			item.address = CursorUtil.getString(cursor, idx_address);
 			item.thread_id = CursorUtil.getLong(cursor, idx_threadId);
 			item.m_id = CursorUtil.getString(cursor, idx_m_id);
+			item.sub = CursorUtil.getString(cursor, idx_sub);
+			item.sub_cs = CursorUtil.getString(cursor, idx_sub_cs);
 			// do extra task for fill empty slot
 			String m_id = item.m_id;
 			String address = item.address;

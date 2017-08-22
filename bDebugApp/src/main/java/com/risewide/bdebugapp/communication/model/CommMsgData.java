@@ -4,16 +4,19 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import com.risewide.bdebugapp.communication.util.DateUtil;
+import com.risewide.bdebugapp.communication.util.InanCharacterSetTable;
 import com.risewide.bdebugapp.util.SVLog;
 
 import android.text.TextUtils;
 
 /**
+ * SMS, LMS, MMS 메시지 관련 통합 데이터 클래스
+ * [TODO]각 메시지 타입별 클래스 분할에 대해서 검토해볼 것.
  * Created by birdea on 2017-05-12.
  */
 
 public class CommMsgData implements Comparable<CommMsgData> {
-	// construct
+
 	public enum Type{
 		SMS,
 		MMS,
@@ -23,14 +26,20 @@ public class CommMsgData implements Comparable<CommMsgData> {
 	public CommMsgData(Type type) {
 		this.msgType = type;
 	}
-	// common column data
+
+
+	///////////////////////////////////////////////////////////
+	// Common column data
+	///////////////////////////////////////////////////////////
 	public long _id;
 	public int _count;
 	public int read = Integer.MIN_VALUE;
 	public long thread_id;
 	public String m_id; //Message-ID
-	// odd column data on some android devices
-	private long date;
+	private long date; // odd column data on some android devices
+
+
+
 	///////////////////////////////////////////////////////////
 	// sms column data from Uri.parse("content://sms");
 	///////////////////////////////////////////////////////////
@@ -39,6 +48,9 @@ public class CommMsgData implements Comparable<CommMsgData> {
 	public String address;
 	//{@link android.provider.Telephony.Sms.Inbox.STATUS}
 	public int status;
+
+
+
 	///////////////////////////////////////////////////////////
 	// mms column data from Uri.parse("content://mms");
 	///////////////////////////////////////////////////////////
@@ -49,19 +61,30 @@ public class CommMsgData implements Comparable<CommMsgData> {
 	public String subject;
 	public int subject_charset;
 
+
+
 	///////////////////////////////////////////////////////////
 	// mms column data from Uri.parse("content://mms/{?}/addr");
 	///////////////////////////////////////////////////////////
 	public List<String> listAddress;
 
+
+
 	///////////////////////////////////////////////////////////
-	// samsung
+	// common column for content://mms-sms/conversations?simple=true
+	///////////////////////////////////////////////////////////
+	public String sub; // of subject
+	public String sub_cs; // of subject character_set
+
+
+
+	///////////////////////////////////////////////////////////
+	// samsung column for content://mms-sms/conversations?simple=true
 	///////////////////////////////////////////////////////////
 	public boolean isSamsungProjection = false;
 	public String recipient_ids;
 	public String snippet;
 	public int snippet_cs;
-	//public int snippet_type;
 
 	@Override
 	public String toString() {
@@ -105,7 +128,7 @@ public class CommMsgData implements Comparable<CommMsgData> {
 	private boolean hasNormalizedDateValue = false;
 
 	/**
-	 * mms long date 데이터가 짤려있음. OMG.
+	 * mms long date 데이터가 짤려있음.
 	 * 단말/통신사별 메시지 규격이 다르기 때문에 발생하는 것으로 추정됨.
 	 * maybe the but : down-cast from long value to int value.
 	 * - 정상	:	"1,467,195,120,000"	(13자리)
@@ -136,19 +159,39 @@ public class CommMsgData implements Comparable<CommMsgData> {
 	}
 
 	public String getEncodedSubjectMessage() {
-		if (subject_charset==106){
-			try {
-				return new String(subject.getBytes("utf-8"));
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
+		return InanCharacterSetTable.getGsmBaseEncodedMessage(subject, subject_charset);
+	}
+
+	public String getBodyMessage() {
+		if (body != null) {
+			return body;
+		}
+		if (snippet != null) {
+			snippet = InanCharacterSetTable.getGsmBaseEncodedMessage(snippet, snippet_cs);
+			return snippet;
+		}
+		if (subject != null) {
+			subject = InanCharacterSetTable.getGsmBaseEncodedMessage(subject, subject_charset);
+			return subject;
+		}
+		if (sub != null) {
+			sub = InanCharacterSetTable.getGsmBaseEncodedMessage(sub, Integer.parseInt(sub_cs));
+			return sub;
 		}
 		return null;
 	}
 
-	public String getBodyMessage() {
-		return body;
+	private String byteArrayToHex(byte[] bytes) {
+		StringBuilder sb = new StringBuilder();
+		if (bytes != null) {
+			for (final byte b: bytes) {
+				sb.append(String.format("%02x ", b & 0xff));
+				//sb.append(String.format("%s ", Integer.toBinaryString(b & 0xff)));
+			}
+		}
+		return sb.toString();
 	}
+
 
 	public String getReadStatus() {
 		if (read == Integer.MIN_VALUE) {
@@ -188,8 +231,8 @@ public class CommMsgData implements Comparable<CommMsgData> {
 		long normalBase = getNormalizeDateValue(base);
 		long normalCandi = getNormalizeDateValue(candi);
 		boolean result = (normalBase==normalCandi);
-		SVLog.d("isEqualDateValue["+result+"]:"+normalBase+" vs "+normalCandi);
-		return (normalBase==normalCandi);
+		//SVLog.d("isEqualDateValue["+result+"]:"+normalBase+" vs "+normalCandi);
+		return (result);
 	}
 
 	private static long getNormalizeDateValue(long val) {

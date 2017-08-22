@@ -121,7 +121,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 	private AtomicBoolean isRefreshing = new AtomicBoolean(false);
 	private void refresh() {
 		if (isRefreshing.get()) {
-			//TToast.show(this, "*refresh - Already started.. wait for a sec");
+			TToast.show(this, "*refresh - Already started.. wait for a sec");
 			SVLog.d("*refresh - Already started.. wait for a sec");
 			return;
 		}
@@ -153,7 +153,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 			public void onComplete(List<CommMsgData> list) {
 				long timeDelay = checker.end();
 				//checker.end();
-				//printOutMessageList(dstList);
+				printOutMessageList(list);
 				loadMessageList(list);
 				//checker.end();
 				int length = (list==null)?0:list.size();
@@ -178,7 +178,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 					String strDate = DateUtil.getSimpleDate(info.getDate());
 					HandyListAdapter.Param param = new HandyListAdapter.Param();
 					param.msgHead = String.format("address(%s) date(%s) read(%s) type(%s)", info.getAddress(myPhoneNumber), strDate, info.getReadStatus(), info.msgType);
-					param.msgBody = String.format("%s", info.body);
+					param.msgBody = String.format("%s", info.getBodyMessage());
 					list.add(param);
 				}
 				handyListAdapter.set(list);

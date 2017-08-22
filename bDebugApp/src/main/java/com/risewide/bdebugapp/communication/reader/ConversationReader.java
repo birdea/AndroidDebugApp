@@ -48,15 +48,15 @@ public class ConversationReader extends AbsMsgReader {
 					key = data.thread_id;
 				}
 				if (!TextUtils.isEmpty(data.address)) {
-					SVLog.d("already has address:"+data.address+", _id:"+data._id);
+					//SVLog.d("already has address:"+data.address+", _id:"+data._id);
 					continue;
 				}
 				if (map.containsKey(key)) {
 					String address = map.get(key);
 					data.address = address;
-					SVLog.d("assign ["+key+"] address:"+address);
+					//SVLog.d("assign ["+key+"] address:"+address);
 				} else {
-					SVLog.d("no assign ["+key+"]");
+					//SVLog.d("no assign ["+key+"]");
 				}
 			}
 		}
@@ -64,18 +64,15 @@ public class ConversationReader extends AbsMsgReader {
 	}
 
 	private Map<Long, String> getAddresses(Context context) {
-		if(canonicalAddressReader == null) {
-			canonicalAddressReader = new CanonicalAddressReader(context, queryConfig);
-		}
 		canonicalAddressReader.setQueryConfig(queryConfig);
 		List<CommMsgData> addressList = canonicalAddressReader.read(context);
 		Map<Long, String> map = new HashMap<>();
 		for(CommMsgData data : addressList) {
 			long key = data._id;
 			if (map.containsKey(key)) {
-				SVLog.d("build map - key["+key+"] is contained..");
+				//SVLog.d("build map - key["+key+"] is contained..");
 			} else {
-				SVLog.d("build map - key["+key+"] address:"+data.address);
+				//SVLog.d("build map - key["+key+"] address:"+data.address);
 				map.put(key, data.address);
 			}
 		}
