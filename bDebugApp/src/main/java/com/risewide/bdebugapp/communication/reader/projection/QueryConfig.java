@@ -38,8 +38,8 @@ public class QueryConfig {
 	}
 
 	public void setSortOrderColumn(String column) {
-		if(!TextUtils.isEmpty(column)) {
-			this.sortOrderColumn = column;
+		if(column!=null && !TextUtils.isEmpty(column.trim())) {
+			this.sortOrderColumn = column.trim();
 		}
 	}
 

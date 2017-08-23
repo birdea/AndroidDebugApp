@@ -16,6 +16,7 @@ public abstract class AbsMessageReader {
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	public interface OnReadTextMessageListener {
 		void onComplete(List<CommMsgData> list);
+		void onError(Throwable e);
 	}
 
 	public abstract void read(Context context, OnReadTextMessageListener listener);

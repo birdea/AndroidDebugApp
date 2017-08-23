@@ -157,10 +157,14 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 		HandyThreadTask.execute(new Runnable() {
 			@Override
 			public void run() {
-				AbsMsgReader reader = getSmsReader(context);
-				reader.setQueryConfig(queryConfig);
-				currentMsgList = reader.read(context);
-				listener.onComplete(currentMsgList);
+				try {
+					AbsMsgReader reader = getSmsReader(context);
+					reader.setQueryConfig(queryConfig);
+					currentMsgList = reader.read(context);
+					listener.onComplete(currentMsgList);
+				} catch (Throwable e) {
+					listener.onError(e);
+				}
 			}
 		});
 	}
@@ -169,10 +173,14 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 		HandyThreadTask.execute(new Runnable() {
 			@Override
 			public void run() {
-				AbsMsgReader reader = getMmsReader(context);
-				reader.setQueryConfig(queryConfig);
-				currentMsgList = reader.read(context);
-				listener.onComplete(currentMsgList);
+				try {
+					AbsMsgReader reader = getMmsReader(context);
+					reader.setQueryConfig(queryConfig);
+					currentMsgList = reader.read(context);
+					listener.onComplete(currentMsgList);
+				} catch (Throwable e) {
+					listener.onError(e);
+				}
 			}
 		});
 	}
@@ -181,10 +189,14 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 		HandyThreadTask.execute(new Runnable() {
 			@Override
 			public void run() {
-				AbsMsgReader reader = getConversationReader(context);
-				reader.setQueryConfig(queryConfig);
-				currentMsgList = reader.read(context);
-				listener.onComplete(currentMsgList);
+				try {
+					AbsMsgReader reader = getConversationReader(context);
+					reader.setQueryConfig(queryConfig);
+					currentMsgList = reader.read(context);
+					listener.onComplete(currentMsgList);
+				} catch (Throwable e) {
+					listener.onError(e);
+				}
 			}
 		});
 	}
@@ -193,10 +205,14 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 		HandyThreadTask.execute(new Runnable() {
 			@Override
 			public void run() {
-				AbsMsgReader reader = getConversationThreadReader(context);
-				reader.setQueryConfig(queryConfig);
-				currentMsgList = reader.read(context);
-				listener.onComplete(currentMsgList);
+				try {
+					AbsMsgReader reader = getConversationThreadReader(context);
+					reader.setQueryConfig(queryConfig);
+					currentMsgList = reader.read(context);
+					listener.onComplete(currentMsgList);
+				} catch (Throwable e) {
+					listener.onError(e);
+				}
 			}
 		});
 	}

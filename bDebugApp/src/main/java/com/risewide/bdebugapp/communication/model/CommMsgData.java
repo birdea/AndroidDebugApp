@@ -3,6 +3,7 @@ package com.risewide.bdebugapp.communication.model;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import com.risewide.bdebugapp.communication.reader.projection.QueryConversationProject;
 import com.risewide.bdebugapp.communication.util.DateUtil;
 import com.risewide.bdebugapp.communication.util.InanCharacterSetTable;
 import com.risewide.bdebugapp.util.SVLog;
@@ -250,5 +251,13 @@ public class CommMsgData implements Comparable<CommMsgData> {
 			}
 		}
 		return val;
+	}
+
+	public long getThreadId() {
+		if (QueryConversationProject.SamsungProject.isTargetDevice()) {
+			return _id;
+		} else {
+			return thread_id;
+		}
 	}
 }

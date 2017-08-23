@@ -11,6 +11,7 @@ import com.risewide.bdebugapp.communication.model.CommMsgData;
 import com.risewide.bdebugapp.communication.model.CommMsgReadType;
 import com.risewide.bdebugapp.communication.reader.AbsMsgReader;
 import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
+import com.risewide.bdebugapp.communication.reader.projection.QueryConversationProject;
 import com.risewide.bdebugapp.communication.util.DateUtil;
 import com.risewide.bdebugapp.communication.util.DelayChecker;
 import com.risewide.bdebugapp.communication.util.TToast;
@@ -128,10 +129,11 @@ public class MessageReaderTestActivity extends BaseActivity {
 		ListView lv_textmessage = (ListView) findViewById(R.id.lv_textmessage);
 		lv_textmessage.setAdapter(handyListAdapter);
 		lv_textmessage.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				List<CommMsgData> list = commUnifyMessageReader.getCurrentMsgList();
-				long threadId = list.get(position)._id;
+				long threadId = list.get(position).getThreadId();
 				TToast.show(MessageReaderTestActivity.this, "Selected thread_id:"+threadId);
 				EditText etThreadId = (EditText) findViewById(R.id.etThreadId);
 				etThreadId.setText(String.valueOf(threadId));
@@ -200,17 +202,22 @@ public class MessageReaderTestActivity extends BaseActivity {
 			@Override
 			public void onComplete(List<CommMsgData> list) {
 				long timeDelay = checker.end();
-				//checker.end();
+				int length = (list==null)?0:list.size();
 				printOutMessageList(list);
 				loadMessageList(list);
-				//checker.end();
-				int length = (list==null)?0:list.size();
-				TToast.show(getBaseContext(), "Complete loading > size: "+length+" ea");
-				SVLog.d("Complete loading > size: "+length+" ea");
-				//checker.showToast(getBaseContext());
 				notifyLastResultInfo(timeDelay, length);
-				SVLog.d("*refresh - Complete loading!");
 				isRefreshing.set(false);
+				TToast.show(getBaseContext(), "Complete loading > size: "+length+" ea");
+				SVLog.d("*refresh - Complete loading! size:"+length+" ea");
+			}
+
+			@Override
+			public void onError(Throwable e) {
+				e.printStackTrace();
+				loadMessageList(null);
+				notifyLastResultInfo(0, 0);
+				isRefreshing.set(false);
+				TToast.show(getBaseContext(), "err:"+e.getLocalizedMessage());
 			}
 		});
 	}
@@ -221,13 +228,15 @@ public class MessageReaderTestActivity extends BaseActivity {
 			public void run() {
 				handyListAdapter.clear();
 				List<HandyListAdapter.Param> list = new ArrayList<>();
-				String myPhoneNumber = DeviceInfo.getPhoneNumber(MessageReaderTestActivity.this);
-				for (CommMsgData info : messageItemList) {
-					String strDate = DateUtil.getSimpleDate(info.getDate());
-					HandyListAdapter.Param param = new HandyListAdapter.Param();
-					param.msgHead = String.format("id(%s) tid(%s) addr(%s) date(%s) read(%s) type(%s)", info._id, info.thread_id, info.getAddress(myPhoneNumber), strDate, info.getReadStatus(), info.msgType);
-					param.msgBody = String.format("%s", info.getBodyMessage());
-					list.add(param);
+				if (messageItemList!=null) {
+					String myPhoneNumber = DeviceInfo.getPhoneNumber(MessageReaderTestActivity.this);
+					for (CommMsgData info : messageItemList) {
+						String strDate = DateUtil.getSimpleDate(info.getDate());
+						HandyListAdapter.Param param = new HandyListAdapter.Param();
+						param.msgHead = String.format("id(%s) tid(%s) addr(%s) date(%s) read(%s) type(%s)", info._id, info.thread_id, info.getAddress(myPhoneNumber), strDate, info.getReadStatus(), info.msgType);
+						param.msgBody = String.format("%s", info.getBodyMessage());
+						list.add(param);
+					}
 				}
 				handyListAdapter.set(list);
 				handyListAdapter.notifyDataSetChanged();
