@@ -29,7 +29,7 @@
             android:layout_height="match_parent"
             android:inputType="numberDecimal"
             android:textSize="12sp"
-            android:hint="a thread_id"/>
+            android:hint="a tid of MmsSms"/>
 
     </LinearLayout>
 
@@ -81,6 +81,36 @@
                 />
         </RadioGroup>
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llyProtocolTablyTypeLayer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Type"
+            android:textSize="13sp"/>
+
+        <RadioGroup
+            android:id="@+id/rgProtocolTableType"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/rbProtocolTableTypeAll"
+                style="@style/rbCommonLayout"
+                android:text="All"
+                />
+            <RadioButton
+                android:id="@+id/rbProtocolTableTypeInbox"
+                style="@style/rbCommonLayout"
+                android:text="Inbox"/>
+        </RadioGroup>
     </LinearLayout>
 
     <LinearLayout
@@ -158,7 +188,7 @@
                 android:id="@+id/cbLoadOnlyUnread"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:checked="true"
+                android:checked="false"
                 android:text="Only Unread"
                 android:textSize="11sp"/>
 
@@ -190,7 +220,7 @@
             android:id="@+id/cbLoadMessageData"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:checked="true"
+            android:checked="false"
             android:text="Message"
             android:textSize="11sp"
             />

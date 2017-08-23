@@ -22,8 +22,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -36,6 +38,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 
 	private HandyListAdapter handyListAdapter;
 	private CommUnifyMessageReader commUnifyMessageReader = new CommUnifyMessageReader();
+	private View llyProtocolTablyTypeLayer;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,21 +50,27 @@ public class MessageReaderTestActivity extends BaseActivity {
 
 	private void initView() {
 
+		llyProtocolTablyTypeLayer = findViewById(R.id.llyProtocolTablyTypeLayer);
+
 		RadioGroup rgProtocolType = (RadioGroup)findViewById(R.id.rgProtocolType);
 		rgProtocolType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
 				switch (checkedId) {
 					case R.id.rbProtocolTypeMmsSms:
+						llyProtocolTablyTypeLayer.setVisibility(View.GONE);
 						commUnifyMessageReader.setReadProtocolType(CommMsgReadType.CONVERSATION);
 						break;
 					case R.id.rbProtocolTypeSms:
+						llyProtocolTablyTypeLayer.setVisibility(View.VISIBLE);
 						commUnifyMessageReader.setReadProtocolType(CommMsgReadType.SMS);
 						break;
 					case R.id.rbProtocolTypeMms:
+						llyProtocolTablyTypeLayer.setVisibility(View.VISIBLE);
 						commUnifyMessageReader.setReadProtocolType(CommMsgReadType.MMS);
 						break;
 					case R.id.rbProtocolTypeThreadId:
+						llyProtocolTablyTypeLayer.setVisibility(View.VISIBLE);
 						commUnifyMessageReader.setReadProtocolType(CommMsgReadType.THREAD_ID);
 						break;
 				}
@@ -91,10 +100,43 @@ public class MessageReaderTestActivity extends BaseActivity {
 		});
 		rgQuerySelectOrder.check(R.id.rbQuerySortDesc);
 
+		RadioGroup rgProtocolTableType = (RadioGroup)findViewById(R.id.rgProtocolTableType);
+		rgProtocolTableType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+				switch (checkedId) {
+					case R.id.rbProtocolTableTypeAll: {
+						QueryConfig config = commUnifyMessageReader.getQueryConfig();
+						config.setTableType(QueryConfig.TableType.All);
+						//commUnifyMessageReader.setQueryConfig(config);
+						break;
+					}
+					case R.id.rbProtocolTableTypeInbox: {
+						QueryConfig config = commUnifyMessageReader.getQueryConfig();
+						config.setTableType(QueryConfig.TableType.Inbox);
+						//commUnifyMessageReader.setQueryConfig(config);
+						break;
+					}
+				}
+			}
+		});
+		rgProtocolTableType.check(R.id.rbProtocolTableTypeAll);
+
+
 		handyListAdapter = new HandyListAdapter(this, HandyListAdapter.Mode.HEAD_BODY);
 
 		ListView lv_textmessage = (ListView) findViewById(R.id.lv_textmessage);
 		lv_textmessage.setAdapter(handyListAdapter);
+		lv_textmessage.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				List<CommMsgData> list = commUnifyMessageReader.getCurrentMsgList();
+				long threadId = list.get(position)._id;
+				TToast.show(MessageReaderTestActivity.this, "Selected thread_id:"+threadId);
+				EditText etThreadId = (EditText) findViewById(R.id.etThreadId);
+				etThreadId.setText(String.valueOf(threadId));
+			}
+		});
 	}
 
 	private void initCont() {
@@ -195,23 +237,23 @@ public class MessageReaderTestActivity extends BaseActivity {
 
 	private void notifyLastResultInfo(final double timeDelay, final int size) {
 		runOnUiThread(new Runnable() {
-						  @Override
-						  public void run() {
-							  TextView tvLastResult = (TextView)findViewById(R.id.tvLastResult);
-							  String strDelay = String.valueOf(timeDelay);
-							  String strSize = String.valueOf(size);
-							  String strType = String.valueOf(commUnifyMessageReader.getReadProtocolType().name());
-							  String strLimit = String.valueOf(commUnifyMessageReader.getQueryConfig().getLimitSize());
-							  String strPlusAddress = String.valueOf(commUnifyMessageReader.getQueryConfig().isExtraLoadAddressData());
-							  String strPlusMessage = String.valueOf(commUnifyMessageReader.getQueryConfig().isExtraLoadMessageData());
-							  String strOnlyUnread = String.valueOf(commUnifyMessageReader.getQueryConfig().isSelectLoadOnlyUnread());
+			@Override
+			public void run() {
+				TextView tvLastResult = (TextView)findViewById(R.id.tvLastResult);
+				String strDelay = String.valueOf(timeDelay);
+				String strSize = String.valueOf(size);
+				String strType = String.valueOf(commUnifyMessageReader.getReadProtocolType().name());
+				String strLimit = String.valueOf(commUnifyMessageReader.getQueryConfig().getLimitSize());
+				String strPlusAddress = String.valueOf(commUnifyMessageReader.getQueryConfig().isExtraLoadAddressData());
+				String strPlusMessage = String.valueOf(commUnifyMessageReader.getQueryConfig().isExtraLoadMessageData());
+				String strOnlyUnread = String.valueOf(commUnifyMessageReader.getQueryConfig().isSelectLoadOnlyUnread());
 
-							  String result = String.format("Delayed(ms)[%s]\non\nSize[%s], Type[%s], Limit[%s], +Address[%s], +Message[%s], +Unread[%s]"
-									  , strDelay, strSize, strType, strLimit, strPlusAddress, strPlusMessage, strOnlyUnread
-							  );
-							  tvLastResult.setText(result);
-						  }
-					  });
+				String result = String.format("Delayed(ms)[%s]\non\nSize[%s], Type[%s], Limit[%s], +Address[%s], +Message[%s], +Unread[%s]"
+				, strDelay, strSize, strType, strLimit, strPlusAddress, strPlusMessage, strOnlyUnread
+				);
+				tvLastResult.setText(result);
+				}
+			});
 	}
 
 	private void printOutMessageList(List<CommMsgData> messageItemList) {

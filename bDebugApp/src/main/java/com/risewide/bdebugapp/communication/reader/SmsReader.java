@@ -16,9 +16,27 @@ public class SmsReader extends AbsMsgReader {
 
 	public SmsReader(Context context, QueryConfig config) {
 		super(context, config);
-//		project = new QuerySmsProject.All();
-		project = new QuerySmsProject.Inbox();
-//		project = new QuerySmsProject.Sent();
+		initProjection(config);
+	}
+
+	@Override
+	public void setQueryConfig(QueryConfig config) {
+		super.setQueryConfig(config);
+		initProjection(config);
+	}
+
+	private void initProjection(QueryConfig config) {
+		switch (config.getTableType()) {
+			case All:
+				project = new QuerySmsProject.All();
+				break;
+			case Inbox:
+				project = new QuerySmsProject.Inbox();
+				break;
+			case Sent:
+				project = new QuerySmsProject.Sent();
+				break;
+		}
 	}
 
 	@Override

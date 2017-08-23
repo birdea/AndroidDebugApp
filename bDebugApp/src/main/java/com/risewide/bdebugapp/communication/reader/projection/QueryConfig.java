@@ -12,12 +12,19 @@ import android.text.TextUtils;
 public class QueryConfig {
 
 	private Order sortOrder = Order.DESC;
+	private TableType tableType = TableType.All;
 	private int orderLimitSize = 0;
 	private String sortOrderColumn = "date";
 	private boolean isExtraLoadMessageData = false;
 	private boolean isExtraLoadAddressData = false;
 	private boolean isSelectLoadOnlyUnread = false;
 	private long threadId;
+
+	public enum TableType {
+		All,
+		Inbox,
+		Sent,
+	}
 
 	public enum Order {
 		DESC,	// descending sortOrder(=내림차순)
@@ -41,6 +48,14 @@ public class QueryConfig {
 			return String.format(" %s %s ", sortOrderColumn, sortOrder.name());
 		}
 		return null;
+	}
+
+	public TableType getTableType() {
+		return tableType;
+	}
+
+	public void setTableType(TableType tableType) {
+		this.tableType = tableType;
 	}
 
 	public void setLimitSize(int size) {

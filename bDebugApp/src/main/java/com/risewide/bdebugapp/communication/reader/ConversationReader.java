@@ -7,6 +7,7 @@ import java.util.Map;
 import com.risewide.bdebugapp.communication.model.CommMsgData;
 import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
 import com.risewide.bdebugapp.communication.reader.projection.QueryConversationProject;
+import com.risewide.bdebugapp.communication.reader.projection.QueryMmsProject;
 import com.risewide.bdebugapp.util.SVLog;
 
 import android.content.Context;
@@ -22,8 +23,12 @@ public class ConversationReader extends AbsMsgReader {
 
 	public ConversationReader(Context context, QueryConfig config) {
 		super(context, config);
+		init(context, config);
+	}
+
+	private void init(Context context, QueryConfig config) {
 		project = QueryConversationProject.getProject(context);
-		canonicalAddressReader = new CanonicalAddressReader(context, queryConfig);
+		canonicalAddressReader = new CanonicalAddressReader(context, config);
 	}
 
 	@Override

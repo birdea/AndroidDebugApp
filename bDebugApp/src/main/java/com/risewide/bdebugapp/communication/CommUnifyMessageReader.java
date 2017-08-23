@@ -1,5 +1,6 @@
 package com.risewide.bdebugapp.communication;
 
+import com.risewide.bdebugapp.communication.model.CommMsgData;
 import com.risewide.bdebugapp.communication.model.CommMsgReadType;
 import com.risewide.bdebugapp.communication.reader.AbsMsgReader;
 import com.risewide.bdebugapp.communication.reader.ConversationReader;
@@ -16,6 +17,8 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 
+import java.util.List;
+
 /**
  * Created by birdea on 2017-08-08.
  */
@@ -27,8 +30,8 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 	private MmsReader mmsReader;
 	private ConversationReader conversationReader;
 	private ConversationThreadReader conversationThreadReader;
-
 	private QueryConfig queryConfig = new QueryConfig();
+	private List<CommMsgData> currentMsgList;
 
 	public CommUnifyMessageReader() {
 		readProtocolType = CommMsgReadType.SMS;
@@ -48,6 +51,10 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 
 	public QueryConfig getQueryConfig() {
 		return queryConfig;
+	}
+
+	public List<CommMsgData> getCurrentMsgList() {
+		return currentMsgList;
 	}
 
 	@Override
@@ -152,7 +159,8 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 			public void run() {
 				AbsMsgReader reader = getSmsReader(context);
 				reader.setQueryConfig(queryConfig);
-				listener.onComplete(reader.read(context));
+				currentMsgList = reader.read(context);
+				listener.onComplete(currentMsgList);
 			}
 		});
 	}
@@ -163,7 +171,8 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 			public void run() {
 				AbsMsgReader reader = getMmsReader(context);
 				reader.setQueryConfig(queryConfig);
-				listener.onComplete(reader.read(context));
+				currentMsgList = reader.read(context);
+				listener.onComplete(currentMsgList);
 			}
 		});
 	}
@@ -174,7 +183,8 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 			public void run() {
 				AbsMsgReader reader = getConversationReader(context);
 				reader.setQueryConfig(queryConfig);
-				listener.onComplete(reader.read(context));
+				currentMsgList = reader.read(context);
+				listener.onComplete(currentMsgList);
 			}
 		});
 	}
@@ -185,7 +195,8 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 			public void run() {
 				AbsMsgReader reader = getConversationThreadReader(context);
 				reader.setQueryConfig(queryConfig);
-				listener.onComplete(reader.read(context));
+				currentMsgList = reader.read(context);
+				listener.onComplete(currentMsgList);
 			}
 		});
 	}

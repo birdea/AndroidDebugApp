@@ -1,5 +1,7 @@
 package com.risewide.bdebugapp.communication.util;
 
+import android.text.style.CharacterStyle;
+
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -283,6 +285,9 @@ public enum InanCharacterSetTable {
 		}
 		try {
 			switch (codes) {
+				case 38:
+					msg = new String(msg.getBytes(GSM_BASE_ENCODED_CHARACTER_SET), "euckr");
+					break;
 				case 106:
 					msg = new String(msg.getBytes(GSM_BASE_ENCODED_CHARACTER_SET), "utf8");
 					break;

@@ -30,6 +30,15 @@ public class ConversationThreadReader extends AbsMsgReader {
 	}
 
 	@Override
+	public void setQueryConfig(QueryConfig config) {
+		super.setQueryConfig(config);
+		if (mmsReader!=null)
+			mmsReader.setQueryConfig(config);
+		if (smsReader!=null)
+			smsReader.setQueryConfig(config);
+	}
+
+	@Override
 	public List<CommMsgData> read(Context context) {
 		//- set configurations
 		//project.setExtraLoadMessageData(queryConfig.isExtraLoadMessageData());

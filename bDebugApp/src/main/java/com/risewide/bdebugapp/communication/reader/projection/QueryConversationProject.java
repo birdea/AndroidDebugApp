@@ -194,16 +194,16 @@ public class QueryConversationProject {
 				"read",
 		};
 
-		private int idxId, idxDate, idxRecipientIds, idxSnippet, idxSnippetCs, idxRead;//, idxSnippetType;
+		private int idx_id, idx_date, idx_recipient_ids, idx_snippet, idx_snippetCs, idx_read;//, idxSnippetType;
 		@Override
 		public void storeProjectColumnIndex(Cursor cursor) {
-			idxId = cursor.getColumnIndex(Telephony.MmsSms._ID);
-			idxDate = cursor.getColumnIndex("date");
-			idxRecipientIds = cursor.getColumnIndex("recipient_ids");
-			idxSnippet = cursor.getColumnIndex("snippet");
-			idxSnippetCs = cursor.getColumnIndex("snippet_cs");
+			idx_id = cursor.getColumnIndex(Telephony.MmsSms._ID);
+			idx_date = cursor.getColumnIndex("date");
+			idx_recipient_ids = cursor.getColumnIndex("recipient_ids");
+			idx_snippet = cursor.getColumnIndex("snippet");
+			idx_snippetCs = cursor.getColumnIndex("snippet_cs");
 			//idxSnippetType = cursor.getColumnIndex("snippet_type");
-			idxRead = cursor.getColumnIndex("read");
+			idx_read = cursor.getColumnIndex("read");
 		}
 
 		@Override
@@ -211,13 +211,13 @@ public class QueryConversationProject {
 			final ContentResolver resolver = context.getContentResolver();
 			final CommMsgData item = new CommMsgData(CommMsgData.Type.CONVERSATION);
 			item.isSamsungProjection = true;
-			item._id = CursorUtil.getLong(cursor, idxId);
-			item.setDate(CursorUtil.getLong(cursor, idxDate));
-			item.recipient_ids = CursorUtil.getString(cursor, idxRecipientIds);
-			item.snippet = CursorUtil.getString(cursor, idxSnippet);
-			item.snippet_cs = CursorUtil.getInt(cursor, idxSnippetCs);
+			item._id = CursorUtil.getLong(cursor, idx_id);
+			item.setDate(CursorUtil.getLong(cursor, idx_date));
+			item.recipient_ids = CursorUtil.getString(cursor, idx_recipient_ids);
+			item.snippet = CursorUtil.getString(cursor, idx_snippet);
+			item.snippet_cs = CursorUtil.getInt(cursor, idx_snippetCs);
 			//item.snippet_type = CursorUtil.getInt(cursor, idxSnippetType);
-			item.read = CursorUtil.getInt(cursor, idxRead);
+			item.read = CursorUtil.getInt(cursor, idx_read);
 			//
 			//if (isExtraLoadAddressData) {
 			//	item.address = mmsReaderSub.getRecipientAddress(resolver, Long.parseLong(item.recipient_ids));
