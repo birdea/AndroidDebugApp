@@ -18,7 +18,7 @@ import android.text.TextUtils;
 
 public class ConversationReader extends AbsMsgReader {
 
-	CanonicalAddressReader canonicalAddressReader;
+	private CanonicalAddressReader canonicalAddressReader;
 
 	public ConversationReader(Context context, QueryConfig config) {
 		super(context, config);

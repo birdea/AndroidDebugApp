@@ -53,13 +53,16 @@ public class MessageReaderTestActivity extends BaseActivity {
 			public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
 				switch (checkedId) {
 					case R.id.rbProtocolTypeMmsSms:
-						commUnifyMessageReader.setSmsProtocolReadType(CommMsgReadType.CONVERSATION);
+						commUnifyMessageReader.setReadProtocolType(CommMsgReadType.CONVERSATION);
 						break;
 					case R.id.rbProtocolTypeSms:
-						commUnifyMessageReader.setSmsProtocolReadType(CommMsgReadType.SMS);
+						commUnifyMessageReader.setReadProtocolType(CommMsgReadType.SMS);
 						break;
 					case R.id.rbProtocolTypeMms:
-						commUnifyMessageReader.setSmsProtocolReadType(CommMsgReadType.MMS);
+						commUnifyMessageReader.setReadProtocolType(CommMsgReadType.MMS);
+						break;
+					case R.id.rbProtocolTypeThreadId:
+						commUnifyMessageReader.setReadProtocolType(CommMsgReadType.THREAD_ID);
 						break;
 				}
 			}
@@ -131,6 +134,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 		final DelayChecker checker = new DelayChecker();
 		checker.start("commUnifyMessageReader");
 		//
+		EditText etThreadId = (EditText) findViewById(R.id.etThreadId);
 		EditText etQuerySortOrderColumn = (EditText)findViewById(R.id.etQuerySortOrderColumn);
 		EditText etQuerySelectLimitSize = (EditText)findViewById(R.id.etQuerySelectLimitSize);
 		CheckBox cbLoadMessageData = (CheckBox)findViewById(R.id.cbLoadMessageData);
@@ -139,6 +143,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 
 		String columnName = WidgetHelper.getTextString(etQuerySortOrderColumn);
 		int limitSize = WidgetHelper.getTextInteger(etQuerySelectLimitSize);
+		long threadId = WidgetHelper.getTextInteger(etThreadId);
 
 		QueryConfig queryConfig = commUnifyMessageReader.getQueryConfig();
 		queryConfig.setLimitSize(limitSize);
@@ -146,6 +151,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 		queryConfig.setExtraLoadMessageData(cbLoadMessageData.isChecked());
 		queryConfig.setExtraLoadAddressData(cbLoadAddressData.isChecked());
 		queryConfig.setSelectLoadOnlyUnread(cbLoadOnlyUnread.isChecked());
+		queryConfig.setThreadId(threadId);
 		//
 		//commUnifyMessageReader.setQueryConfig(queryConfig);
 		commUnifyMessageReader.read(this, new CommUnifyMessageReader.OnReadTextMessageListener() {
@@ -177,7 +183,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 				for (CommMsgData info : messageItemList) {
 					String strDate = DateUtil.getSimpleDate(info.getDate());
 					HandyListAdapter.Param param = new HandyListAdapter.Param();
-					param.msgHead = String.format("address(%s) date(%s) read(%s) type(%s)", info.getAddress(myPhoneNumber), strDate, info.getReadStatus(), info.msgType);
+					param.msgHead = String.format("id(%s) tid(%s) addr(%s) date(%s) read(%s) type(%s)", info._id, info.thread_id, info.getAddress(myPhoneNumber), strDate, info.getReadStatus(), info.msgType);
 					param.msgBody = String.format("%s", info.getBodyMessage());
 					list.add(param);
 				}
@@ -194,7 +200,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 							  TextView tvLastResult = (TextView)findViewById(R.id.tvLastResult);
 							  String strDelay = String.valueOf(timeDelay);
 							  String strSize = String.valueOf(size);
-							  String strType = String.valueOf(commUnifyMessageReader.getSmsProtocolReadType().name());
+							  String strType = String.valueOf(commUnifyMessageReader.getReadProtocolType().name());
 							  String strLimit = String.valueOf(commUnifyMessageReader.getQueryConfig().getLimitSize());
 							  String strPlusAddress = String.valueOf(commUnifyMessageReader.getQueryConfig().isExtraLoadAddressData());
 							  String strPlusMessage = String.valueOf(commUnifyMessageReader.getQueryConfig().isExtraLoadMessageData());

@@ -28,6 +28,7 @@ public class QueryMmsProject {
 		private static final String[] PROJECTION = {
 				Telephony.Mms._ID,
 				Telephony.Mms.MESSAGE_ID,
+				Telephony.Mms.THREAD_ID,
 				Telephony.Mms.DATE,
 				Telephony.Mms.READ,
 				Telephony.Mms.MESSAGE_BOX,
@@ -42,6 +43,7 @@ public class QueryMmsProject {
 		protected void storeProjectColumnIndex(Cursor cursor) {
 			idx_id = cursor.getColumnIndex(Telephony.Mms._ID);
 			idx_m_id = cursor.getColumnIndex(Telephony.Mms.MESSAGE_ID);
+			idx_thread_id = cursor.getColumnIndex(Telephony.Mms.THREAD_ID);
 			idx_date = cursor.getColumnIndex(Telephony.Mms.DATE);
 			idx_read = cursor.getColumnIndex(Telephony.Mms.READ);
 			idx_msg_box = cursor.getColumnIndex(Telephony.Mms.MESSAGE_BOX);
@@ -53,13 +55,14 @@ public class QueryMmsProject {
 			idx_body = cursor.getColumnIndex(Telephony.Mms.SUBJECT_CHARSET);
 		}
 
-		private int idx_id, idx_m_id, idx_date, idx_read, idx_msg_box, idx_text_only, idx_mms_version;
+		private int idx_id, idx_m_id, idx_thread_id, idx_date, idx_read, idx_msg_box, idx_text_only, idx_mms_version;
 		private int idx_msg_type, idx_subject, idx_subject_charset, idx_body;
 		@Override
 		protected CommMsgData read(final Context context, Cursor cursor) {
 			final CommMsgData item = new CommMsgData(CommMsgData.Type.MMS);
 			item._id = CursorUtil.getLong(cursor, idx_id);
 			item.m_id = CursorUtil.getString(cursor, idx_m_id);
+			item.thread_id = CursorUtil.getLong(cursor, idx_thread_id);
 			item.setDate(CursorUtil.getLong(cursor, idx_date));
 			item.read = CursorUtil.getInt(cursor, idx_read);
 			item.msg_box = CursorUtil.getInt(cursor, idx_msg_box);
@@ -70,9 +73,9 @@ public class QueryMmsProject {
 			item.subject_charset = CursorUtil.getInt(cursor, idx_subject_charset);
 			//- handle in async
 			ContentResolver cr = context.getContentResolver();
-			if (isExtraLoadAddressData) {
-				item.listAddress = mmsReaderSub.getAddressNumber(cr, (int) item._id);
-			}
+			//if (isExtraLoadAddressData) {
+			//	item.listAddress = mmsReaderSub.getAddressNumber(cr, (int) item._id);
+			//}
 			if (TextUtils.isEmpty(item.m_id) || "null".equals(item.m_id)) {
 				item.body = CursorUtil.getString(cursor, idx_body);
 			} else {
@@ -92,16 +95,13 @@ public class QueryMmsProject {
 		@Override
 		public String getSelection() {
 			if (isLoadOnlyUnreadData) {
-				return Telephony.Mms.READ+"!=?";
+				return selection+" AND "+Telephony.Mms.READ+"!=1";
 			}
-			return null;
+			return selection;
 		}
 
 		@Override
 		public String[] getSelectionArgs() {
-			if (isLoadOnlyUnreadData) {
-				return new String[]{"1"};
-			}
 			return null;
 		}
 
@@ -136,6 +136,7 @@ public class QueryMmsProject {
 		private static final String[] PROJECTION = {
 				Telephony.Mms.Inbox._ID,
 				Telephony.Mms.Inbox.MESSAGE_ID,
+				Telephony.Mms.Inbox.THREAD_ID,
 				Telephony.Mms.Inbox.DATE,
 				Telephony.Mms.Inbox.READ,
 				Telephony.Mms.Inbox.MESSAGE_BOX,
@@ -146,12 +147,11 @@ public class QueryMmsProject {
 				Telephony.Mms.Inbox.SUBJECT_CHARSET,
 		};
 
-		private int idx_id, idx_m_id, idx_date, idx_read, idx_msg_box, idx_text_only, idx_mms_version;
-		private int idx_msg_type, idx_subject, idx_subject_charset, idx_body;
 		@Override
 		protected void storeProjectColumnIndex(Cursor cursor) {
 			idx_id = cursor.getColumnIndex(Telephony.Mms.Inbox._ID);
 			idx_m_id = cursor.getColumnIndex(Telephony.Mms.Inbox.MESSAGE_ID);
+			idx_thread_id = cursor.getColumnIndex(Telephony.Mms.Inbox.THREAD_ID);
 			idx_date = cursor.getColumnIndex(Telephony.Mms.Inbox.DATE);
 			idx_read = cursor.getColumnIndex(Telephony.Mms.Inbox.READ);
 			idx_msg_box = cursor.getColumnIndex(Telephony.Mms.Inbox.MESSAGE_BOX);
@@ -160,15 +160,17 @@ public class QueryMmsProject {
 			idx_msg_type = cursor.getColumnIndex(Telephony.Mms.Inbox.MESSAGE_TYPE);
 			idx_subject = cursor.getColumnIndex(Telephony.Mms.Inbox.SUBJECT);
 			idx_subject_charset = cursor.getColumnIndex(Telephony.Mms.Inbox.SUBJECT_CHARSET);
-			idx_body = cursor.getColumnIndex("body");
+			idx_body = cursor.getColumnIndex(Telephony.Mms.Inbox.SUBJECT_CHARSET);
 		}
 
+		private int idx_id, idx_m_id, idx_thread_id, idx_date, idx_read, idx_msg_box, idx_text_only, idx_mms_version;
+		private int idx_msg_type, idx_subject, idx_subject_charset, idx_body;
 		@Override
-		protected CommMsgData read(Context context, Cursor cursor) {
+		protected CommMsgData read(final Context context, Cursor cursor) {
 			final CommMsgData item = new CommMsgData(CommMsgData.Type.MMS);
-
 			item._id = CursorUtil.getLong(cursor, idx_id);
 			item.m_id = CursorUtil.getString(cursor, idx_m_id);
+			item.thread_id = CursorUtil.getLong(cursor, idx_thread_id);
 			item.setDate(CursorUtil.getLong(cursor, idx_date));
 			item.read = CursorUtil.getInt(cursor, idx_read);
 			item.msg_box = CursorUtil.getInt(cursor, idx_msg_box);
@@ -179,9 +181,9 @@ public class QueryMmsProject {
 			item.subject_charset = CursorUtil.getInt(cursor, idx_subject_charset);
 			//- handle in async
 			ContentResolver cr = context.getContentResolver();
-			if (isExtraLoadAddressData) {
-				item.listAddress = mmsReaderSub.getAddressNumber(cr, (int) item._id);
-			}
+			//if (isExtraLoadAddressData) {
+			//	item.listAddress = mmsReaderSub.getAddressNumber(cr, (int) item._id);
+			//}
 			if (TextUtils.isEmpty(item.m_id) || "null".equals(item.m_id)) {
 				item.body = CursorUtil.getString(cursor, idx_body);
 			} else {
@@ -201,16 +203,13 @@ public class QueryMmsProject {
 		@Override
 		public String getSelection() {
 			if (isLoadOnlyUnreadData) {
-				return Telephony.Mms.READ+"!=?";
+				return selection+" AND "+Telephony.Mms.READ+"!=1";
 			}
-			return null;
+			return selection;
 		}
 
 		@Override
 		public String[] getSelectionArgs() {
-			if (isLoadOnlyUnreadData) {
-				return new String[]{"1"};
-			}
 			return null;
 		}
 
@@ -237,6 +236,3 @@ public class QueryMmsProject {
 		}
 	}
 }
-
-
-

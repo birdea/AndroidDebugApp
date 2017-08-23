@@ -17,6 +17,7 @@ public class QueryConfig {
 	private boolean isExtraLoadMessageData = false;
 	private boolean isExtraLoadAddressData = false;
 	private boolean isSelectLoadOnlyUnread = false;
+	private long threadId;
 
 	public enum Order {
 		DESC,	// descending sortOrder(=내림차순)
@@ -103,5 +104,13 @@ public class QueryConfig {
 			sb.append(clause);
 		}
 		return sb;
+	}
+
+	public long getThreadId() {
+		return threadId;
+	}
+
+	public void setThreadId(long threadId) {
+		this.threadId = threadId;
 	}
 }

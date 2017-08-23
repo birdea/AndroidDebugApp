@@ -20,6 +20,28 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:text="Thread ID"
+            android:textSize="13sp"/>
+
+        <EditText
+            android:id="@+id/etThreadId"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:inputType="numberDecimal"
+            android:textSize="12sp"
+            android:hint="a thread_id"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
             android:text="DB Table"
             android:textSize="13sp"/>
 
@@ -36,16 +58,26 @@
             <RadioButton
                 android:id="@+id/rbProtocolTypeMmsSms"
                 style="@style/rbCommonLayout"
-                android:text="MmsSms"/>
+                android:text="MmsSms"
+                android:textSize="11sp"
+                />
             <RadioButton
                 android:id="@+id/rbProtocolTypeSms"
                 style="@style/rbCommonLayout"
                 android:text="SMS"
+                android:textSize="11sp"
                 />
             <RadioButton
                 android:id="@+id/rbProtocolTypeMms"
                 style="@style/rbCommonLayout"
                 android:text="MMS"
+                android:textSize="11sp"
+                />
+            <RadioButton
+                android:id="@+id/rbProtocolTypeThreadId"
+                style="@style/rbCommonLayout"
+                android:text="ThreadID"
+                android:textSize="11sp"
                 />
         </RadioGroup>
 

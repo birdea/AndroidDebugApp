@@ -8,4 +8,5 @@ public enum CommMsgReadType {
 	CONVERSATION,
 	SMS,
 	MMS,
+	THREAD_ID,
 }

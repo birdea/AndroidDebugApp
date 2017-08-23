@@ -1,12 +1,17 @@
 package com.risewide.bdebugapp.communication.reader;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.risewide.bdebugapp.communication.model.CommMsgData;
 import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
 import com.risewide.bdebugapp.communication.reader.projection.QueryMmsProject;
+import com.risewide.bdebugapp.util.SVLog;
 
 import android.content.Context;
+import android.provider.Telephony;
+import android.text.TextUtils;
 
 /**
  * Created by birdea on 2017-08-03.
@@ -14,9 +19,12 @@ import android.content.Context;
 
 public class MmsReader extends AbsMsgReader {
 
+	private CanonicalAddressReader canonicalAddressReader;
+
 	public MmsReader(Context context, QueryConfig config) {
 		super(context, config);
-		project = new QueryMmsProject.All();
+		project = new QueryMmsProject.Inbox();
+		canonicalAddressReader = new CanonicalAddressReader(context, queryConfig);
 	}
 
 	@Override
@@ -25,8 +33,47 @@ public class MmsReader extends AbsMsgReader {
 		project.setExtraLoadMessageData(queryConfig.isExtraLoadMessageData());
 		project.setExtraLoadAddressData(queryConfig.isExtraLoadAddressData());
 		project.setLoadOnlyUnreadData(queryConfig.isSelectLoadOnlyUnread());
-		project.setConfigSortOrder(getConfigSortOrder());
+		project.setConfigSortOrder(" "+Telephony.Mms.THREAD_ID+" DESC "/*getConfigSortOrder()*/);
+		project.setSelection(" thread_id=="+queryConfig.getThreadId()+" ");
 		//- execute to readAll
-		return project.readAll(context);
+		List<CommMsgData> mmsList = project.readAll(context);
+		//- get canonical address data map (id, address)
+		/*if (queryConfig.isExtraLoadAddressData()) {
+			canonicalAddressReader.setQueryConfig(queryConfig);
+			Map<Long, String> map = getAddresses(context);
+			//- assign address with _id;
+			for (CommMsgData data : mmsList) {
+				long key = data.thread_id;
+				//
+				if (!TextUtils.isEmpty(data.address)) {
+					SVLog.d("already has address:"+data.address+", _id:"+data._id);
+					continue;
+				}
+				if (map.containsKey(key)) {
+					String address = map.get(key);
+					data.address = address;
+					SVLog.d("assign ["+key+"] address:"+address);
+				} else {
+					SVLog.d("no assign ["+key+"], body:"+data.getBodyMessage());
+				}
+			}
+		}*/
+		return mmsList;
+	}
+
+	private Map<Long, String> getAddresses(Context context) {
+		canonicalAddressReader.setQueryConfig(queryConfig);
+		List<CommMsgData> addressList = canonicalAddressReader.read(context);
+		Map<Long, String> map = new HashMap<>();
+		for(CommMsgData data : addressList) {
+			long key = data._id;
+			if (map.containsKey(key)) {
+				SVLog.d("build map - key["+key+"] is contained..");
+			} else {
+				SVLog.d("build map - key["+key+"] address:"+data.address);
+				map.put(key, data.address);
+			}
+		}
+		return map;
 	}
 }

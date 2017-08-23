@@ -3,6 +3,7 @@ package com.risewide.bdebugapp.communication;
 import com.risewide.bdebugapp.communication.model.CommMsgReadType;
 import com.risewide.bdebugapp.communication.reader.AbsMsgReader;
 import com.risewide.bdebugapp.communication.reader.ConversationReader;
+import com.risewide.bdebugapp.communication.reader.ConversationThreadReader;
 import com.risewide.bdebugapp.communication.reader.MmsReader;
 import com.risewide.bdebugapp.communication.reader.SmsReader;
 import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
@@ -21,23 +22,24 @@ import android.support.v4.app.ActivityCompat;
 
 public class CommUnifyMessageReader extends AbsMessageReader{
 
-	private CommMsgReadType smsProtocolReadType;
+	private CommMsgReadType readProtocolType;
 	private SmsReader smsReader;
 	private MmsReader mmsReader;
 	private ConversationReader conversationReader;
+	private ConversationThreadReader conversationThreadReader;
 
 	private QueryConfig queryConfig = new QueryConfig();
 
 	public CommUnifyMessageReader() {
-		smsProtocolReadType = CommMsgReadType.SMS;
+		readProtocolType = CommMsgReadType.SMS;
 	}
 
-	public CommMsgReadType getSmsProtocolReadType() {
-		return smsProtocolReadType;
+	public CommMsgReadType getReadProtocolType() {
+		return readProtocolType;
 	}
 
-	public void setSmsProtocolReadType(CommMsgReadType type) {
-		smsProtocolReadType = type;
+	public void setReadProtocolType(CommMsgReadType type) {
+		readProtocolType = type;
 	}
 
 	public void setQueryConfig(QueryConfig config) {
@@ -50,7 +52,7 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 
 	@Override
 	public void read(Context context, OnReadTextMessageListener listener) {
-		switch (smsProtocolReadType) {
+		switch (readProtocolType) {
 			case CONVERSATION:
 				readMmsSmsConversationMessage(context, listener);
 				break;
@@ -61,6 +63,7 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 				readMmsMessage(context, listener);
 				break;
 			default:
+				readThreadIdMessage(context, listener);
 				break;
 		}
 	}
@@ -97,6 +100,18 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 		}
 		return conversationReader;
 	}
+
+	private ConversationThreadReader getConversationThreadReader(Context context) {
+		if(conversationThreadReader == null) {
+			synchronized (CommUnifyMessageReader.class) {
+				if(conversationThreadReader == null) {
+					conversationThreadReader = new ConversationThreadReader(context, queryConfig);
+				}
+			}
+		}
+		return conversationThreadReader;
+	}
+
 
 	@Override
 	public void registerContentObserver(Context context, boolean notifyForDescendents, AbsMsgReader.OnContentObserver observer) {
@@ -135,9 +150,9 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 		HandyThreadTask.execute(new Runnable() {
 			@Override
 			public void run() {
-				SmsReader smsReader = getSmsReader(context);
-				smsReader.setQueryConfig(queryConfig);
-				listener.onComplete(smsReader.read(context));
+				AbsMsgReader reader = getSmsReader(context);
+				reader.setQueryConfig(queryConfig);
+				listener.onComplete(reader.read(context));
 			}
 		});
 	}
@@ -146,9 +161,9 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 		HandyThreadTask.execute(new Runnable() {
 			@Override
 			public void run() {
-				MmsReader mmsReader = getMmsReader(context);
-				mmsReader.setQueryConfig(queryConfig);
-				listener.onComplete(mmsReader.read(context));
+				AbsMsgReader reader = getMmsReader(context);
+				reader.setQueryConfig(queryConfig);
+				listener.onComplete(reader.read(context));
 			}
 		});
 	}
@@ -157,9 +172,20 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 		HandyThreadTask.execute(new Runnable() {
 			@Override
 			public void run() {
-				ConversationReader conversationReader = getConversationReader(context);
-				conversationReader.setQueryConfig(queryConfig);
-				listener.onComplete(conversationReader.read(context));
+				AbsMsgReader reader = getConversationReader(context);
+				reader.setQueryConfig(queryConfig);
+				listener.onComplete(reader.read(context));
+			}
+		});
+	}
+
+	private void readThreadIdMessage(final Context context, final OnReadTextMessageListener listener) {
+		HandyThreadTask.execute(new Runnable() {
+			@Override
+			public void run() {
+				AbsMsgReader reader = getConversationThreadReader(context);
+				reader.setQueryConfig(queryConfig);
+				listener.onComplete(reader.read(context));
 			}
 		});
 	}

@@ -28,6 +28,7 @@ public class SmsReader extends AbsMsgReader {
 		project.setExtraLoadAddressData(queryConfig.isExtraLoadAddressData());
 		project.setLoadOnlyUnreadData(queryConfig.isSelectLoadOnlyUnread());
 		project.setConfigSortOrder(getConfigSortOrder());
+		project.setSelection(" thread_id=="+queryConfig.getThreadId()+" ");
 		//- execute to readAll
 		return project.readAll(context);
 	}

@@ -16,6 +16,7 @@ public abstract class AbsQueryProject<T> {
 	protected boolean isExtraLoadAddressData = false;
 	protected boolean isLoadOnlyUnreadData = false;
 	protected String sortOrder;
+	protected String selection;
 	protected abstract void storeProjectColumnIndex(Cursor cursor);
 	protected abstract T read(Context context, Cursor cursor);
 
@@ -40,5 +41,9 @@ public abstract class AbsQueryProject<T> {
 	}
 	public String getConfigSortOrder(){
 		return sortOrder;
+	}
+
+	public void setSelection(String selection) {
+		this.selection = selection;
 	}
 }

@@ -138,16 +138,13 @@ public class QueryConversationProject {
 		@Override
 		public String getSelection() {
 			if (isLoadOnlyUnreadData) {
-				return "read!=1";//Telephony.Mms.READ+"!=?";
+				return selection+" AND "+Telephony.Mms.READ+"!=1";
 			}
-			return null;
+			return selection;
 		}
 
 		@Override
 		public String[] getSelectionArgs() {
-			//if (isLoadOnlyUnreadData) {
-			//	return new String[]{"1"};
-			//}
 			return null;
 		}
 
@@ -245,16 +242,13 @@ public class QueryConversationProject {
 		@Override
 		public String getSelection() {
 			if (isLoadOnlyUnreadData) {
-				return Telephony.Mms.READ+"!=?";
+				return selection+" AND "+Telephony.Mms.READ+"!=1";
 			}
-			return null;
+			return selection;
 		}
 
 		@Override
 		public String[] getSelectionArgs() {
-			if (isLoadOnlyUnreadData) {
-				return new String[]{"1"};
-			}
 			return null;
 		}
 
