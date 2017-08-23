@@ -11,7 +11,6 @@ import com.risewide.bdebugapp.communication.model.CommMsgData;
 import com.risewide.bdebugapp.communication.model.CommMsgReadType;
 import com.risewide.bdebugapp.communication.reader.AbsMsgReader;
 import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
-import com.risewide.bdebugapp.communication.reader.projection.QueryConversationProject;
 import com.risewide.bdebugapp.communication.util.DateUtil;
 import com.risewide.bdebugapp.communication.util.DelayChecker;
 import com.risewide.bdebugapp.communication.util.TToast;
@@ -26,7 +25,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -132,7 +130,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				List<CommMsgData> list = commUnifyMessageReader.getCurrentMsgList();
+				List<CommMsgData> list = commUnifyMessageReader.getReadMsgList();
 				long threadId = list.get(position).getThreadId();
 				TToast.show(MessageReaderTestActivity.this, "Selected thread_id:"+threadId);
 				EditText etThreadId = (EditText) findViewById(R.id.etThreadId);

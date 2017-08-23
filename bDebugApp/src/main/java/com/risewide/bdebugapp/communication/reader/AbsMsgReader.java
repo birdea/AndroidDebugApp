@@ -16,6 +16,10 @@ import android.os.Looper;
 import android.provider.Telephony;
 
 /**
+ * <p>Content Provider(*cp) 에서 문자 읽기 기능 수행을 위한 추상 클래스
+ * {@link QueryConfig} cp query 수행시 사용될 설정 클래스
+ * {@link CommMsgData} 문자 읽기 관련 데이터 클래스
+ * {@link OnContentObserver} cp (change) event 발생을 처리하기 위한 인터페이스
  * Created by birdea on 2017-08-16.
  */
 

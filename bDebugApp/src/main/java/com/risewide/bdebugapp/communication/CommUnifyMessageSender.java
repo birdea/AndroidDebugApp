@@ -25,26 +25,33 @@ import android.telephony.SmsManager;
 import android.text.TextUtils;
 
 /**
- * Created by birdea on 2017-08-02.
+ * <p>*Send message*
+ * <p>Supported for SMS, LMS
+ * <p>Not-Supported for MMS
+ * <p>Android API : android.telephony.{@link SmsManager}
+ *
+ * {@See https://developer.android.com/reference/android/telephony/SmsManager.html}
+ *
+ * <p>*Description*
+ * <br>{@link #setProtocolType(CommMsgSendType type)} 메시지 전송 타입 설정
+ * <br>{@link CommMsgSendType#AUTO_ADJUST} 로 설정시 메시지 길이에 따라 자동 문자 전송 (SMS or LMS)
+ * <br>{@link #send(Context, OnSendTextMessageListener)} 메시지 전송 (main) 메소드
+ * <br>{@link MessageSendListener} 메시지 발신의 성공 여부 확인을 위한 브로드캐스트 리시버
+ * <br>{@link MessageDeliveryListener} 발신한 메시지의 수신 여부 확인을 위한 브로드캐스트 리시버
+ *
+ * <p>Created by birdea on 2017-08-02.
  */
 
 public class CommUnifyMessageSender extends AbsMessageSender {
 
 	public static final boolean IS_SUPPORT_MMS = false;
 
-	public enum CallMethodType {
-		DirectCall,
-		Intent,
-	}
-
 	private CommMsgSendType protocolType;
-	private CallMethodType callMethodType;
 	private MsgSendData messageData;
 
 	public CommUnifyMessageSender() {
 		messageData = new MsgSendData();
-		protocolType = CommMsgSendType.SMS;
-		callMethodType = CallMethodType.DirectCall;
+		protocolType = CommMsgSendType.AUTO_ADJUST;
 	}
 
 	public void setOnHandyEventListener(OnHandyEventListener listener) {
@@ -77,20 +84,6 @@ public class CommUnifyMessageSender extends AbsMessageSender {
 		return true;
 	}
 
-	private OnSendTextMessageListener onSendTextMessageListener;
-	private void notifySentMessageEvent(boolean success) {
-		if(onSendTextMessageListener==null) {
-			return;
-		}
-		onSendTextMessageListener.onSent(success);
-	}
-	private void notifyReceiveMessageEvent(boolean success) {
-		if(onSendTextMessageListener==null) {
-			return;
-		}
-		onSendTextMessageListener.onReceived(success);
-	}
-
 	@Override
 	public void send(Context context, OnSendTextMessageListener listener) {
 		// check for data to be ready to send
@@ -99,15 +92,14 @@ public class CommUnifyMessageSender extends AbsMessageSender {
 			TToast.show(context, "invalid data, check again plz..");
 			return;
 		}
-		onSendTextMessageListener = listener;
 		notifyOnEventListener("validation is ok.. send on protocol:"+protocolType);
 		// switch the delivery way of automatic or manual
 		if (CommMsgSendType.AUTO_ADJUST.equals(protocolType)) {
 			TToast.show(context, "send on automatic-protocol");
-			sendOnAutomaticProtocol(context);
+			sendOnAutomaticProtocol(context, listener);
 		} else {
 			TToast.show(context, "send on manual-protocol");
-			sendOnManualProtocol(context);
+			sendOnManualProtocol(context, listener);
 		}
 	}
 
@@ -115,14 +107,8 @@ public class CommUnifyMessageSender extends AbsMessageSender {
 	public void setProtocolType(CommMsgSendType type) {
 		protocolType = type;
 	}
-	public void setCallMethodType(CallMethodType type) {
-		callMethodType = type;
-	}
 	public CommMsgSendType getProtocolType(){
 		return protocolType;
-	}
-	public CallMethodType getCallMethodType(){
-		return callMethodType;
 	}
 
 	public MsgSendData getMessageData() {
@@ -132,40 +118,40 @@ public class CommUnifyMessageSender extends AbsMessageSender {
 		messageData = data;
 	}
 
-	private void sendOnAutomaticProtocol(Context context) {
+	private void sendOnAutomaticProtocol(Context context, OnSendTextMessageListener listener) {
 		SmsManager smsManager = SmsManager.getDefault();
 		// MMS
 		if (IS_SUPPORT_MMS && messageData.imageDataUri != null) {
-			sendOnMMS(context);
+			sendOnMMS(context, listener);
 			return;
 		}
 		// LMS OR SMS
 		List<String> msgList = smsManager.divideMessage(messageData.textMessage);
 		int msgLength = msgList.size();
 		if (msgLength > 1) {
-			sendOnLMS(context);
+			sendOnLMS(context, listener);
 		} else {
-			sendOnSMS(context);
+			sendOnSMS(context, listener);
 		}
 	}
 
-	private void sendOnManualProtocol(Context context) {
+	private void sendOnManualProtocol(Context context, OnSendTextMessageListener listener) {
 		switch(protocolType) {
 			case SMS:
-				sendOnSMS(context);
+				sendOnSMS(context, listener);
 				break;
 			case LMS:
-				sendOnLMS(context);
+				sendOnLMS(context, listener);
 				break;
 			case MMS:
-				sendOnMMS(context);
+				sendOnMMS(context, listener);
 				break;
 			default:
 				break;
 		}
 	}
 
-	private void sendOnLMS(Context context) {
+	private void sendOnLMS(Context context, OnSendTextMessageListener listener) {
 		SmsManager smsManager = SmsManager.getDefault();
 		//
 		String destinationAddress, scAddress, text;
@@ -193,14 +179,14 @@ public class CommUnifyMessageSender extends AbsMessageSender {
 			filterMsgDelivery.addAction(actionDelivery);
 		}
 		// register send & delivery listener
-		context.registerReceiver(new MessageSendListener(context, msgList.size()), filterMsgSend);
-		context.registerReceiver(new MessageDeliveryListener(context, msgList.size()), filterMsgDelivery);
+		context.registerReceiver(new MessageSendListener(context, msgList.size(), listener), filterMsgSend);
+		context.registerReceiver(new MessageDeliveryListener(context, msgList.size(), listener), filterMsgDelivery);
 		//
 		notifyOnEventListener("sendOn[LMS] addr:"+destinationAddress+",text:"+text);
 		smsManager.sendMultipartTextMessage(destinationAddress, scAddress, msgList, sentIntentList, deliveryIntentList);
 	}
 
-	private void sendOnSMS(Context context) {
+	private void sendOnSMS(Context context, OnSendTextMessageListener listener) {
 		SmsManager smsManager = SmsManager.getDefault();
 		//
 		String destinationAddress, scAddress, text;
@@ -213,14 +199,14 @@ public class CommUnifyMessageSender extends AbsMessageSender {
 		sentIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_SMS_SEND), PendingIntent.FLAG_UPDATE_CURRENT);
 		deliveryIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_SMS_DELIVERY), PendingIntent.FLAG_UPDATE_CURRENT);
 		// register send & delivery listener
-		context.registerReceiver(new MessageSendListener(context, 1), new IntentFilter(ACTION_SMS_SEND));
-		context.registerReceiver(new MessageDeliveryListener(context, 1), new IntentFilter(ACTION_SMS_DELIVERY));
+		context.registerReceiver(new MessageSendListener(context, 1, listener), new IntentFilter(ACTION_SMS_SEND));
+		context.registerReceiver(new MessageDeliveryListener(context, 1, listener), new IntentFilter(ACTION_SMS_DELIVERY));
 		//
 		notifyOnEventListener("sendOn[SMS] addr:"+destinationAddress+",text:"+text);
 		smsManager.sendTextMessage(destinationAddress, scAddress, text, sentIntent, deliveryIntent);
 	}
 
-	private void sendOnMMS(Context context) {
+	private void sendOnMMS(Context context, OnSendTextMessageListener listener) {
 		notifyOnEventListener("sendOn[MMS] IS_SUPPORT_MMS:"+IS_SUPPORT_MMS);
 		if(IS_SUPPORT_MMS==false) {
 			return;
@@ -237,8 +223,8 @@ public class CommUnifyMessageSender extends AbsMessageSender {
 		sentIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_SMS_SEND), PendingIntent.FLAG_UPDATE_CURRENT);
 		// deliveryIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_SMS_DELIVERY), PendingIntent.FLAG_UPDATE_CURRENT);
 		// register send & delivery listener
-		context.registerReceiver(new MessageSendListener(context, 1), new IntentFilter(ACTION_SMS_SEND));
-		context.registerReceiver(new MessageDeliveryListener(context, 1), new IntentFilter(ACTION_SMS_DELIVERY));
+		context.registerReceiver(new MessageSendListener(context, 1, listener), new IntentFilter(ACTION_SMS_SEND));
+		context.registerReceiver(new MessageDeliveryListener(context, 1, listener), new IntentFilter(ACTION_SMS_DELIVERY));
 		//
 		notifyOnEventListener("sendOn[MMS] addr:"+destinationAddress+",contentUri:"+contentUri);
 		smsManager.sendMultimediaMessage(context, contentUri, destinationAddress, configOverrides, sentIntent);
@@ -265,63 +251,94 @@ public class CommUnifyMessageSender extends AbsMessageSender {
 	private class MessageSendListener extends BroadcastReceiver {
 		private Context context;
 		private final int msgSize;
-		private int count;
-		MessageSendListener(Context cont, int size){
+		private int cntSuccess;
+		private int cntFail;
+		private OnSendTextMessageListener onSendTextMessageListener;
+
+		MessageSendListener(Context cont, int size, OnSendTextMessageListener listener){
 			this.context = cont;
 			this.msgSize = size;
+			this.onSendTextMessageListener = listener;
 		}
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			int resultCode = getResultCode();
-			notifyOnEventListener("MessageSendListener.onReceive - resultCode:"+resultCode+",action:"+intent.getAction()+", msgSize:"+msgSize+",count:"+count);
-			switch(resultCode){
+			int resCode = getResultCode();
+			notifyOnEventListener("MessageSendListener.onReceive - resCode:"+resCode+",msgSize:"+msgSize+",cntSuccess:"+cntSuccess+",cntFail:"+cntFail);
+			switch(resCode){
 				case Activity.RESULT_OK:
+					cntSuccess++;
 					TToast.show(context, "SMS send, RESULT_OK");
 					break;
 				case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+					cntFail++;
 					TToast.show(context, "SMS send, RESULT_ERROR_GENERIC_FAILURE");
 					break;
 				case SmsManager.RESULT_ERROR_NO_SERVICE:
+					cntFail++;
 					TToast.show(context, "SMS send, RESULT_ERROR_NO_SERVICE");
 					break;
 				case SmsManager.RESULT_ERROR_RADIO_OFF:
+					cntFail++;
 					TToast.show(context, "SMS send, RESULT_ERROR_RADIO_OFF");
 					break;
 				case SmsManager.RESULT_ERROR_NULL_PDU:
+					cntFail++;
 					TToast.show(context, "SMS send, RESULT_ERROR_NULL_PDU");
 					break;
 			}
+			notifyCompleteEvent();
+		}
+
+		private void notifyCompleteEvent() {
+			int cntTotal = cntSuccess + cntFail;
 			//
-			if (msgSize <= ++count) {
-				this.context.unregisterReceiver(this);
-				notifyOnEventListener("MessageSendListener unregisterReceiver! size:"+msgSize+",count:"+count);
+			if (msgSize <= cntTotal) {
+				context.unregisterReceiver(this);
+				notifyOnEventListener("MessageSendListener.complete! size:"+msgSize+",cntTotal:"+cntTotal+",cntSuccess:"+ cntSuccess +",cntFail:"+ cntFail);
+				if (onSendTextMessageListener != null) {
+					onSendTextMessageListener.onSent(cntTotal==cntSuccess);
+				}
 			}
 		}
 	}
 	private class MessageDeliveryListener extends BroadcastReceiver {
 		private Context context;
 		private final int msgSize;
-		private int count;
-		MessageDeliveryListener(Context cont, int size){
+		private int cntSuccess;
+		private int cntFail;
+		private OnSendTextMessageListener onSendTextMessageListener;
+
+		MessageDeliveryListener(Context cont, int size, OnSendTextMessageListener listener){
 			this.context = cont;
 			this.msgSize = size;
+			this.onSendTextMessageListener = listener;
 		}
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			int resultCode = getResultCode();
-			notifyOnEventListener("MessageDeliveryListener.onReceive - resultCode:"+resultCode+",action:"+intent.getAction()+", msgSize:"+msgSize+",count:"+count);
-			switch (resultCode){
+			int resCode = getResultCode();
+			notifyOnEventListener("MessageDeliveryListener.onReceive - resCode:"+resCode+",msgSize:"+msgSize+",cntSuccess:"+cntSuccess+",cntFail:"+cntFail);
+			switch (resCode){
 				case Activity.RESULT_OK:
+					cntSuccess++;
 					TToast.show(context, "SMS delivery RESULT_OK");
 					break;
 				case Activity.RESULT_CANCELED:
+					cntFail++;
 					TToast.show(context, "SMS delivery RESULT_CANCELED");
 					break;
 			}
+			notifyCompleteEvent();
+		}
+
+		private void notifyCompleteEvent() {
+			int cntTotal = cntSuccess + cntFail;
 			//
-			if (msgSize <= ++count) {
-				this.context.unregisterReceiver(this);
-				notifyOnEventListener("MessageDeliveryListener unregisterReceiver! size:"+msgSize+",count:"+count);
+			if (msgSize <= cntTotal) {
+				context.unregisterReceiver(this);
+				notifyOnEventListener("MessageDeliveryListener.complete! size:"+msgSize+",cntTotal:"+cntTotal+",cntSuccess:"+ cntSuccess +",cntFail:"+ cntFail);
+				if (onSendTextMessageListener != null) {
+					onSendTextMessageListener.onReceived(cntTotal==cntSuccess);
+				}
 			}
 		}
 	}

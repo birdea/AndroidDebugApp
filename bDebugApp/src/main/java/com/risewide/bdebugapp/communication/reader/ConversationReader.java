@@ -7,8 +7,6 @@ import java.util.Map;
 import com.risewide.bdebugapp.communication.model.CommMsgData;
 import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
 import com.risewide.bdebugapp.communication.reader.projection.QueryConversationProject;
-import com.risewide.bdebugapp.communication.reader.projection.QueryMmsProject;
-import com.risewide.bdebugapp.util.SVLog;
 
 import android.content.Context;
 import android.text.TextUtils;

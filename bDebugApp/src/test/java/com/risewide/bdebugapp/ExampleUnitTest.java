@@ -1,12 +1,12 @@
 package com.risewide.bdebugapp;
 
-import com.risewide.bdebugapp.util.SVLog;
-
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+
+import com.risewide.bdebugapp.util.SVLog;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -14,17 +14,36 @@ import static org.junit.Assert.*;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class ExampleUnitTest {
+
+	private boolean isDigitsOnly(CharSequence str) {
+		final int len = str.length();
+		for (int cp, i = 0; i < len; i += Character.charCount(cp)) {
+			cp = Character.codePointAt(str, i);
+			if (!Character.isDigit(cp)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	@Test
 	public void addition_isCorrect() throws Exception {
 		assertEquals(4, 2 + 2);
 	}
-
-
 	/*
 	CommMsgData{_id(188),m_id(y_r8JH8F1C8),thread_id(0),date(1471594654),700118_094634,address(null),read(1),type(0),body(null),snippet(null),snippet_cs(0),msg_box(1),text_only(1),mms_version(18),msg_type(132),subject((ê´ê³ )[ì íì¹´ë, ì´ë²¤í¸ ìë´]),(광고)[신한카드, 이벤트 안내],subject_charset(106),}
 	 */
 	@Test
 	public void encode_test() throws Exception {
+
+		String candi = "ds";
+		L(candi+" is digit only?:"+isDigitsOnly(candi));
+		candi = "213423";
+		L(candi+" is digit only?:"+isDigitsOnly(candi));
+		candi = "a213423";
+		L(candi+" is digit only?:"+isDigitsOnly(candi));
+		candi = "a2134231b";
+		L(candi+" is digit only?:"+isDigitsOnly(candi));
 
 		//testAdjustEncodeCharacterSet("(ê´ê³ )[ì íì¹´ë, ì´ë²¤í¸ ìë´]");
 		//testAdjustEncodeCharacterSet("[NHëíìí]ìì í");

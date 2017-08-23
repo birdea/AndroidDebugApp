@@ -1,18 +1,15 @@
 package com.risewide.bdebugapp.communication.model;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import com.risewide.bdebugapp.communication.reader.projection.QueryConversationProject;
 import com.risewide.bdebugapp.communication.util.DateUtil;
 import com.risewide.bdebugapp.communication.util.InanCharacterSetTable;
-import com.risewide.bdebugapp.util.SVLog;
 
 import android.text.TextUtils;
 
 /**
  * SMS, LMS, MMS 메시지 관련 통합 데이터 클래스
- * [TODO]각 메시지 타입별 클래스 분할에 대해서 검토해볼 것.
  * Created by birdea on 2017-05-12.
  */
 
@@ -33,7 +30,6 @@ public class CommMsgData implements Comparable<CommMsgData> {
 	// Common column data
 	///////////////////////////////////////////////////////////
 	public long _id;
-	public int _count;
 	public int read = Integer.MIN_VALUE;
 	public long thread_id;
 	public String m_id; //Message-ID
@@ -115,7 +111,7 @@ public class CommMsgData implements Comparable<CommMsgData> {
 	@Override
 	public int compareTo(CommMsgData another) {
 		//int cmp = a > b ? +1 : a < b ? -1 : 0;
-		return Long.compare(date, another.date);
+		return Long.compare(getDate(), another.getDate());
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -167,15 +163,15 @@ public class CommMsgData implements Comparable<CommMsgData> {
 		if (body != null) {
 			return body;
 		}
-		if (snippet != null) {
+		if (!TextUtils.isEmpty(snippet)) {
 			snippet = InanCharacterSetTable.getGsmBaseEncodedMessage(snippet, snippet_cs);
 			return snippet;
 		}
-		if (subject != null) {
+		if (!TextUtils.isEmpty(subject)) {
 			subject = InanCharacterSetTable.getGsmBaseEncodedMessage(subject, subject_charset);
 			return subject;
 		}
-		if (sub != null) {
+		if (!TextUtils.isEmpty(sub) && !TextUtils.isEmpty(sub_cs) && TextUtils.isDigitsOnly(sub_cs)) {
 			sub = InanCharacterSetTable.getGsmBaseEncodedMessage(sub, Integer.parseInt(sub_cs));
 			return sub;
 		}

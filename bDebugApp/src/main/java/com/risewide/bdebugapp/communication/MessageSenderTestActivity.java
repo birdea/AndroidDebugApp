@@ -99,21 +99,6 @@ public class MessageSenderTestActivity extends BaseActivity{
 			}
 		});
 
-		RadioGroup rgMethodType = (RadioGroup)findViewById(R.id.rgMethodType);
-		rgMethodType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-				switch (checkedId) {
-					case R.id.rbMethodTypeDirectCall:
-						smsUnifyMessageSender.setCallMethodType(CommUnifyMessageSender.CallMethodType.DirectCall);
-						break;
-					case R.id.rbMethodTypeUseIntent:
-						smsUnifyMessageSender.setCallMethodType(CommUnifyMessageSender.CallMethodType.Intent);
-						break;
-				}
-				addEventMessage("rgMethodType.checked:"+checkedId+","+ smsUnifyMessageSender.getCallMethodType());
-			}
-		});
 		etTextMessage = (EditText)findViewById(R.id.etTextMessage);
 		etTextMessage.addTextChangedListener(new TextWatcher() {
 			@Override
@@ -134,8 +119,8 @@ public class MessageSenderTestActivity extends BaseActivity{
 					charLength = s.toString().length();
 					bytes = s.toString().getBytes().length;
 				}
-				tvMsgSize.setText(String.format("%d(%d bytes)", charLength, bytes));
-				tvMsgTitle.setText(String.format("msg[%d]", CommUnifyMessageSender.getCountOfDivideMessage(s.toString())));
+				tvMsgSize.setText(String.format("length:%d (%d bytes)", charLength, bytes));
+				tvMsgTitle.setText(String.format("msg [%d set]", CommUnifyMessageSender.getCountOfDivideMessage(s.toString())));
 			}
 		});
 

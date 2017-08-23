@@ -21,6 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
+
             <TextView
                 style="@style/titleCommonLayout"
                 android:layout_weight="1"
@@ -29,14 +30,15 @@
             <Button
                 android:id="@+id/btnShowDeviceInfo"
                 style="@style/btnSelectLayout"
-                android:textSize="11sp"
-                android:text="SHOW/HIDE"/>
+                android:text="SHOW/HIDE"
+                android:textSize="11sp"/>
         </TableRow>
 
         <TextView
             android:id="@+id/tvDeviceInfo"
             style="@style/bodyCommonLayout"
-            android:text="..."/>
+            android:text="..."
+            android:visibility="gone"/>
 
         <!-- Trigger Message Protocol Type -->
 
@@ -49,50 +51,31 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <RadioButton
                 android:id="@+id/rbProtocolTypeAuto"
                 style="@style/rbCommonLayout"
+                android:checked="true"
                 android:text="Auto"
                 />
+
             <RadioButton
                 android:id="@+id/rbProtocolTypeSms"
                 style="@style/rbCommonLayout"
-                android:checked="true"
                 android:text="SMS"/>
+
             <RadioButton
                 android:id="@+id/rbProtocolTypeLms"
                 style="@style/rbCommonLayout"
                 android:text="LMS"
                 />
+
             <RadioButton
                 android:id="@+id/rbProtocolTypeMms"
                 style="@style/rbCommonLayout"
                 android:text="MMS"
+                android:visibility="gone"
                 />
-        </RadioGroup>
-
-        <!-- Trigger Method Type :: currently GONE -->
-        <TextView
-            style="@style/titleCommonLayout"
-            android:text="# Method Type"
-            android:visibility="gone"/>
-
-        <RadioGroup
-            android:id="@+id/rgMethodType"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:orientation="horizontal">
-            <RadioButton
-                android:id="@+id/rbMethodTypeDirectCall"
-                style="@style/rbCommonLayout"
-                android:checked="true"
-                android:text="Direct Call"
-                />
-            <RadioButton
-                android:id="@+id/rbMethodTypeUseIntent"
-                style="@style/rbCommonLayout"
-                android:text="Use Intent"/>
         </RadioGroup>
 
         <!-- Fill out message data (whom, text, data) -->
@@ -107,14 +90,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
+
             <TextView
                 style="@style/bodyCommonLayout"
                 android:text="Sender"/>
+
             <EditText
                 android:id="@+id/etSenderNumber"
                 style="@style/etCommonLayout"
-                android:hint="..."
                 android:enabled="false"
+                android:hint="..."
                 />
         </TableRow>
 
@@ -124,13 +109,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
+
             <TextView
                 style="@style/bodyCommonLayout"
                 android:text="Receiver"/>
+
             <LinearLayout
                 style="@style/llyCommonLayout"
                 android:orientation="horizontal"
                 >
+
                 <EditText
                     android:id="@+id/etReceiverName"
                     style="@style/etCommonLayout"
@@ -138,13 +126,15 @@
                     android:enabled="false"
                     android:hint="...name"
                     />
+
                 <EditText
                     android:id="@+id/etReceiverNumber"
                     style="@style/etCommonLayout"
-                    android:inputType="numberSigned|phone"
                     android:hint="..."
+                    android:inputType="numberSigned|phone"
                     />
             </LinearLayout>
+
             <Button
                 android:id="@+id/btnSelectReceiverNumber"
                 style="@style/btnSelectLayout"
@@ -157,29 +147,37 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
+
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:orientation="vertical">
-                <TextView
-                    android:id="@+id/tvMsgTitle"
-                    style="@style/bodyCommonLayout"
-                    android:layout_weight="1"
-                    android:text="msg"/>
-                <TextView
-                    android:id="@+id/tvMsgSize"
-                    style="@style/bodyCommonLayout"
-                    android:layout_weight="1"
-                    android:hint="..."/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/tvMsgTitle"
+                        style="@style/bodyCommonLayout"
+                        android:layout_weight="1"
+                        android:text="msg"/>
+
+                    <TextView
+                        android:id="@+id/tvMsgSize"
+                        style="@style/bodyCommonLayout"
+                        android:layout_weight="1"
+                        android:hint="..."/>
+                </LinearLayout>
+                <EditText
+                    android:id="@+id/etTextMessage"
+                    style="@style/etCommonLayout"
+                    android:hint="..."
+                    android:maxLines="5"
+                    android:minLines="2"
+                    />
             </LinearLayout>
 
-            <EditText
-                android:id="@+id/etTextMessage"
-                style="@style/etCommonLayout"
-                android:minLines="2"
-                android:maxLines="5"
-                android:hint="..."
-                />
             <Button
                 android:id="@+id/btnSelectMessage"
                 style="@style/btnSelectLayout"
@@ -191,16 +189,20 @@
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             >
+
             <TextView
                 style="@style/bodyCommonLayout"
                 android:text="image"/>
+
             <EditText
                 android:id="@+id/etImageDataInfo"
                 style="@style/etCommonLayout"
-                android:hint="..."
                 android:enabled="false"
+                android:hint="..."
                 />
+
             <Button
                 android:id="@+id/btnSelectImageData"
                 style="@style/btnSelectLayout"
@@ -211,6 +213,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
+
             <Button
                 android:id="@+id/btnSendMessage"
                 style="@style/btnCommonLayout"

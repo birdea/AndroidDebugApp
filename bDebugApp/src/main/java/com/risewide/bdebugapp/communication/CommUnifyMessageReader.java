@@ -1,5 +1,7 @@
 package com.risewide.bdebugapp.communication;
 
+import java.util.List;
+
 import com.risewide.bdebugapp.communication.model.CommMsgData;
 import com.risewide.bdebugapp.communication.model.CommMsgReadType;
 import com.risewide.bdebugapp.communication.reader.AbsMsgReader;
@@ -17,10 +19,19 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 
-import java.util.List;
-
 /**
- * Created by birdea on 2017-08-08.
+ * <p>*Read Message*
+ * <p>SMS, MMS, Conversations
+ * <p>Content Provider(*CP) uri를 통해서 각 타입별 메시지를 읽어올 수 있다.
+ * <p>각 메시지 타입별 CP uri
+ * <br>	1. SMS 수신메시지 : {@link android.provider.Telephony.Sms.Inbox}
+ * <br>	2. MSM 수신메시지 : {@link android.provider.Telephony.Mms.Inbox}
+ * <br>	3. Conversations 통합메시지
+ * <br>		3-1. Samsung	: "content://mms-sms/conversations?simple=true"
+ * <br>		3-2. etc		: "content://mms-sms/conversations"
+ * <p>각 메시지 타입별 쿼리 전/후처리 상세화, 공통화 요소 관리를 위해 {@link AbsMsgReader} 클래스로 추상화.
+ * <p>각 메시지 타입별 쿼리 프로젝션 처리 상세화, 공통화 요소 관리를 위해 {@link com.risewide.bdebugapp.communication.reader.projection.AbsQueryProject} 클래스로 추상화.
+ * <p>Created by birdea on 2017-08-08.
  */
 
 public class CommUnifyMessageReader extends AbsMessageReader{
@@ -31,10 +42,10 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 	private ConversationReader conversationReader;
 	private ConversationThreadReader conversationThreadReader;
 	private QueryConfig queryConfig = new QueryConfig();
-	private List<CommMsgData> currentMsgList;
+	private List<CommMsgData> readMsgList;
 
 	public CommUnifyMessageReader() {
-		readProtocolType = CommMsgReadType.SMS;
+		readProtocolType = CommMsgReadType.CONVERSATION;
 	}
 
 	public CommMsgReadType getReadProtocolType() {
@@ -53,8 +64,8 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 		return queryConfig;
 	}
 
-	public List<CommMsgData> getCurrentMsgList() {
-		return currentMsgList;
+	public List<CommMsgData> getReadMsgList() {
+		return readMsgList;
 	}
 
 	@Override
@@ -160,8 +171,8 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 				try {
 					AbsMsgReader reader = getSmsReader(context);
 					reader.setQueryConfig(queryConfig);
-					currentMsgList = reader.read(context);
-					listener.onComplete(currentMsgList);
+					readMsgList = reader.read(context);
+					listener.onComplete(readMsgList);
 				} catch (Throwable e) {
 					listener.onError(e);
 				}
@@ -176,8 +187,8 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 				try {
 					AbsMsgReader reader = getMmsReader(context);
 					reader.setQueryConfig(queryConfig);
-					currentMsgList = reader.read(context);
-					listener.onComplete(currentMsgList);
+					readMsgList = reader.read(context);
+					listener.onComplete(readMsgList);
 				} catch (Throwable e) {
 					listener.onError(e);
 				}
@@ -192,8 +203,8 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 				try {
 					AbsMsgReader reader = getConversationReader(context);
 					reader.setQueryConfig(queryConfig);
-					currentMsgList = reader.read(context);
-					listener.onComplete(currentMsgList);
+					readMsgList = reader.read(context);
+					listener.onComplete(readMsgList);
 				} catch (Throwable e) {
 					listener.onError(e);
 				}
@@ -208,8 +219,8 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 				try {
 					AbsMsgReader reader = getConversationThreadReader(context);
 					reader.setQueryConfig(queryConfig);
-					currentMsgList = reader.read(context);
-					listener.onComplete(currentMsgList);
+					readMsgList = reader.read(context);
+					listener.onComplete(readMsgList);
 				} catch (Throwable e) {
 					listener.onError(e);
 				}

@@ -1,7 +1,5 @@
 package com.risewide.bdebugapp.communication.util;
 
-import android.text.style.CharacterStyle;
-
 import java.io.UnsupportedEncodingException;
 
 /**

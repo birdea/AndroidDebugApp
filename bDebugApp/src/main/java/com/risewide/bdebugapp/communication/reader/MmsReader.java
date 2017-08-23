@@ -7,12 +7,9 @@ import java.util.Map;
 import com.risewide.bdebugapp.communication.model.CommMsgData;
 import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
 import com.risewide.bdebugapp.communication.reader.projection.QueryMmsProject;
-import com.risewide.bdebugapp.communication.reader.projection.QuerySmsProject;
 import com.risewide.bdebugapp.util.SVLog;
 
 import android.content.Context;
-import android.provider.Telephony;
-import android.text.TextUtils;
 
 /**
  * Created by birdea on 2017-08-03.
@@ -54,7 +51,7 @@ public class MmsReader extends AbsMsgReader {
 		project.setExtraLoadMessageData(queryConfig.isExtraLoadMessageData());
 		project.setExtraLoadAddressData(queryConfig.isExtraLoadAddressData());
 		project.setLoadOnlyUnreadData(queryConfig.isSelectLoadOnlyUnread());
-		project.setConfigSortOrder(" "+Telephony.Mms.THREAD_ID+" DESC "/*getConfigSortOrder()*/);
+		project.setConfigSortOrder(getConfigSortOrder());
 		project.setSelection(" thread_id=="+queryConfig.getThreadId()+" ");
 		//- execute to readAll
 		List<CommMsgData> mmsList = project.readAll(context);

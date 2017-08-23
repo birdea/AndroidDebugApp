@@ -56,12 +56,6 @@
                 android:text="All"
                 />-->
             <RadioButton
-                android:id="@+id/rbProtocolTypeMmsSms"
-                style="@style/rbCommonLayout"
-                android:text="MmsSms"
-                android:textSize="11sp"
-                />
-            <RadioButton
                 android:id="@+id/rbProtocolTypeSms"
                 style="@style/rbCommonLayout"
                 android:text="SMS"
@@ -71,6 +65,12 @@
                 android:id="@+id/rbProtocolTypeMms"
                 style="@style/rbCommonLayout"
                 android:text="MMS"
+                android:textSize="11sp"
+                />
+            <RadioButton
+                android:id="@+id/rbProtocolTypeMmsSms"
+                style="@style/rbCommonLayout"
+                android:text="MmsSms"
                 android:textSize="11sp"
                 />
             <RadioButton

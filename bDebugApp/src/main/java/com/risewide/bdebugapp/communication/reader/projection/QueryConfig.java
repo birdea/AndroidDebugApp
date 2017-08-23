@@ -37,13 +37,17 @@ public class QueryConfig {
 		}
 	}
 
+	public Order getSortOrder() {
+		return sortOrder;
+	}
+
 	public void setSortOrderColumn(String column) {
 		if(column!=null && !TextUtils.isEmpty(column.trim())) {
 			this.sortOrderColumn = column.trim();
 		}
 	}
 
-	public String getSortOrder() {
+	public String getSortOrderClause() {
 		if(!TextUtils.isEmpty(sortOrderColumn)) {
 			return String.format(" %s %s ", sortOrderColumn, sortOrder.name());
 		}
@@ -83,7 +87,7 @@ public class QueryConfig {
 	 */
 	public String getComposedSortOrderClause() {
 		StringBuilder sb = new StringBuilder();
-		appendIfNotNull(sb, getSortOrder());
+		appendIfNotNull(sb, getSortOrderClause());
 		appendIfNotNull(sb, getClauseLimitSize());
 		SVLog.i("** ComposedSortOrderClause:"+sb.toString());
 		return sb.toString();
