@@ -35,7 +35,6 @@ public class QueryConversationProject {
 		AbsQueryProject<CommMsgData> project = null;
 		Cursor cursor = null;
 		ContentResolver resolver = context.getContentResolver();
-		//ContentProviderClient cpc = resolver.acquireContentProviderClient(project.getUri());
 		try {
 			if (SamsungProject.isTargetDevice()) {
 				project = new SamsungProject();
@@ -101,7 +100,6 @@ public class QueryConversationProject {
 			item.sub_cs = CursorUtil.getString(cursor, idx_sub_cs);
 			// do extra task for fill empty slot
 			String m_id = item.m_id;
-			String address = item.address;
 			ContentResolver resolver = context.getContentResolver();
 			//
 			/*if (TextUtils.isEmpty(address) || "null".equals(address)) {
@@ -129,7 +127,7 @@ public class QueryConversationProject {
 		}
 
 		/**
-		 * content provider query param 형태를 selection, selectionArgs[] 별개로 할당시 WHERE clause 적용 안되는 경우 발생
+		 * content provider query param 형태를 mSelection, selectionArgs[] 별개로 할당시 WHERE clause 적용 안되는 경우 발생
 		 * So that, bypass to use hard code like below > "read!=1"
 		 * 오류 발생 단말기 : G5 LG-F700S Android 7.0
 		 * 정상 동작 단말기 : GalaxyS7 SM-G930S 7.0 using {@link SamsungProject}
@@ -138,9 +136,9 @@ public class QueryConversationProject {
 		@Override
 		public String getSelection() {
 			if (isLoadOnlyUnreadData) {
-				return selection+" AND "+Telephony.Mms.READ+"!=1";
+				return mSelection +" AND "+Telephony.Mms.READ+"!=1";
 			}
-			return selection;
+			return mSelection;
 		}
 
 		@Override
@@ -156,7 +154,7 @@ public class QueryConversationProject {
 		@Override
 		public List<CommMsgData> readAll(Context context) {
 			ContentResolver resolver = context.getContentResolver();
-			Cursor cursor = resolver.query(getUri(), getProjection(), getSelection(), getSelectionArgs(), sortOrder);
+			Cursor cursor = resolver.query(getUri(), getProjection(), getSelection(), getSelectionArgs(), mSortOrder);
 
 			List<CommMsgData> list = new ArrayList<>();
 			if (cursor != null && cursor.moveToFirst()) {
@@ -242,9 +240,9 @@ public class QueryConversationProject {
 		@Override
 		public String getSelection() {
 			if (isLoadOnlyUnreadData) {
-				return selection+" AND "+Telephony.Mms.READ+"!=1";
+				return mSelection +" AND "+Telephony.Mms.READ+"!=1";
 			}
-			return selection;
+			return mSelection;
 		}
 
 		@Override
@@ -260,7 +258,7 @@ public class QueryConversationProject {
 		@Override
 		public List<CommMsgData> readAll(Context context) {
 			ContentResolver resolver = context.getContentResolver();
-			Cursor cursor = resolver.query(getUri(), getProjection(), getSelection(), getSelectionArgs(), sortOrder);
+			Cursor cursor = resolver.query(getUri(), getProjection(), getSelection(), getSelectionArgs(), mSortOrder);
 
 			List<CommMsgData> list = new ArrayList<>();
 			if (cursor != null && cursor.moveToFirst()) {

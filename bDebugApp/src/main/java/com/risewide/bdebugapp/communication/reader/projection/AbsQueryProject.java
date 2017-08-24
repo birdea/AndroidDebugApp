@@ -15,8 +15,8 @@ public abstract class AbsQueryProject<T> {
 	protected boolean isExtraLoadMessageData = false;
 	protected boolean isExtraLoadAddressData = false;
 	protected boolean isLoadOnlyUnreadData = false;
-	protected String sortOrder;
-	protected String selection;
+	protected String mSortOrder;
+	protected String mSelection;
 	protected abstract void storeProjectColumnIndex(Cursor cursor);
 	protected abstract T read(Context context, Cursor cursor);
 
@@ -37,13 +37,13 @@ public abstract class AbsQueryProject<T> {
 	}
 
 	public void setConfigSortOrder(String order) {
-		sortOrder = order;
+		mSortOrder = order;
 	}
 	public String getConfigSortOrder(){
-		return sortOrder;
+		return mSortOrder;
 	}
 
-	public void setSelection(String selection) {
-		this.selection = selection;
+	public void setSelection(String select) {
+		mSelection = select;
 	}
 }

@@ -22,7 +22,7 @@ public class CommMsgData implements Comparable<CommMsgData> {
 	}
 	public Type msgType = Type.SMS;
 	public CommMsgData(Type type) {
-		this.msgType = type;
+		msgType = type;
 	}
 
 
@@ -118,8 +118,8 @@ public class CommMsgData implements Comparable<CommMsgData> {
 	// Getter, Setter for some picky data
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void setDate(long date) {
-		this.date = date;
+	public void setDate(long dateMs) {
+		date = dateMs;
 	}
 
 	private boolean hasNormalizedDateValue = false;

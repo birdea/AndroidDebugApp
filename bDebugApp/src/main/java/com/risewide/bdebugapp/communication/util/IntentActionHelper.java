@@ -20,19 +20,19 @@ public class IntentActionHelper {
 		void dispatcher(int resultCode, Intent data);
 	}
 
-	public void selectReceiverPhoneNumber(Activity activity, OnActivityResultDispatcher dispatcher) {
+	public void selectReceiverPhoneNumber(Activity act, OnActivityResultDispatcher dispatcher) {
 		//
-		this.activity = activity;
-		this.onActivityResultDispatcher = dispatcher;
+		activity = act;
+		onActivityResultDispatcher = dispatcher;
 		//
 		Intent intent = new Intent(Intent.ACTION_PICK);
 		intent.setData(ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
 		activity.startActivityForResult(intent, REQCODE_CONTACT_ACTION_PICK);
 	}
 
-	public void selectGaleryImage(Activity activity, OnActivityResultDispatcher dispatcher) {
-		this.activity = activity;
-		this.onActivityResultDispatcher = dispatcher;
+	public void selectGaleryImage(Activity act, OnActivityResultDispatcher dispatcher) {
+		activity = act;
+		onActivityResultDispatcher = dispatcher;
 		//
 		Intent intent = new Intent(Intent.ACTION_PICK);
 		intent.setType(MediaStore.Images.Media.CONTENT_TYPE);

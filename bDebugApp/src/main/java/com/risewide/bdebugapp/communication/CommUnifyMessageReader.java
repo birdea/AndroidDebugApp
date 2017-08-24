@@ -36,41 +36,41 @@ import android.support.v4.app.ActivityCompat;
 
 public class CommUnifyMessageReader extends AbsMessageReader{
 
-	private CommMsgReadType readProtocolType;
-	private SmsReader smsReader;
-	private MmsReader mmsReader;
-	private ConversationReader conversationReader;
-	private ConversationThreadReader conversationThreadReader;
-	private QueryConfig queryConfig = new QueryConfig();
-	private List<CommMsgData> readMsgList;
+	private CommMsgReadType mCommMsgReadType;
+	private SmsReader mSmsReader;
+	private MmsReader mMmsReader;
+	private ConversationReader mConversationReader;
+	private ConversationThreadReader mConversationThreadReader;
+	private QueryConfig mQueryConfig = new QueryConfig();
+	private List<CommMsgData> mReadMsgList;
 
 	public CommUnifyMessageReader() {
-		readProtocolType = CommMsgReadType.CONVERSATION;
+		mCommMsgReadType = CommMsgReadType.CONVERSATION;
 	}
 
 	public CommMsgReadType getReadProtocolType() {
-		return readProtocolType;
+		return mCommMsgReadType;
 	}
 
 	public void setReadProtocolType(CommMsgReadType type) {
-		readProtocolType = type;
+		mCommMsgReadType = type;
 	}
 
 	public void setQueryConfig(QueryConfig config) {
-		this.queryConfig = config;
+		mQueryConfig = config;
 	}
 
 	public QueryConfig getQueryConfig() {
-		return queryConfig;
+		return mQueryConfig;
 	}
 
 	public List<CommMsgData> getReadMsgList() {
-		return readMsgList;
+		return mReadMsgList;
 	}
 
 	@Override
 	public void read(Context context, OnReadTextMessageListener listener) {
-		switch (readProtocolType) {
+		switch (mCommMsgReadType) {
 			case CONVERSATION:
 				readMmsSmsConversationMessage(context, listener);
 				break;
@@ -87,47 +87,47 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 	}
 
 	private SmsReader getSmsReader(Context context) {
-		if(smsReader == null) {
+		if(mSmsReader == null) {
 			synchronized (CommUnifyMessageReader.class) {
-				if(smsReader == null) {
-					smsReader = new SmsReader(context, queryConfig);
+				if(mSmsReader == null) {
+					mSmsReader = new SmsReader(context, mQueryConfig);
 				}
 			}
 		}
-		return smsReader;
+		return mSmsReader;
 	}
 
 	private MmsReader getMmsReader(Context context) {
-		if(mmsReader == null) {
+		if(mMmsReader == null) {
 			synchronized (CommUnifyMessageReader.class) {
-				if(mmsReader == null) {
-					mmsReader = new MmsReader(context, queryConfig);
+				if(mMmsReader == null) {
+					mMmsReader = new MmsReader(context, mQueryConfig);
 				}
 			}
 		}
-		return mmsReader;
+		return mMmsReader;
 	}
 
 	private ConversationReader getConversationReader(Context context) {
-		if(conversationReader == null) {
+		if(mConversationReader == null) {
 			synchronized (CommUnifyMessageReader.class) {
-				if(conversationReader == null) {
-					conversationReader = new ConversationReader(context, queryConfig);
+				if(mConversationReader == null) {
+					mConversationReader = new ConversationReader(context, mQueryConfig);
 				}
 			}
 		}
-		return conversationReader;
+		return mConversationReader;
 	}
 
 	private ConversationThreadReader getConversationThreadReader(Context context) {
-		if(conversationThreadReader == null) {
+		if(mConversationThreadReader == null) {
 			synchronized (CommUnifyMessageReader.class) {
-				if(conversationThreadReader == null) {
-					conversationThreadReader = new ConversationThreadReader(context, queryConfig);
+				if(mConversationThreadReader == null) {
+					mConversationThreadReader = new ConversationThreadReader(context, mQueryConfig);
 				}
 			}
 		}
-		return conversationThreadReader;
+		return mConversationThreadReader;
 	}
 
 
@@ -140,8 +140,8 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 
 	@Override
 	public void unregisterContentObserver(Context context, AbsMsgReader.OnContentObserver observer) {
-		//smsReader.unregisterContentObserver(context, observer);
-		//mmsReader.unregisterContentObserver(context, observer);
+		//mSmsReader.unregisterContentObserver(context, observer);
+		//mMmsReader.unregisterContentObserver(context, observer);
 		getConversationReader(context).unregisterContentObserver(context, observer);
 	}
 
@@ -170,9 +170,9 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 			public void run() {
 				try {
 					AbsMsgReader reader = getSmsReader(context);
-					reader.setQueryConfig(queryConfig);
-					readMsgList = reader.read(context);
-					listener.onComplete(readMsgList);
+					reader.setQueryConfig(mQueryConfig);
+					mReadMsgList = reader.read(context);
+					listener.onComplete(mReadMsgList);
 				} catch (Throwable e) {
 					listener.onError(e);
 				}
@@ -186,9 +186,9 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 			public void run() {
 				try {
 					AbsMsgReader reader = getMmsReader(context);
-					reader.setQueryConfig(queryConfig);
-					readMsgList = reader.read(context);
-					listener.onComplete(readMsgList);
+					reader.setQueryConfig(mQueryConfig);
+					mReadMsgList = reader.read(context);
+					listener.onComplete(mReadMsgList);
 				} catch (Throwable e) {
 					listener.onError(e);
 				}
@@ -202,9 +202,9 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 			public void run() {
 				try {
 					AbsMsgReader reader = getConversationReader(context);
-					reader.setQueryConfig(queryConfig);
-					readMsgList = reader.read(context);
-					listener.onComplete(readMsgList);
+					reader.setQueryConfig(mQueryConfig);
+					mReadMsgList = reader.read(context);
+					listener.onComplete(mReadMsgList);
 				} catch (Throwable e) {
 					listener.onError(e);
 				}
@@ -218,9 +218,9 @@ public class CommUnifyMessageReader extends AbsMessageReader{
 			public void run() {
 				try {
 					AbsMsgReader reader = getConversationThreadReader(context);
-					reader.setQueryConfig(queryConfig);
-					readMsgList = reader.read(context);
-					listener.onComplete(readMsgList);
+					reader.setQueryConfig(mQueryConfig);
+					mReadMsgList = reader.read(context);
+					listener.onComplete(mReadMsgList);
 				} catch (Throwable e) {
 					listener.onError(e);
 				}

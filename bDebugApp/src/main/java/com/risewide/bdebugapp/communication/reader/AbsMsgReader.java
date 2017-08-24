@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Telephony;
+import android.support.annotation.Nullable;
 
 /**
  * <p>Content Provider(*cp) 에서 문자 읽기 기능 수행을 위한 추상 클래스
@@ -25,10 +26,10 @@ import android.provider.Telephony;
 
 public abstract class AbsMsgReader {
 
-	protected QueryConfig queryConfig;
-	protected AbsQueryProject<CommMsgData> project;
-	protected OnContentObserver onContentObserver;
-	protected ContentObserver contentObserver;
+	protected QueryConfig mQueryConfig;
+	protected AbsQueryProject<CommMsgData> mQueryProject;
+	protected OnContentObserver mOnContentObserver;
+	protected ContentObserver mContentObserver;
 
 	public AbsMsgReader(Context context, QueryConfig config) {
 		init();
@@ -40,34 +41,34 @@ public abstract class AbsMsgReader {
 	}
 
 	private void init() {
-		contentObserver = new ContentObserver(new Handler(Looper.getMainLooper())) {
+		mContentObserver = new ContentObserver(new Handler(Looper.getMainLooper())) {
 
-			private String uriMonitor;
-			private String uriConversation;
+			private String mUriMonitor;
+			private String mUriConversation;
 
 			private String getUriMonitor() {
-				if (uriMonitor == null && project != null) {
-					uriMonitor = project.getUri().toString();
+				if (mUriMonitor == null && mQueryProject != null) {
+					mUriMonitor = mQueryProject.getUri().toString();
 				}
-				return uriMonitor;
-			}
-			private String getUriConversations() {
-				if (uriConversation == null) {
-					uriConversation =  Telephony.MmsSms.CONTENT_CONVERSATIONS_URI.toString();
-				}
-				return uriConversation;
+				return mUriMonitor;
 			}
 
-			@Override
+			private String getUriConversations() {
+				if (mUriConversation == null) {
+					mUriConversation =  Telephony.MmsSms.CONTENT_CONVERSATIONS_URI.toString();
+				}
+				return mUriConversation;
+			}
+
 			public void onChange(boolean selfChange, Uri uri) {
 				super.onChange(selfChange, uri);
 				String uriChange = uri.toString();
 				String uriMonitor = getUriMonitor();
 				String uriConversation = getUriConversations();
-				SVLog.i(String.format("ContentObserver.onChange > selfChange:%s, Uri:%s, uriChange:%s, uriMonitor:%s",selfChange, uri, uriChange, uriMonitor));
+				SVLog.i(String.format("ContentObserver.onChange > selfChange:%s, Uri:%s, uriChange:%s, mUriMonitor:%s",selfChange, uri, uriChange, uriMonitor));
 				if (uriChange.equals(uriMonitor) || uriChange.contains(uriConversation)) {
-					if (onContentObserver != null) {
-						onContentObserver.onChange();
+					if (mOnContentObserver != null) {
+						mOnContentObserver.onChange();
 					}
 				}
 			}
@@ -76,25 +77,25 @@ public abstract class AbsMsgReader {
 	abstract public List<CommMsgData> read(Context context);
 
 	public void setQueryConfig(QueryConfig config) {
-		this.queryConfig = config;
+		mQueryConfig = config;
 	}
 
 	protected String getConfigSortOrder() {
-		if(queryConfig != null) {
-			return queryConfig.getComposedSortOrderClause();
+		if(mQueryConfig != null) {
+			return mQueryConfig.getComposedSortOrderClause();
 		}
 		return null;
 	}
 
 	public void registerContentObserver(Context context, boolean notifyForDescendents, OnContentObserver observer) {
-		onContentObserver = observer;
+		mOnContentObserver = observer;
 		ContentResolver cr = context.getContentResolver();
-		cr.registerContentObserver(project.getUri(), notifyForDescendents, contentObserver);
-		SVLog.d("registerContentObserver uri:"+project.getUri());
+		cr.registerContentObserver(mQueryProject.getUri(), notifyForDescendents, mContentObserver);
+		SVLog.d("registerContentObserver uri:"+ mQueryProject.getUri());
 	}
 	public void unregisterContentObserver(Context context, OnContentObserver observer) {
 		ContentResolver cr = context.getContentResolver();
-		cr.unregisterContentObserver(contentObserver);
-		SVLog.d("unregisterContentObserver uri:"+project.getUri());
+		cr.unregisterContentObserver(mContentObserver);
+		SVLog.d("unregisterContentObserver uri:"+ mQueryProject.getUri());
 	}
 }

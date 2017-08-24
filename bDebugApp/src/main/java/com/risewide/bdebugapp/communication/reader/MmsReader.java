@@ -17,12 +17,12 @@ import android.content.Context;
 
 public class MmsReader extends AbsMsgReader {
 
-	private CanonicalAddressReader canonicalAddressReader;
+	private CanonicalAddressReader mCanonicalAddressReader;
 
 	public MmsReader(Context context, QueryConfig config) {
 		super(context, config);
 		initProjection(config);
-		canonicalAddressReader = new CanonicalAddressReader(context, config);
+		mCanonicalAddressReader = new CanonicalAddressReader(context, config);
 	}
 
 	@Override
@@ -34,13 +34,13 @@ public class MmsReader extends AbsMsgReader {
 	private void initProjection(QueryConfig config) {
 		switch (config.getTableType()) {
 			case All:
-				project = new QueryMmsProject.All();
+				mQueryProject = new QueryMmsProject.All();
 				break;
 			case Inbox:
-				project = new QueryMmsProject.Inbox();
+				mQueryProject = new QueryMmsProject.Inbox();
 				break;
 			case Sent:
-				//project = new QueryMmsProject.Sent();
+				//mQueryProject = new QueryMmsProject.Sent();
 				break;
 		}
 	}
@@ -48,16 +48,16 @@ public class MmsReader extends AbsMsgReader {
 	@Override
 	public List<CommMsgData> read(Context context) {
 		//- set configurations
-		project.setExtraLoadMessageData(queryConfig.isExtraLoadMessageData());
-		project.setExtraLoadAddressData(queryConfig.isExtraLoadAddressData());
-		project.setLoadOnlyUnreadData(queryConfig.isSelectLoadOnlyUnread());
-		project.setConfigSortOrder(getConfigSortOrder());
-		project.setSelection(" thread_id=="+queryConfig.getThreadId()+" ");
+		mQueryProject.setExtraLoadMessageData(mQueryConfig.isExtraLoadMessageData());
+		mQueryProject.setExtraLoadAddressData(mQueryConfig.isExtraLoadAddressData());
+		mQueryProject.setLoadOnlyUnreadData(mQueryConfig.isSelectLoadOnlyUnread());
+		mQueryProject.setConfigSortOrder(getConfigSortOrder());
+		mQueryProject.setSelection(" thread_id=="+ mQueryConfig.getThreadId()+" ");
 		//- execute to readAll
-		List<CommMsgData> mmsList = project.readAll(context);
+		List<CommMsgData> mmsList = mQueryProject.readAll(context);
 		//- get canonical address data map (id, address)
-		/*if (queryConfig.isExtraLoadAddressData()) {
-			canonicalAddressReader.setQueryConfig(queryConfig);
+		/*if (mQueryConfig.isExtraLoadAddressData()) {
+			mCanonicalAddressReader.setQueryConfig(mQueryConfig);
 			Map<Long, String> map = getAddresses(context);
 			//- assign address with _id;
 			for (CommMsgData data : mmsList) {
@@ -80,8 +80,8 @@ public class MmsReader extends AbsMsgReader {
 	}
 
 	private Map<Long, String> getAddresses(Context context) {
-		canonicalAddressReader.setQueryConfig(queryConfig);
-		List<CommMsgData> addressList = canonicalAddressReader.read(context);
+		mCanonicalAddressReader.setQueryConfig(mQueryConfig);
+		List<CommMsgData> addressList = mCanonicalAddressReader.read(context);
 		Map<Long, String> map = new HashMap<>();
 		for(CommMsgData data : addressList) {
 			long key = data._id;

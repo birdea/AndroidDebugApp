@@ -273,7 +273,7 @@ public enum InanCharacterSetTable {
 
 	public int code;
 	InanCharacterSetTable(int c) {
-		this.code = c;
+		code = c;
 	}
 
 	private static final String GSM_BASE_ENCODED_CHARACTER_SET = "iso-8859-1";

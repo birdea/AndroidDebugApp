@@ -11,14 +11,14 @@ import android.text.TextUtils;
 
 public class QueryConfig {
 
-	private Order sortOrder = Order.DESC;
-	private TableType tableType = TableType.All;
-	private int orderLimitSize = 0;
-	private String sortOrderColumn = "date";
+	private Order mSortOrder = Order.DESC;
+	private TableType mTableType = TableType.All;
+	private int mOrderLimitSize = 0;
+	private String mSortOrderColumn = "date";
 	private boolean isExtraLoadMessageData = false;
 	private boolean isExtraLoadAddressData = false;
 	private boolean isSelectLoadOnlyUnread = false;
-	private long threadId;
+	private long mThreadId;
 
 	public enum TableType {
 		All,
@@ -27,52 +27,52 @@ public class QueryConfig {
 	}
 
 	public enum Order {
-		DESC,	// descending sortOrder(=내림차순)
-		ASC,	// ascending sortOrder(=오름차순)
+		DESC,	// descending mSortOrder(=내림차순)
+		ASC,	// ascending mSortOrder(=오름차순)
 	}
 
 	public void setSortOrder(Order order) {
 		if(order!=null) {
-			this.sortOrder = order;
+			mSortOrder = order;
 		}
 	}
 
 	public Order getSortOrder() {
-		return sortOrder;
+		return mSortOrder;
 	}
 
 	public void setSortOrderColumn(String column) {
 		if(column!=null && !TextUtils.isEmpty(column.trim())) {
-			this.sortOrderColumn = column.trim();
+			mSortOrderColumn = column.trim();
 		}
 	}
 
 	public String getSortOrderClause() {
-		if(!TextUtils.isEmpty(sortOrderColumn)) {
-			return String.format(" %s %s ", sortOrderColumn, sortOrder.name());
+		if(!TextUtils.isEmpty(mSortOrderColumn)) {
+			return String.format(" %s %s ", mSortOrderColumn, mSortOrder.name());
 		}
 		return null;
 	}
 
 	public TableType getTableType() {
-		return tableType;
+		return mTableType;
 	}
 
-	public void setTableType(TableType tableType) {
-		this.tableType = tableType;
+	public void setTableType(TableType type) {
+		mTableType = type;
 	}
 
 	public void setLimitSize(int size) {
-		orderLimitSize = size;
+		mOrderLimitSize = size;
 	}
 
 	public int getLimitSize() {
-		return orderLimitSize;
+		return mOrderLimitSize;
 	}
 
 	private String getClauseLimitSize() {
-		if (orderLimitSize > 0) {
-			return String.format(" LIMIT %d ", orderLimitSize);
+		if (mOrderLimitSize > 0) {
+			return String.format(" LIMIT %d ", mOrderLimitSize);
 		}
 		return null;
 	}
@@ -126,10 +126,10 @@ public class QueryConfig {
 	}
 
 	public long getThreadId() {
-		return threadId;
+		return mThreadId;
 	}
 
-	public void setThreadId(long threadId) {
-		this.threadId = threadId;
+	public void setThreadId(long id) {
+		mThreadId = id;
 	}
 }

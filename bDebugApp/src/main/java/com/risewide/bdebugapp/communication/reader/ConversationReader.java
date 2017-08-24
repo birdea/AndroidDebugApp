@@ -17,7 +17,7 @@ import android.text.TextUtils;
 
 public class ConversationReader extends AbsMsgReader {
 
-	private CanonicalAddressReader canonicalAddressReader;
+	private CanonicalAddressReader mCanonicalAddressReader;
 
 	public ConversationReader(Context context, QueryConfig config) {
 		super(context, config);
@@ -25,22 +25,22 @@ public class ConversationReader extends AbsMsgReader {
 	}
 
 	private void init(Context context, QueryConfig config) {
-		project = QueryConversationProject.getProject(context);
-		canonicalAddressReader = new CanonicalAddressReader(context, config);
+		mQueryProject = QueryConversationProject.getProject(context);
+		mCanonicalAddressReader = new CanonicalAddressReader(context, config);
 	}
 
 	@Override
 	public List<CommMsgData> read(Context context) {
 		//- set configurations
-		project.setExtraLoadMessageData(queryConfig.isExtraLoadMessageData());
-		project.setExtraLoadAddressData(queryConfig.isExtraLoadAddressData());
-		project.setLoadOnlyUnreadData(queryConfig.isSelectLoadOnlyUnread());
-		project.setConfigSortOrder(getConfigSortOrder());
+		mQueryProject.setExtraLoadMessageData(mQueryConfig.isExtraLoadMessageData());
+		mQueryProject.setExtraLoadAddressData(mQueryConfig.isExtraLoadAddressData());
+		mQueryProject.setLoadOnlyUnreadData(mQueryConfig.isSelectLoadOnlyUnread());
+		mQueryProject.setConfigSortOrder(getConfigSortOrder());
 		//- execute to readAll
-		List<CommMsgData> conversations = project.readAll(context);
+		List<CommMsgData> conversations = mQueryProject.readAll(context);
 		//- get canonical address data map (id, address)
-		if (queryConfig.isExtraLoadAddressData()) {
-			canonicalAddressReader.setQueryConfig(queryConfig);
+		if (mQueryConfig.isExtraLoadAddressData()) {
+			mCanonicalAddressReader.setQueryConfig(mQueryConfig);
 			Map<Long, String> map = getAddresses(context);
 			//- assign address with _id;
 			for (CommMsgData data : conversations) {
@@ -67,8 +67,8 @@ public class ConversationReader extends AbsMsgReader {
 	}
 
 	private Map<Long, String> getAddresses(Context context) {
-		canonicalAddressReader.setQueryConfig(queryConfig);
-		List<CommMsgData> addressList = canonicalAddressReader.read(context);
+		mCanonicalAddressReader.setQueryConfig(mQueryConfig);
+		List<CommMsgData> addressList = mCanonicalAddressReader.read(context);
 		Map<Long, String> map = new HashMap<>();
 		for(CommMsgData data : addressList) {
 			long key = data._id;

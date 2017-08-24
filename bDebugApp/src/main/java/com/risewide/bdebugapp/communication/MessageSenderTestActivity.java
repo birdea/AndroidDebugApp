@@ -36,11 +36,12 @@ import android.widget.TextView;
 
 public class MessageSenderTestActivity extends BaseActivity{
 
-	CommUnifyMessageSender smsUnifyMessageSender;
-	HandyListAdapter handyListAdapter;
-	//
-	TextView tvDeviceInfo, tvMsgSize, tvMsgTitle;
-	EditText etTextMessage;
+	private CommUnifyMessageSender mCommUnifyMessageSender;
+	private HandyListAdapter mHandyListAdapter;
+
+	//- view component
+	private TextView tvDeviceInfo, tvMsgSize, tvMsgTitle;
+	private EditText etTextMessage;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,19 +84,19 @@ public class MessageSenderTestActivity extends BaseActivity{
 			public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
 				switch (checkedId) {
 					case R.id.rbProtocolTypeAuto:
-						smsUnifyMessageSender.setProtocolType(CommMsgSendType.AUTO_ADJUST);
+						mCommUnifyMessageSender.setCommMsgSendType(CommMsgSendType.AUTO_ADJUST);
 						break;
 					case R.id.rbProtocolTypeSms:
-						smsUnifyMessageSender.setProtocolType(CommMsgSendType.SMS);
+						mCommUnifyMessageSender.setCommMsgSendType(CommMsgSendType.SMS);
 						break;
 					case R.id.rbProtocolTypeLms:
-						smsUnifyMessageSender.setProtocolType(CommMsgSendType.LMS);
+						mCommUnifyMessageSender.setCommMsgSendType(CommMsgSendType.LMS);
 						break;
 					case R.id.rbProtocolTypeMms:
-						smsUnifyMessageSender.setProtocolType(CommMsgSendType.MMS);
+						mCommUnifyMessageSender.setCommMsgSendType(CommMsgSendType.MMS);
 						break;
 				}
-				addEventMessage("rgProtocolType.checked:"+checkedId+","+ smsUnifyMessageSender.getProtocolType());
+				addEventMessage("rgProtocolType.checked:"+checkedId+","+ mCommUnifyMessageSender.getCommMsgSendType());
 			}
 		});
 
@@ -124,29 +125,29 @@ public class MessageSenderTestActivity extends BaseActivity{
 			}
 		});
 
-		handyListAdapter = new HandyListAdapter(this, HandyListAdapter.Mode.BODY_ONLY);
+		mHandyListAdapter = new HandyListAdapter(this, HandyListAdapter.Mode.BODY_ONLY);
 		ListView lvEvents = (ListView) findViewById(R.id.lvEvents);
-		lvEvents.setAdapter(handyListAdapter);
+		lvEvents.setAdapter(mHandyListAdapter);
 	}
 
 	private void addEventMessage(String event) {
 		SVLog.i(event);
-		if(handyListAdapter == null) {
+		if(mHandyListAdapter == null) {
 			return;
 		}
-		handyListAdapter.addAndnotifyDataSetChanged(null, event);
+		mHandyListAdapter.addAndnotifyDataSetChanged(null, event);
 	}
 
 	private void initCont() {
-		smsUnifyMessageSender = new CommUnifyMessageSender();
-		smsUnifyMessageSender.setOnHandyEventListener(new OnHandyEventListener() {
+		mCommUnifyMessageSender = new CommUnifyMessageSender();
+		mCommUnifyMessageSender.setOnHandyEventListener(new OnHandyEventListener() {
 			@Override
 			public void onEvent(String msg) {
 				addEventMessage(msg);
 			}
 		});
 
-		if(!smsUnifyMessageSender.hasPermission(this)){
+		if(!mCommUnifyMessageSender.hasPermission(this)){
 			TToast.show(this, "need to get permissions..");
 			finish();
 		}
@@ -181,10 +182,9 @@ public class MessageSenderTestActivity extends BaseActivity{
 		}
 	}
 
-	IntentActionHelper intentActionHelper = new IntentActionHelper();
-
+	private IntentActionHelper mIntentActionHelper = new IntentActionHelper();
 	private void selectReceiver() {
-		intentActionHelper.selectReceiverPhoneNumber(this, new IntentActionHelper.OnActivityResultDispatcher() {
+		mIntentActionHelper.selectReceiverPhoneNumber(this, new IntentActionHelper.OnActivityResultDispatcher() {
 			@Override
 			public void dispatcher(int resultCode, Intent data) {
 				if (resultCode == RESULT_OK) {
@@ -194,7 +194,7 @@ public class MessageSenderTestActivity extends BaseActivity{
 								new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
 										ContactsContract.CommonDataKinds.Phone.NUMBER}, null, null, null);
 						if (cursor.moveToFirst()) {
-							MsgSendData messageData = smsUnifyMessageSender.getMessageData();
+							MsgSendData messageData = mCommUnifyMessageSender.getMsgSendData();
 							messageData.setNameReceiver(cursor.getString(0));
 							messageData.setPhoneNumberReceiver(cursor.getString(1));
 						}
@@ -204,8 +204,8 @@ public class MessageSenderTestActivity extends BaseActivity{
 					}
 					EditText etReceiverName = (EditText)findViewById(R.id.etReceiverName);
 					EditText etReceiverNumber = (EditText)findViewById(R.id.etReceiverNumber);
-					etReceiverName.setText(String.valueOf(smsUnifyMessageSender.getMessageData().nameReceiver));
-					etReceiverNumber.setText(String.valueOf(smsUnifyMessageSender.getMessageData().phoneNumberReceiver));
+					etReceiverName.setText(String.valueOf(mCommUnifyMessageSender.getMsgSendData().nameReceiver));
+					etReceiverNumber.setText(String.valueOf(mCommUnifyMessageSender.getMsgSendData().phoneNumberReceiver));
 					addEventMessage("selectReceiver-resultCode:"+resultCode+" > see (name, number)");
 				} else {
 					addEventMessage("selectReceiver-resultCode:"+resultCode+" > not selected");
@@ -216,7 +216,7 @@ public class MessageSenderTestActivity extends BaseActivity{
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		intentActionHelper.onActivityResultDispatcher(requestCode, resultCode, data);
+		mIntentActionHelper.onActivityResultDispatcher(requestCode, resultCode, data);
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
@@ -240,7 +240,7 @@ public class MessageSenderTestActivity extends BaseActivity{
 	}
 
 	private void selectImage() {
-		intentActionHelper.selectGaleryImage(this, new IntentActionHelper.OnActivityResultDispatcher() {
+		mIntentActionHelper.selectGaleryImage(this, new IntentActionHelper.OnActivityResultDispatcher() {
 			@Override
 			public void dispatcher(int resultCode, Intent data) {
 				if (resultCode == RESULT_OK) {
@@ -249,7 +249,7 @@ public class MessageSenderTestActivity extends BaseActivity{
 						if (imageUri != null) {
 							EditText etImageDataInfo = (EditText)findViewById(R.id.etImageDataInfo);
 							etImageDataInfo.setText(imageUri.getPath());
-							MsgSendData messageData = smsUnifyMessageSender.getMessageData();
+							MsgSendData messageData = mCommUnifyMessageSender.getMsgSendData();
 							messageData.setImageUri(imageUri);
 						}
 					}
@@ -275,19 +275,19 @@ public class MessageSenderTestActivity extends BaseActivity{
 		numberReceiver = WidgetHelper.getTextString(etReceiverNumber);
 		textMessage = WidgetHelper.getTextString(etTextMessage);
 		//
-		MsgSendData messageData = smsUnifyMessageSender.getMessageData();
+		MsgSendData messageData = mCommUnifyMessageSender.getMsgSendData();
 		messageData.setPhoneNumberSender(numberSender);
 		messageData.setPhoneNumberReceiver(numberReceiver);
 		messageData.setTextMessage(textMessage);
 		//
-		smsUnifyMessageSender.send(this, new AbsMessageSender.OnSendTextMessageListener() {
+		mCommUnifyMessageSender.send(this, new AbsMessageSender.OnSendTextMessageListener() {
 			@Override
 			public void onSent(boolean success) {
-				SVLog.i("smsUnifyMessageSender.onSent:"+success);
+				SVLog.i("mCommUnifyMessageSender.onSent:"+success);
 			}
 			@Override
 			public void onReceived(boolean success) {
-				SVLog.i("smsUnifyMessageSender.onReceived:"+success);
+				SVLog.i("mCommUnifyMessageSender.onReceived:"+success);
 			}
 		});
 	}

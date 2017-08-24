@@ -28,13 +28,13 @@ public class SmsReader extends AbsMsgReader {
 	private void initProjection(QueryConfig config) {
 		switch (config.getTableType()) {
 			case All:
-				project = new QuerySmsProject.All();
+				mQueryProject = new QuerySmsProject.All();
 				break;
 			case Inbox:
-				project = new QuerySmsProject.Inbox();
+				mQueryProject = new QuerySmsProject.Inbox();
 				break;
 			case Sent:
-				project = new QuerySmsProject.Sent();
+				mQueryProject = new QuerySmsProject.Sent();
 				break;
 		}
 	}
@@ -42,12 +42,12 @@ public class SmsReader extends AbsMsgReader {
 	@Override
 	public List<CommMsgData> read(Context context) {
 		//- set configurations
-		project.setExtraLoadMessageData(queryConfig.isExtraLoadMessageData());
-		project.setExtraLoadAddressData(queryConfig.isExtraLoadAddressData());
-		project.setLoadOnlyUnreadData(queryConfig.isSelectLoadOnlyUnread());
-		project.setConfigSortOrder(getConfigSortOrder());
-		project.setSelection(" thread_id=="+queryConfig.getThreadId()+" ");
+		mQueryProject.setExtraLoadMessageData(mQueryConfig.isExtraLoadMessageData());
+		mQueryProject.setExtraLoadAddressData(mQueryConfig.isExtraLoadAddressData());
+		mQueryProject.setLoadOnlyUnreadData(mQueryConfig.isSelectLoadOnlyUnread());
+		mQueryProject.setConfigSortOrder(getConfigSortOrder());
+		mQueryProject.setSelection(" thread_id=="+ mQueryConfig.getThreadId()+" ");
 		//- execute to readAll
-		return project.readAll(context);
+		return mQueryProject.readAll(context);
 	}
 }

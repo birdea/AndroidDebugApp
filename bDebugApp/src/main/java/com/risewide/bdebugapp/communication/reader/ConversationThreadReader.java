@@ -20,22 +20,22 @@ import android.content.Context;
 
 public class ConversationThreadReader extends AbsMsgReader {
 
-	private MmsReader mmsReader;
-	private SmsReader smsReader;
+	private MmsReader mMmsReader;
+	private SmsReader mSmsReader;
 
 	public ConversationThreadReader(Context context, QueryConfig config) {
 		super(context, config);
-		mmsReader = new MmsReader(context, config);
-		smsReader = new SmsReader(context, config);
+		mMmsReader = new MmsReader(context, config);
+		mSmsReader = new SmsReader(context, config);
 	}
 
 	@Override
 	public void setQueryConfig(QueryConfig config) {
 		super.setQueryConfig(config);
-		if (mmsReader!=null)
-			mmsReader.setQueryConfig(config);
-		if (smsReader!=null)
-			smsReader.setQueryConfig(config);
+		if (mMmsReader !=null)
+			mMmsReader.setQueryConfig(config);
+		if (mSmsReader !=null)
+			mSmsReader.setQueryConfig(config);
 	}
 
 	@Override
@@ -44,18 +44,18 @@ public class ConversationThreadReader extends AbsMsgReader {
 		List<CommMsgData> conversations = new ArrayList<>();
 
 		//-step.2 get each protocol msg on same-thread or multi-thread (if it needs)
-		List<CommMsgData> mmsList = mmsReader.read(context);
-		List<CommMsgData> smsList = smsReader.read(context);
+		List<CommMsgData> mmsList = mMmsReader.read(context);
+		List<CommMsgData> smsList = mSmsReader.read(context);
 
 		//-step.3 fill each result list on empty list
 		conversations.addAll(mmsList);
 		conversations.addAll(smsList);
 
 		//-step.4 sort (desc or asc)
-		Collections.sort(conversations, getComparator(queryConfig.getSortOrder()));
+		Collections.sort(conversations, getComparator(mQueryConfig.getSortOrder()));
 
 		//-step.5 make sub list for limit
-		int limit = queryConfig.getLimitSize();
+		int limit = mQueryConfig.getLimitSize();
 		int length = conversations.size();
 		if (limit > 0 && length > limit) {
 			conversations = conversations.subList(0, limit);

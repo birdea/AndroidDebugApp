@@ -17,9 +17,9 @@ public class DelayChecker {
 	private long baseTime;
 	private long lastDelayTime;
 
-	public void start(String tag) {
-		this.count = 0;
-		this.tag = tag;
+	public void start(String tagName) {
+		count = 0;
+		tag = tagName;
 		baseTime = System.currentTimeMillis();
 	}
 

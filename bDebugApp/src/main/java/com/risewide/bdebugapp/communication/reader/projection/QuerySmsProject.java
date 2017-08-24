@@ -64,9 +64,9 @@ public class QuerySmsProject {
 		@Override
 		public String getSelection() {
 			if (isLoadOnlyUnreadData) {
-				return selection+" AND "+Telephony.Mms.READ+"!=1";
+				return mSelection +" AND "+Telephony.Mms.READ+"!=1";
 			}
-			return selection;
+			return mSelection;
 		}
 
 		@Override
@@ -82,7 +82,7 @@ public class QuerySmsProject {
 		@Override
 		public List<CommMsgData> readAll(Context context) {
 			ContentResolver resolver = context.getContentResolver();
-			Cursor cursor = resolver.query(getUri(), getProjection(), getSelection(), getSelectionArgs(), sortOrder);
+			Cursor cursor = resolver.query(getUri(), getProjection(), getSelection(), getSelectionArgs(), mSortOrder);
 
 			List<CommMsgData> list = new ArrayList<>();
 			if (cursor != null && cursor.moveToFirst()) {
@@ -142,9 +142,9 @@ public class QuerySmsProject {
 		@Override
 		public String getSelection() {
 			if (isLoadOnlyUnreadData) {
-				return selection+" AND "+Telephony.Mms.READ+"!=1";
+				return mSelection +" AND "+Telephony.Mms.READ+"!=1";
 			}
-			return selection;
+			return mSelection;
 		}
 
 		@Override
@@ -160,7 +160,7 @@ public class QuerySmsProject {
 		@Override
 		public List<CommMsgData> readAll(Context context) {
 			ContentResolver resolver = context.getContentResolver();
-			Cursor cursor = resolver.query(getUri(), getProjection(), getSelection(), getSelectionArgs(), sortOrder);
+			Cursor cursor = resolver.query(getUri(), getProjection(), getSelection(), getSelectionArgs(), mSortOrder);
 
 			List<CommMsgData> list = new ArrayList<>();
 			if (cursor != null && cursor.moveToFirst()) {
@@ -220,9 +220,9 @@ public class QuerySmsProject {
 		@Override
 		public String getSelection() {
 			if (isLoadOnlyUnreadData) {
-				return selection+" AND "+Telephony.Mms.READ+"!=1";
+				return mSelection +" AND "+Telephony.Mms.READ+"!=1";
 			}
-			return selection;
+			return mSelection;
 		}
 
 		@Override
@@ -238,7 +238,7 @@ public class QuerySmsProject {
 		@Override
 		public List readAll(Context context) {
 			ContentResolver resolver = context.getContentResolver();
-			Cursor cursor = resolver.query(getUri(), getProjection(), getSelection(), getSelectionArgs(), sortOrder);
+			Cursor cursor = resolver.query(getUri(), getProjection(), getSelection(), getSelectionArgs(), mSortOrder);
 
 			List<CommMsgData> list = new ArrayList<>();
 			if (cursor != null && cursor.moveToFirst()) {

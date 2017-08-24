@@ -16,17 +16,17 @@ public class CanonicalAddressReader extends AbsMsgReader {
 
 	public CanonicalAddressReader(Context context, QueryConfig config) {
 		super(context, config);
-		project = new QueryCanonicalAddressProject.CanonicalAddressProject();
+		mQueryProject = new QueryCanonicalAddressProject.CanonicalAddressProject();
 	}
 
 	@Override
 	public List<CommMsgData> read(Context context) {
 		//- set configurations
-		project.setExtraLoadMessageData(queryConfig.isExtraLoadMessageData());
-		project.setExtraLoadAddressData(queryConfig.isExtraLoadAddressData());
-		project.setLoadOnlyUnreadData(queryConfig.isSelectLoadOnlyUnread());
-		project.setConfigSortOrder(getConfigSortOrder());
+		mQueryProject.setExtraLoadMessageData(mQueryConfig.isExtraLoadMessageData());
+		mQueryProject.setExtraLoadAddressData(mQueryConfig.isExtraLoadAddressData());
+		mQueryProject.setLoadOnlyUnreadData(mQueryConfig.isSelectLoadOnlyUnread());
+		mQueryProject.setConfigSortOrder(getConfigSortOrder());
 		//- execute to readAll
-		return project.readAll(context);
+		return mQueryProject.readAll(context);
 	}
 }

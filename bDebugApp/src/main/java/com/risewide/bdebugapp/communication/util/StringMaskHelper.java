@@ -19,9 +19,9 @@ public class StringMaskHelper {
 		PUNCT("\\p{Punct}"), // Punctuation : [!"#$%&'()*+,-./:;<=>?@[\]^_`{\}]
 		DIGIT("\\p{Digit}"); // Decimal Digits : [0-9]
 
-		public final String regex;
+		public final String regularExpress;
 		CharRegExType(String regex) {
-			this.regex = regex;
+			regularExpress = regex;
 		}
 	}
 
@@ -65,7 +65,7 @@ public class StringMaskHelper {
 				if (i != 0) {
 					builder.append("|");
 				}
-				builder.append(CHAR_REG_EX_TYPE[i].regex);
+				builder.append(CHAR_REG_EX_TYPE[i].regularExpress);
 			}
 			pattern = Pattern.compile(builder.toString());
 		}
