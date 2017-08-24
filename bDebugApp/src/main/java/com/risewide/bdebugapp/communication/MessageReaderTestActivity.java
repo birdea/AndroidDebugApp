@@ -44,7 +44,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_handletextmessage);
+		setContentView(R.layout.activity_text_message_read);
 		initView();
 		initCont();
 	}

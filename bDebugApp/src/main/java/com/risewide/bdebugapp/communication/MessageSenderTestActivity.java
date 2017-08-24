@@ -46,7 +46,7 @@ public class MessageSenderTestActivity extends BaseActivity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_message_test);
+		setContentView(R.layout.activity_text_message_send);
 		initCont();
 		initView();
 		addEventMessage("onCreate.inited");
