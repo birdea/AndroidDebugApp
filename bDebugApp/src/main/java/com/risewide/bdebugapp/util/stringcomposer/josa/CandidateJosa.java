@@ -1,9 +1,12 @@
-package com.risewide.bdebugapp.util.stringcomposer;
+package com.risewide.bdebugapp.util.stringcomposer.josa;
+
+import com.risewide.bdebugapp.util.stringcomposer.format.FormatSpecifier;
 
 /**
  * 각 korean enum 에 대한 로마자 변환은 아래 사이트를 참고.
- * http://roman.cs.pusan.ac.kr/
  *
+ *
+ * @see <p><a href="http://roman.cs.pusan.ac.kr/">로마자 변환 참고 사이트</a></p>
  * Created by birdea on 2016-11-22.
  */
 
@@ -28,28 +31,31 @@ public enum CandidateJosa {
 		josaWithoutJongsung = josaWithout;
 	}
 
-	public static CandidateJosa getJosaSet(String formedSentence) {
-		FormatSpecifier[] formatArray = FormatSpecifier.values();
+	public static CandidateJosa getJosaSet(String formatSentence) {
+		FormatSpecifier[] formats = FormatSpecifier.values();
 		for (CandidateJosa josa : values()) {
-			if (josa.isContained(formedSentence, formatArray)) {
+			if (josa.isContained(formatSentence, formats)) {
 				return josa;
 			}
 		}
-			/*
-			 * CandidateJosa[] josas = values(); for (int i = 0; i < formedSentence.length(); i++) { char c =
-			 * formedSentence.charAt(i); for(CandidateJosa josa : josas) { if(josa.isMatched(String.valueOf(c))){ return
-			 * josa; } } }
-			 */
 		return CandidateJosa.UNKNOWN;
 	}
 
+	/**
+	 * <p>특정 문장에 알려진 포맷터와 알려진 조사가 (내부) 규격대로 올바로 구성되어 있는지 체크</p>
+	 * ex: %s는 오케이입니다. (acceptable)<br>
+	 * ex: %s 는 낫오케이입니다. (not-acceptable)<br>
+	 * @param sentence
+	 * @param formatArray
+	 * @return
+	 */
 	public boolean isContained(String sentence, FormatSpecifier[] formatArray) {
 		if (josaWithJongsung == null || josaWithoutJongsung == null) {
 			return false;
 		}
 		for (FormatSpecifier formatSpecifier : formatArray) {
-			String prefix = formatSpecifier.format;
-			if((sentence.contains(prefix + josaWithJongsung) || sentence.contains(prefix + josaWithoutJongsung))) {
+			String prefix = formatSpecifier.getFormat();
+			if ((sentence.contains(prefix + josaWithJongsung) || sentence.contains(prefix + josaWithoutJongsung))) {
 				return true;
 			}
 		}

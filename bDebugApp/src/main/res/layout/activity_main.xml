@@ -132,5 +132,15 @@
                 android:text="aidl activity"/>
         </TableRow>
 
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <Button
+                android:id="@+id/btnKoreanJosaComposerTest"
+                style="@style/btnCommonLayout"
+                android:text="Korean Josa Composer Test"/>
+        </TableRow>
+
     </LinearLayout>
 </ScrollView>
