@@ -3,7 +3,6 @@ package com.risewide.bdebugapp.util.stringcomposer.spec;
 import com.risewide.bdebugapp.util.SLog;
 
 public enum MatcherArabicToKorean {
-	_0(0, '공'),
 	// scope x={1~9}
 	_1(1, '일'),
 	_2(2, '이'),
@@ -24,6 +23,7 @@ public enum MatcherArabicToKorean {
 	_10p12(1000000000000L, '조'),
 	_10p16(10000000000000000L, '경'),
 	//_해(100000000000000000000L, "해"),
+	_0(0, '공'),
 	;
 	
 	long value;
@@ -38,12 +38,10 @@ public enum MatcherArabicToKorean {
 		return korean;
 	}
 
-	public long getDivider() {
-		return value * 10;
-	}
-
 	public static MatcherArabicToKorean get(long value) {
-		// int > String > get last char > compare with ..
+		if (value < 0) {
+			value = Math.abs(value);
+		}
 		String number = String.valueOf(value);
 		int length = number.length();
 		int idx = length;
@@ -69,6 +67,9 @@ public enum MatcherArabicToKorean {
 	
 	private static MatcherArabicToKorean find(long value){
 		MatcherArabicToKorean defSpec = _0;
+		if (value == 0) {
+			return _0;
+		}
 		for(MatcherArabicToKorean spec : values()) {
 			if(value < _10p4.value) {
 				if(spec.value == value) {
@@ -76,10 +77,13 @@ public enum MatcherArabicToKorean {
 				}
 			} else {
 				long divider = spec.value;
+				if (divider == 0) {
+					return defSpec;
+				}
 				int divide = (int) (value / divider);
 				int nextDivide = (int) (value / divider * 10000);
 				SLog.d("MatcherArabicToKorean.find-korean.value, value:"+value + ", divider:"+divider +", divide:"+divide+", nextDivide:"+nextDivide);
-				if(divide == 0) {
+				if (divide == 0) {
 					return defSpec;
 				}
 			}

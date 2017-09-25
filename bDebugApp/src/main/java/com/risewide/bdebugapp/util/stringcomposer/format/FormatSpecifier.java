@@ -1,7 +1,7 @@
 package com.risewide.bdebugapp.util.stringcomposer.format;
 
 import com.risewide.bdebugapp.util.stringcomposer.composer.JosaComposerInteger;
-import com.risewide.bdebugapp.util.stringcomposer.composer.JosaComposerString;
+import com.risewide.bdebugapp.util.stringcomposer.composer.JosaComposerObject;
 import com.risewide.bdebugapp.util.stringcomposer.composer.JosaComposer;
 
 /**
@@ -14,7 +14,7 @@ public enum FormatSpecifier {
 		@Override
 		public JosaComposer getComposer() {
 			if (josaComposer == null) {
-				return new JosaComposerString();
+				return new JosaComposerObject();
 			}
 			return josaComposer;
 		}

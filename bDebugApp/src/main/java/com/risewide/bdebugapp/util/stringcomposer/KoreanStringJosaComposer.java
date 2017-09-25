@@ -88,6 +88,7 @@ public class KoreanStringJosaComposer implements IStringJosaComposer {
 				return formatString;
 			}
 		}
+		Log("[valid] selected FormatSpecifier :" + formatSpecifier);
 
 		CandidateJosa josaSet = CandidateJosa.getJosaSet(formatString);
 		if (CandidateJosa.UNKNOWN.equals(josaSet)) {

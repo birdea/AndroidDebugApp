@@ -16,7 +16,7 @@ public class JosaComposerInteger extends JosaComposer<Integer> {
 	@Override
 	public JosaSet select(Integer integer, String josaWithJongsung, String josaWithoutJongsung) {
 		// step.1 - check if param is empty
-		if (TextUtils.isEmpty(josaWithJongsung) || TextUtils.isEmpty(josaWithoutJongsung)) {
+		if (integer == null || TextUtils.isEmpty(josaWithJongsung) || TextUtils.isEmpty(josaWithoutJongsung)) {
 			SLog.w("[except] getMultiSentenceWithJosa. StringUtils.isEmpty integer:" + integer + ", arg1:"
 					+ josaWithJongsung + ", arg2:" + josaWithoutJongsung);
 			return new JosaSet("","");
@@ -26,7 +26,7 @@ public class JosaComposerInteger extends JosaComposer<Integer> {
 		char lastChar = pak.getKoreanChar();
 		SLog.d("JosaComposerInteger.selected-lastChar:"+lastChar + ", word:"+integer);
 		// step.3 - check if korean, since it should be
-		if (JosaComposerString.isKoreanChar(lastChar)) {
+		if (JosaComposerObject.isKoreanChar(lastChar)) {
 			// step.3 - select the josa
 			if ((lastChar - 0xAC00) % 28 > 0) {
 				return new JosaSet(josaWithJongsung, josaWithoutJongsung);

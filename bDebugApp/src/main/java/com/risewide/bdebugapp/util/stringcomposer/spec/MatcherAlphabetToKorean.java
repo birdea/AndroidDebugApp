@@ -50,12 +50,13 @@ public enum MatcherAlphabetToKorean {
 
 	@NonNull
 	public static MatcherAlphabetToKorean getKoreanWord(char engWord) {
+		char lowerCaseChar = Character.toLowerCase(engWord);
 		MatcherAlphabetToKorean selected = null;
 		for(MatcherAlphabetToKorean candi : values()) {
 			if (MatcherAlphabetToKorean.UNKNOWN.equals(candi)) {
 				continue;
 			}
-			if (candi.word == engWord) {
+			if (candi.word == lowerCaseChar) {
 				selected = candi;
 				break;
 			}
