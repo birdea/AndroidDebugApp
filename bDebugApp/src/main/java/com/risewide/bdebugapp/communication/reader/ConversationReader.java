@@ -51,15 +51,15 @@ public class ConversationReader extends AbsMsgReader {
 					key = data.thread_id;
 				}
 				if (!TextUtils.isEmpty(data.address)) {
-					//SVLog.d("already has address:"+data.address+", _id:"+data._id);
+					//SLog.d("already has address:"+data.address+", _id:"+data._id);
 					continue;
 				}
 				if (map.containsKey(key)) {
 					String address = map.get(key);
 					data.address = address;
-					//SVLog.d("assign ["+key+"] address:"+address);
+					//SLog.d("assign ["+key+"] address:"+address);
 				} else {
-					//SVLog.d("no assign ["+key+"]");
+					//SLog.d("no assign ["+key+"]");
 				}
 			}
 		}
@@ -73,9 +73,9 @@ public class ConversationReader extends AbsMsgReader {
 		for(CommMsgData data : addressList) {
 			long key = data._id;
 			if (map.containsKey(key)) {
-				//SVLog.d("build map - key["+key+"] is contained..");
+				//SLog.d("build map - key["+key+"] is contained..");
 			} else {
-				//SVLog.d("build map - key["+key+"] address:"+data.address);
+				//SLog.d("build map - key["+key+"] address:"+data.address);
 				map.put(key, data.address);
 			}
 		}

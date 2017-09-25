@@ -10,7 +10,7 @@ import com.risewide.bdebugapp.communication.util.OnHandyEventListener;
 import com.risewide.bdebugapp.communication.util.TToast;
 import com.risewide.bdebugapp.communication.util.WidgetHelper;
 import com.risewide.bdebugapp.util.DeviceInfo;
-import com.risewide.bdebugapp.util.SVLog;
+import com.risewide.bdebugapp.util.SLog;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -131,7 +131,7 @@ public class MessageSenderTestActivity extends BaseActivity{
 	}
 
 	private void addEventMessage(String event) {
-		SVLog.i(event);
+		SLog.i(event);
 		if(mHandyListAdapter == null) {
 			return;
 		}
@@ -283,11 +283,11 @@ public class MessageSenderTestActivity extends BaseActivity{
 		mCommUnifyMessageSender.send(this, new AbsMessageSender.OnSendTextMessageListener() {
 			@Override
 			public void onSent(boolean success) {
-				SVLog.i("mCommUnifyMessageSender.onSent:"+success);
+				SLog.i("mCommUnifyMessageSender.onSent:"+success);
 			}
 			@Override
 			public void onReceived(boolean success) {
-				SVLog.i("mCommUnifyMessageSender.onReceived:"+success);
+				SLog.i("mCommUnifyMessageSender.onReceived:"+success);
 			}
 		});
 	}

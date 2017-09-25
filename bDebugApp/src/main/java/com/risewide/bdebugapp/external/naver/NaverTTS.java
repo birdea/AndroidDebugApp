@@ -19,7 +19,7 @@ import android.os.Environment;
 import com.risewide.bdebugapp.external.naver.config.NaverApiConfig;
 
 /**
- * Created by sktechx on 2017-02-14.
+ * Created by birdea on 2017-02-14.
  */
 
 public class NaverTTS {

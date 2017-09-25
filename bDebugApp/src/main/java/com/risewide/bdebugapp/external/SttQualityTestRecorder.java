@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.os.Environment;
 
-import com.risewide.bdebugapp.util.SVLog;
+import com.risewide.bdebugapp.util.SLog;
 
 /**
  * Created by birdea on 2017-02-14.
@@ -39,7 +39,7 @@ public class SttQualityTestRecorder {
 			br = new BufferedWriter(fw);
 			//
 			count = 0;
-			SVLog.i("init!");
+			SLog.i("init!");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -50,7 +50,7 @@ public class SttQualityTestRecorder {
 			if(br != null) {
 				br.close();
 				br = null;
-				SVLog.i("release!");
+				SLog.i("release!");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -79,7 +79,7 @@ public class SttQualityTestRecorder {
 				br.write(encoded);
 				br.newLine();
 				br.flush();
-				SVLog.i("write:"+encoded);
+				SLog.i("write:"+encoded);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

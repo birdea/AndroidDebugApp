@@ -19,7 +19,7 @@ import android.widget.MediaController;
 import com.risewide.bdebugapp.BaseActivity;
 import com.risewide.bdebugapp.R;
 import com.risewide.bdebugapp.adapter.HandyListAdapter;
-import com.risewide.bdebugapp.util.SVLog;
+import com.risewide.bdebugapp.util.SLog;
 
 /**
  * Created by birdea on 2017-02-14.
@@ -199,11 +199,11 @@ public class SpeechDemoGoogleActivity extends BaseActivity {
 		}
 		if(Mode.Google.equals(mode)) {
 			mode.trigger(this, getPackageName());
-			SVLog.i("Google.start!");
+			SLog.i("Google.start!");
 		} else {
 
 			if(false == SpeechRecognizer.isRecognitionAvailable(this)) {
-				SVLog.i("SpeechRecognizer.can not run!");
+				SLog.i("SpeechRecognizer.can not run!");
 				//return;
 			}
 			speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);            //음성인식 intent생성
@@ -215,7 +215,7 @@ public class SpeechDemoGoogleActivity extends BaseActivity {
 			speechIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, PARAM_STT_MAX_RESULT);
 			speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say something...");
 			speechRecognizer.startListening(speechIntent);
-			SVLog.i("SpeechRecognizer.startListening");
+			SLog.i("SpeechRecognizer.startListening");
 		}
 	}
 
@@ -233,7 +233,7 @@ public class SpeechDemoGoogleActivity extends BaseActivity {
 			case REQ_CODE_STT_GOOGLE: {
 				if(resultCode == RESULT_OK && data != null) {
 					List<String> list = Mode.Google.receive(data);
-					SVLog.i("# speech text list size : "+list.size());
+					SLog.i("# speech text list size : "+list.size());
 					for(String result : list) {
 						addListParam("onActivityResult() > result", result);
 					}
@@ -264,49 +264,49 @@ public class SpeechDemoGoogleActivity extends BaseActivity {
 	private RecognitionListener listener = new RecognitionListener() {
 		@Override
 		public void onReadyForSpeech(Bundle params) {
-			SVLog.i("#onReadyForSpeech:"+params);
+			SLog.i("#onReadyForSpeech:"+params);
 			addListParam("RecognitionListener().onReadyForSpeech", params);
 		}
 
 		@Override
 		public void onBeginningOfSpeech() {
-			SVLog.i("#onBeginningOfSpeech");
+			SLog.i("#onBeginningOfSpeech");
 			addListParam("RecognitionListener().onBeginningOfSpeech", "n/a");
 		}
 
 		@Override
 		public void onRmsChanged(float rmsdB) {
-			SVLog.i("#onRmsChanged:"+rmsdB);
+			SLog.i("#onRmsChanged:"+rmsdB);
 			addListParam("RecognitionListener().onRmsChanged", rmsdB);
 		}
 
 		@Override
 		public void onBufferReceived(byte[] buffer) {
 			String rececived = (buffer!=null)?buffer.toString():null;
-			SVLog.i("#onBufferReceived:"+rececived);
+			SLog.i("#onBufferReceived:"+rececived);
 			addListParam("RecognitionListener().onBufferReceived", rececived);
 		}
 
 		@Override
 		public void onEndOfSpeech() {
-			SVLog.i("#onEndOfSpeech");
+			SLog.i("#onEndOfSpeech");
 			addListParam("RecognitionListener().onEndOfSpeech", "n/a");
 		}
 
 		@Override
 		public void onError(int error) {
-			SVLog.i("#onError:" + error);
+			SLog.i("#onError:" + error);
 			switch(error) {
 				case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
 				case SpeechRecognizer.ERROR_NO_MATCH:
-					SVLog.i("#onEvent error:" + error + ">> retry.");
+					SLog.i("#onEvent error:" + error + ">> retry.");
 					addListParam("RecognitionListener().onEvent", "#error: "+error+">> retry.");
 					if(speechRecognizer != null && speechIntent != null) {
 						speechRecognizer.startListening(speechIntent);
 					}
 					break;
 				default:
-					SVLog.i("#onEvent error:" + error + ">> do nothing.");
+					SLog.i("#onEvent error:" + error + ">> do nothing.");
 					addListParam("RecognitionListener().onEvent", "#error: "+error + ">> do nothing.");
 					break;
 			}
@@ -314,18 +314,18 @@ public class SpeechDemoGoogleActivity extends BaseActivity {
 
 		@Override
 		public void onResults(Bundle results) {
-			SVLog.i("#onResults:"+results);
+			SLog.i("#onResults:"+results);
 			String key = SpeechRecognizer.RESULTS_RECOGNITION;
 			List<String> listResult = results.getStringArrayList(key);        //인식된 데이터 list 받아옴.
 			StringBuilder sb = new StringBuilder();
 			for(String result : listResult) {
-				SVLog.i("#onResults result:"+ result);
+				SLog.i("#onResults result:"+ result);
 				addListParam("RecognitionListener().onResults", "#candidates: "+result);
 				sb.append(result);
 				et_speech.setText(result);
 			}
 			String text = listResult.get(0);//sb.toString();
-			SVLog.i("#onResults text:"+ text +" /listResult:"+listResult);
+			SLog.i("#onResults text:"+ text +" /listResult:"+listResult);
 			if(text != null) {
 				addListParam("RecognitionListener().onResults", "#text: "+text);
 				et_speech.setText(text);
@@ -336,18 +336,18 @@ public class SpeechDemoGoogleActivity extends BaseActivity {
 
 		@Override
 		public void onPartialResults(Bundle partialResults) {
-			SVLog.i("#onPartialResults:"+partialResults);
+			SLog.i("#onPartialResults:"+partialResults);
 			String key = SpeechRecognizer.RESULTS_RECOGNITION;
 			List<String> listResult = partialResults.getStringArrayList(key);        //인식된 데이터 list 받아옴.
 			StringBuilder sb = new StringBuilder();
 			for(String result : listResult) {
-				SVLog.i("#onPartialResults result:"+ result);
+				SLog.i("#onPartialResults result:"+ result);
 				addListParam("RecognitionListener().onPartialResults", "#result: "+result);
 				sb.append(result);
 				et_speech.setText(result);
 			}
 			String text = listResult.get(0);//sb.toString();
-			SVLog.i("#onPartialResults text:"+ text +" /listResult:"+listResult);
+			SLog.i("#onPartialResults text:"+ text +" /listResult:"+listResult);
 			if(text != null) {
 				addListParam("RecognitionListener().onPartialResults", "#text: "+text);
 				et_speech.setText(text);
@@ -356,7 +356,7 @@ public class SpeechDemoGoogleActivity extends BaseActivity {
 
 		@Override
 		public void onEvent(int eventType, Bundle params) {
-			SVLog.i("#onEvent eventType:"+eventType + " /Bundle:"+params);
+			SLog.i("#onEvent eventType:"+eventType + " /Bundle:"+params);
 			addListParam("RecognitionListener().onEvent", "#eventType: "+eventType);
 		}
 	};

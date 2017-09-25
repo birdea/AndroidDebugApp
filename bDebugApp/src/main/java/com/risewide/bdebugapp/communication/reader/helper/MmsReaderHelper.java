@@ -10,7 +10,7 @@ import java.util.List;
 import com.risewide.bdebugapp.communication.model.CommMsgData;
 import com.risewide.bdebugapp.communication.util.HandyThreadTask;
 import com.risewide.bdebugapp.communication.util.IOCloser;
-import com.risewide.bdebugapp.util.SVLog;
+import com.risewide.bdebugapp.util.SLog;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -65,7 +65,7 @@ public class MmsReaderHelper {
 			int rowCount = 0;
 			do {
 				String address = cursor.getString(idx_address);
-				SVLog.i("rowCount:"+(rowCount++)+", idx_address:"+idx_address+", address:"+address);
+				SLog.i("rowCount:"+(rowCount++)+", idx_address:"+idx_address+", address:"+address);
 				list.add(address);
 			} while (cursor.moveToNext());
 		}

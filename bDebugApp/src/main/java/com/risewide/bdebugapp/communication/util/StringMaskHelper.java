@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 import android.text.TextUtils;
 
 /**
- * Created by sktechx on 2017-05-16.
+ * Created by birdea on 2017-05-16.
  */
 
 public class StringMaskHelper {

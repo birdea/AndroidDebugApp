@@ -71,6 +71,12 @@
         <activity android:name=".communication.MessageReaderTestActivity"
                   android:screenOrientation="portrait"/>
 
+        <!-- Test Aidl Communication -->
+        <activity android:name=".aidltest.TestAidlActivity"
+                  android:screenOrientation="portrait"/>
+        <service android:name=".aidltest.TestAidlService"
+            android:process=":test_aidl"/>
+
     </application>
 
 </manifest>

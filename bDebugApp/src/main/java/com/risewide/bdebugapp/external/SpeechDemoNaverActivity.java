@@ -8,7 +8,7 @@ import com.risewide.bdebugapp.R;
 import com.risewide.bdebugapp.external.naver.NaverRecognizer;
 import com.risewide.bdebugapp.external.naver.NaverTTS;
 import com.risewide.bdebugapp.external.naver.config.NaverApiConfig;
-import com.risewide.bdebugapp.util.SVLog;
+import com.risewide.bdebugapp.util.SLog;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -161,7 +161,7 @@ public class SpeechDemoNaverActivity extends Activity {
 		switch (msg.what) {
 			case R.id.clientReady:
 				// Now an user can speak.
-				SVLog.d("NaverSTT: clientReady");
+				SLog.d("NaverSTT: clientReady");
 				txtResult.setText("Connected");
 				//writer = new AudioWriterPCM(
 				//		Environment.getExternalStorageDirectory().getAbsolutePath() + "/NaverSpeechTest");
@@ -170,19 +170,19 @@ public class SpeechDemoNaverActivity extends Activity {
 				break;
 
 			case R.id.audioRecording:
-				SVLog.d("NaverSTT: audioRecording");
+				SLog.d("NaverSTT: audioRecording");
 				//writer.write((short[]) msg.obj);
 				break;
 
 			case R.id.partialResult:
-				SVLog.d("NaverSTT: partialResult");
+				SLog.d("NaverSTT: partialResult");
 				// Extract obj property typed with String.
 				mResult = (String) (msg.obj);
 				txtResult.setText(mResult);
 				break;
 
 			case R.id.finalResult:
-				SVLog.d("NaverSTT: finalResult");
+				SLog.d("NaverSTT: finalResult");
 				// Extract obj property typed with String array.
 				// The first element is recognition result for speech.
 				lastWord = null;
@@ -202,7 +202,7 @@ public class SpeechDemoNaverActivity extends Activity {
 				break;
 
 			case R.id.recognitionError:
-				SVLog.d("NaverSTT: recognitionError");
+				SLog.d("NaverSTT: recognitionError");
 				//if (writer != null) {
 				//	writer.close();
 				//}
@@ -216,7 +216,7 @@ public class SpeechDemoNaverActivity extends Activity {
 				break;
 
 			case R.id.clientInactive:
-				SVLog.d("NaverSTT: clientInactive");
+				SLog.d("NaverSTT: clientInactive");
 				//if (writer != null) {
 				//	writer.close();
 				//}

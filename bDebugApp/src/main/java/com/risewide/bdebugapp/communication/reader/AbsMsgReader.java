@@ -5,7 +5,7 @@ import java.util.List;
 import com.risewide.bdebugapp.communication.model.CommMsgData;
 import com.risewide.bdebugapp.communication.reader.projection.AbsQueryProject;
 import com.risewide.bdebugapp.communication.reader.projection.QueryConfig;
-import com.risewide.bdebugapp.util.SVLog;
+import com.risewide.bdebugapp.util.SLog;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -14,7 +14,6 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Telephony;
-import android.support.annotation.Nullable;
 
 /**
  * <p>Content Provider(*cp) 에서 문자 읽기 기능 수행을 위한 추상 클래스
@@ -65,7 +64,7 @@ public abstract class AbsMsgReader {
 				String uriChange = uri.toString();
 				String uriMonitor = getUriMonitor();
 				String uriConversation = getUriConversations();
-				SVLog.i(String.format("ContentObserver.onChange > selfChange:%s, Uri:%s, uriChange:%s, mUriMonitor:%s",selfChange, uri, uriChange, uriMonitor));
+				SLog.i(String.format("ContentObserver.onChange > selfChange:%s, Uri:%s, uriChange:%s, mUriMonitor:%s",selfChange, uri, uriChange, uriMonitor));
 				if (uriChange.equals(uriMonitor) || uriChange.contains(uriConversation)) {
 					if (mOnContentObserver != null) {
 						mOnContentObserver.onChange();
@@ -91,11 +90,11 @@ public abstract class AbsMsgReader {
 		mOnContentObserver = observer;
 		ContentResolver cr = context.getContentResolver();
 		cr.registerContentObserver(mQueryProject.getUri(), notifyForDescendents, mContentObserver);
-		SVLog.d("registerContentObserver uri:"+ mQueryProject.getUri());
+		SLog.d("registerContentObserver uri:"+ mQueryProject.getUri());
 	}
 	public void unregisterContentObserver(Context context, OnContentObserver observer) {
 		ContentResolver cr = context.getContentResolver();
 		cr.unregisterContentObserver(mContentObserver);
-		SVLog.d("unregisterContentObserver uri:"+ mQueryProject.getUri());
+		SLog.d("unregisterContentObserver uri:"+ mQueryProject.getUri());
 	}
 }

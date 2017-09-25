@@ -50,9 +50,9 @@ public class AudioFocusManager {
 		}
 		int result = audioManager.requestAudioFocus(listener, STREAM_TYPE, FOCUS_MODE);
 		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-			SVLog.i("init - result [SUCCESS] AUDIOFOCUS_REQUEST_GRANTED ! = " + result);
+			SLog.i("init - result [SUCCESS] AUDIOFOCUS_REQUEST_GRANTED ! = " + result);
 		} else {
-			SVLog.i("init - result [FAIL] AUDIOFOCUS_REQUEST_NOT_GRANTED ! = " + result);
+			SLog.i("init - result [FAIL] AUDIOFOCUS_REQUEST_NOT_GRANTED ! = " + result);
 		}
 	}
 
@@ -62,13 +62,13 @@ public class AudioFocusManager {
 			return;
 		}
 		int result = audioManager.abandonAudioFocus(listener);
-		SVLog.i("release - abandonAudioFocus > result : " + result);
+		SLog.i("release - abandonAudioFocus > result : " + result);
 		switch (result) {
 			case AudioManager.AUDIOFOCUS_REQUEST_FAILED:
-				SVLog.i("release - FAIL (AUDIOFOCUS_REQUEST_FAILED): " + result);
+				SLog.i("release - FAIL (AUDIOFOCUS_REQUEST_FAILED): " + result);
 				break;
 			case AudioManager.AUDIOFOCUS_REQUEST_GRANTED:
-				SVLog.i("release - SUCCESS (AUDIOFOCUS_REQUEST_GRANTED): " + result);
+				SLog.i("release - SUCCESS (AUDIOFOCUS_REQUEST_GRANTED): " + result);
 				break;
 			default:
 				break;
@@ -85,9 +85,9 @@ public class AudioFocusManager {
 		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
 			// audioManager.registerMediaButtonEventReceiver(RemoteControlReceiver);
 			// Start playback.
-			SVLog.i("takeInFocus - result [SUCCESS] AUDIOFOCUS_REQUEST_GRANTED ! = " + result);
+			SLog.i("takeInFocus - result [SUCCESS] AUDIOFOCUS_REQUEST_GRANTED ! = " + result);
 		} else {
-			SVLog.i("takeInFocus - result [FAIL] AUDIOFOCUS_REQUEST_NOT_GRANTED ! = " + result);
+			SLog.i("takeInFocus - result [FAIL] AUDIOFOCUS_REQUEST_NOT_GRANTED ! = " + result);
 		}
 	}
 
@@ -99,10 +99,10 @@ public class AudioFocusManager {
 		int result = audioManager.abandonAudioFocus(onAudioFocusChangeListener);
 		switch (result) {
 			case AudioManager.AUDIOFOCUS_REQUEST_FAILED:
-				SVLog.i("takeOutFocus - FAIL (AUDIOFOCUS_REQUEST_FAILED): " + result);
+				SLog.i("takeOutFocus - FAIL (AUDIOFOCUS_REQUEST_FAILED): " + result);
 				break;
 			case AudioManager.AUDIOFOCUS_REQUEST_GRANTED:
-				SVLog.i("takeOutFocus - SUCCESS (AUDIOFOCUS_REQUEST_GRANTED): " + result);
+				SLog.i("takeOutFocus - SUCCESS (AUDIOFOCUS_REQUEST_GRANTED): " + result);
 				break;
 			default:
 				break;
@@ -141,7 +141,7 @@ public class AudioFocusManager {
 					 * We don't release the media player because playback is likely to resume
 					 * if (mMediaPlayer.isPlaying()) mMediaPlayer.pause();
 					 */
-					SVLog.i("onAudioFocusChange - AUDIOFOCUS_LOSS_TRANSIENT : " + focusChange);
+					SLog.i("onAudioFocusChange - AUDIOFOCUS_LOSS_TRANSIENT : " + focusChange);
 					break;
 				case AudioManager.AUDIOFOCUS_GAIN:
 					/**
@@ -150,7 +150,7 @@ public class AudioFocusManager {
 					 * else if (!mMediaPlayer.isPlaying()) mMediaPlayer.start();
 					 * mMediaPlayer.setVolume(1.0f, 1.0f);
 					 */
-					SVLog.i("onAudioFocusChange - AUDIOFOCUS_GAIN : " + focusChange);
+					SLog.i("onAudioFocusChange - AUDIOFOCUS_GAIN : " + focusChange);
 					break;
 				case AudioManager.AUDIOFOCUS_LOSS:
 					/**
@@ -160,7 +160,7 @@ public class AudioFocusManager {
 					 * mMediaPlayer.release();
 					 * mMediaPlayer = null;
 					 */
-					SVLog.i("onAudioFocusChange - AUDIOFOCUS_LOSS : " + focusChange);
+					SLog.i("onAudioFocusChange - AUDIOFOCUS_LOSS : " + focusChange);
 					//am.unregisterMediaButtonEventReceiver(RemoteControlReceiver);
 					// Stop playback
 					break;
@@ -169,10 +169,10 @@ public class AudioFocusManager {
 					 * Lost focus for a short time, but it's ok to keep playing at an attenuated level
 					 * if (mMediaPlayer.isPlaying()) mMediaPlayer.setVolume(0.1f, 0.1f);
 					 */
-					SVLog.i("onAudioFocusChange - AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK : " + focusChange);
+					SLog.i("onAudioFocusChange - AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK : " + focusChange);
 					break;
 				default:
-					SVLog.i("onAudioFocusChange - unknown focusChange : " + focusChange);
+					SLog.i("onAudioFocusChange - unknown focusChange : " + focusChange);
 					break;
 			}
 		}

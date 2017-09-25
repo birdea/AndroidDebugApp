@@ -11,6 +11,8 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 
+import com.risewide.bdebugapp.aidltest.TestAidlActivity;
+import com.risewide.bdebugapp.aidltest.TestAidlService;
 import com.risewide.bdebugapp.communication.MessageReaderTestActivity;
 import com.risewide.bdebugapp.communication.MessageSenderTestActivity;
 import com.risewide.bdebugapp.external.SpeechDemoGoogleActivity;
@@ -19,7 +21,7 @@ import com.risewide.bdebugapp.external.SpeechDemoNaverActivity;
 import com.risewide.bdebugapp.process.ActivityTestCrashOnOtherProcess;
 import com.risewide.bdebugapp.process.ActivityTestCrashOnSameProcess;
 import com.risewide.bdebugapp.util.AudioFocusManager;
-import com.risewide.bdebugapp.util.SVLog;
+import com.risewide.bdebugapp.util.SLog;
 import com.skt.prod.voice.v2.aidl.ISmartVoice;
 import com.skt.prod.voice.v2.aidl.ITextToSpeechCallback;
 
@@ -39,7 +41,7 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override
 			public void uncaughtException(Thread t, Throwable e) {
-				SVLog.w("MainActivity.uncaughtException :"+e.getLocalizedMessage());
+				SLog.w("MainActivity.uncaughtException :"+e.getLocalizedMessage());
 				deUncaughtExceptionHandler.uncaughtException(t, e);
 			}
 		});
@@ -61,6 +63,16 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 
 	public void onClickView(View view) {
 		switch (view.getId()) {
+			case R.id.btnAidlService: {
+				Intent intent = new Intent(this, TestAidlService.class);
+				startService(intent);
+				break;
+			}
+			case R.id.btnAidlActivity: {
+				Intent intent = new Intent(this, TestAidlActivity.class);
+				startActivity(intent);
+				break;
+			}
 			case R.id.btnCommunicationMessageReader: {
 				Intent intent = new Intent(this, MessageReaderTestActivity.class);
 				startActivity(intent);
@@ -117,7 +129,7 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 		}
 	}
 	private void log(String msg) {
-		SVLog.i("DebugAppTest", msg);
+		SLog.i("DebugAppTest", msg);
 	}
 
 	private ServiceConnection mConnection = new ServiceConnection() {

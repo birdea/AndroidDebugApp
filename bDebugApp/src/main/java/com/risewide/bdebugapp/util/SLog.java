@@ -9,10 +9,10 @@ import com.risewide.bdebugapp.BuildConfig;
  *
  * @author nam, birdea
  */
-public class SVLog {
+public class SLog {
 
 	public static String makeTag(Class c) {
-		return "[SV]" + c.getSimpleName();
+		return "[S]" + c.getSimpleName();
 	}
 
 	public enum Mode {
@@ -68,7 +68,7 @@ public class SVLog {
 	 * @param obj
 	 */
 	public static void v(Object obj) {
-		v(makeTag(SVLog.class), obj);
+		v(makeTag(SLog.class), obj);
 	}
 
 	public static void v(String tag, Object msg) {
@@ -88,7 +88,7 @@ public class SVLog {
 	 * @param obj
 	 */
 	public static void d(Object obj) {
-		d(makeTag(SVLog.class), obj);
+		d(makeTag(SLog.class), obj);
 	}
 
 	public static void d(String tag, Object msg) {
@@ -108,7 +108,7 @@ public class SVLog {
 	 * @param obj
 	 */
 	public static void i(Object obj) {
-		i(makeTag(SVLog.class), obj);
+		i(makeTag(SLog.class), obj);
 	}
 
 	public static void i(String tag, Object msg) {
@@ -128,7 +128,7 @@ public class SVLog {
 	 * @param obj
 	 */
 	public static void w(Object obj) {
-		w(makeTag(SVLog.class), obj);
+		w(makeTag(SLog.class), obj);
 	}
 
 	public static void w(String tag, Object msg) {
@@ -148,7 +148,7 @@ public class SVLog {
 	 * @param obj
 	 */
 	public static void e(Object obj) {
-		e(makeTag(SVLog.class), obj);
+		e(makeTag(SLog.class), obj);
 	}
 
 	public static void e(String tag, Object msg) {

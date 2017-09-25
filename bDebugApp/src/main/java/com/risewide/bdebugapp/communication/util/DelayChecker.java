@@ -1,6 +1,6 @@
 package com.risewide.bdebugapp.communication.util;
 
-import com.risewide.bdebugapp.util.SVLog;
+import com.risewide.bdebugapp.util.SLog;
 
 import android.content.Context;
 
@@ -26,7 +26,7 @@ public class DelayChecker {
 	public long end() {
 		count++;
 		lastDelayTime = System.currentTimeMillis() - baseTime;
-		SVLog.d(TAG, getMessage());
+		SLog.d(TAG, getMessage());
 		return lastDelayTime;
 	}
 

@@ -16,7 +16,7 @@ import com.risewide.bdebugapp.communication.util.DelayChecker;
 import com.risewide.bdebugapp.communication.util.TToast;
 import com.risewide.bdebugapp.communication.util.WidgetHelper;
 import com.risewide.bdebugapp.util.DeviceInfo;
-import com.risewide.bdebugapp.util.SVLog;
+import com.risewide.bdebugapp.util.SLog;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -160,7 +160,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 	private AbsMsgReader.OnContentObserver contentObserver = new AbsMsgReader.OnContentObserver() {
 		@Override
 		public void onChange() {
-			SVLog.i("*OnContentObserver.onChange()");
+			SLog.i("*OnContentObserver.onChange()");
 			refresh();
 		}
 	};
@@ -169,12 +169,12 @@ public class MessageReaderTestActivity extends BaseActivity {
 	private void refresh() {
 		if (isRefreshing.get()) {
 			TToast.show(this, "*refresh - Already started.. wait for a sec");
-			SVLog.d("*refresh - Already started.. wait for a sec");
+			SLog.d("*refresh - Already started.. wait for a sec");
 			return;
 		}
 		isRefreshing.set(true);
 		//TToast.show(this, "*refresh - Start loading.. wait for a sec");
-		SVLog.d("*refresh - Start loading.. wait for a sec");
+		SLog.d("*refresh - Start loading.. wait for a sec");
 		final DelayChecker checker = new DelayChecker();
 		checker.start("mCommUnifyMessageReader");
 		//
@@ -208,7 +208,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 				notifyLastResultInfo(timeDelay, length);
 				isRefreshing.set(false);
 				TToast.show(getBaseContext(), "Complete loading > size: "+length+" ea");
-				SVLog.d("*refresh - Complete loading! size:"+length+" ea");
+				SLog.d("*refresh - Complete loading! size:"+length+" ea");
 			}
 
 			@Override
@@ -270,7 +270,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 			return;
 		}
 		for (CommMsgData info : messageItemList) {
-			SVLog.d(info.toString());
+			SLog.d(info.toString());
 		}
 	}
 

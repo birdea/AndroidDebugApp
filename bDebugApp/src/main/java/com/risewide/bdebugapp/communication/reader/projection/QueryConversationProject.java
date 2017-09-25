@@ -9,7 +9,7 @@ import com.risewide.bdebugapp.communication.reader.helper.MmsReaderHelper;
 import com.risewide.bdebugapp.communication.reader.helper.SmsReaderHelper;
 import com.risewide.bdebugapp.communication.util.CursorUtil;
 import com.risewide.bdebugapp.communication.util.IOCloser;
-import com.risewide.bdebugapp.util.SVLog;
+import com.risewide.bdebugapp.util.SLog;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -39,11 +39,11 @@ public class QueryConversationProject {
 			if (SamsungProject.isTargetDevice()) {
 				project = new SamsungProject();
 				cursor = resolver.query(project.getUri(), project.getProjection(), project.getSelection(), project.getSelectionArgs(), null);
-				SVLog.i("** Conversation - getProject - Samsung URI");
+				SLog.i("** Conversation - getProject - Samsung URI");
 			} else {
 				project = new CommonProject();
 				cursor = resolver.query(project.getUri(), project.getProjection(), project.getSelection(), project.getSelectionArgs(), null);
-				SVLog.i("** Conversation - getProject - Common URI");
+				SLog.i("** Conversation - getProject - Common URI");
 			}
 		} catch (Exception ignore) {
 			ignore.printStackTrace();

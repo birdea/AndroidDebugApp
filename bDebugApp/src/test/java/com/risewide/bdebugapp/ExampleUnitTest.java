@@ -3,10 +3,13 @@ package com.risewide.bdebugapp;
 import static org.junit.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.junit.Test;
 
-import com.risewide.bdebugapp.util.SVLog;
+import com.risewide.bdebugapp.util.SLog;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -26,14 +29,14 @@ public class ExampleUnitTest {
 		return true;
 	}
 
-	@Test
+	//@Test
 	public void addition_isCorrect() throws Exception {
 		assertEquals(4, 2 + 2);
 	}
 	/*
 	CommMsgData{_id(188),m_id(y_r8JH8F1C8),thread_id(0),date(1471594654),700118_094634,address(null),read(1),type(0),body(null),snippet(null),snippet_cs(0),msg_box(1),text_only(1),mms_version(18),msg_type(132),subject((ê´ê³ )[ì íì¹´ë, ì´ë²¤í¸ ìë´]),(광고)[신한카드, 이벤트 안내],subject_charset(106),}
 	 */
-	@Test
+	//@Test
 	public void encode_test() throws Exception {
 
 		String candi = "ds";
@@ -59,6 +62,37 @@ public class ExampleUnitTest {
 		L(raw+".new String(iso-8859-1)>"+byteArrayToHex(encoded.getBytes()));
 		encoded = new String(bytes, "utf8");
 		L(raw+".new String(utf8)>"+byteArrayToHex(encoded.getBytes()));
+	}
+
+	@Test
+	public void date_is_validate() throws Exception {
+		long dateToday = System.currentTimeMillis();
+		long dateSomeday = System.currentTimeMillis() - 2120930123;
+		Calendar calendar = Calendar.getInstance();
+		//calendar.add(Calendar.DATE, -1);
+		calendar.add(Calendar.HOUR, -24);
+		L("yesterday:"+sdf.format(calendar.getTime())+", isValidDateTime:"+isValidDateTime(dateToday));
+		// today
+		L("today:"+sdf.format(new Date(dateToday))+", isValidDateTime:"+isValidDateTime(dateToday));
+		// day before yesterday
+		L("dateSomeday:"+sdf.format(new Date(dateSomeday))+", isValidDateTime:"+isValidDateTime(dateSomeday));
+	}
+
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
+	private long considerableLastDate = 0;
+
+	private boolean isValidDateTime(long date) {
+		if (considerableLastDate == 0) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.add(Calendar.DATE, -1);
+			/*calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);*/
+			considerableLastDate = calendar.getTimeInMillis();
+		}
+		return (considerableLastDate <= date);
 	}
 
 	private static void L(String msg) {
@@ -104,7 +138,7 @@ public class ExampleUnitTest {
 					e.printStackTrace();
 				}
 				String msg =String.format("decoder:%s, encoder:%s : %s",decoder, encoder, output);
-				//SVLog.i(String.format("decoder:%s, encoder:%s : %s",decoder, encoder, output));
+				//SLog.i(String.format("decoder:%s, encoder:%s : %s",decoder, encoder, output));
 				System.out.println(msg);
 			}
 		}
@@ -120,6 +154,6 @@ public class ExampleUnitTest {
 			}
 		}
 		String form = String.format("text:%s > bytes:%s", text, byteArrayToHex(bytes));
-		SVLog.i("CheckBytes", form);
+		SLog.i("CheckBytes", form);
 	}
 }

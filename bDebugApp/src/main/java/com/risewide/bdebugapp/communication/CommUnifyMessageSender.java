@@ -7,7 +7,7 @@ import com.risewide.bdebugapp.communication.model.CommMsgSendType;
 import com.risewide.bdebugapp.communication.model.MsgSendData;
 import com.risewide.bdebugapp.communication.util.OnHandyEventListener;
 import com.risewide.bdebugapp.communication.util.TToast;
-import com.risewide.bdebugapp.util.SVLog;
+import com.risewide.bdebugapp.util.SLog;
 
 import android.Manifest;
 import android.app.Activity;
@@ -60,7 +60,7 @@ public class CommUnifyMessageSender extends AbsMessageSender {
 		mOnHandyEventListener = listener;
 	}
 	private void notifyOnEventListener(String msg) {
-		SVLog.i("CommUnifyMessageSender", msg);
+		SLog.i("CommUnifyMessageSender", msg);
 		if(mOnHandyEventListener ==null) {
 			return;
 		}
@@ -268,35 +268,35 @@ public class CommUnifyMessageSender extends AbsMessageSender {
 			switch(resCode){
 				case Activity.RESULT_OK:
 					mCntSuccess++;
-					SVLog.d("SMS send, RESULT_OK");
+					SLog.d("SMS send, RESULT_OK");
 					break;
 				case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
 					mCntFail++;
-					SVLog.d("SMS send, RESULT_ERROR_GENERIC_FAILURE");
+					SLog.d("SMS send, RESULT_ERROR_GENERIC_FAILURE");
 					break;
 				case SmsManager.RESULT_ERROR_NO_SERVICE:
 					mCntFail++;
-					SVLog.d("SMS send, RESULT_ERROR_NO_SERVICE");
+					SLog.d("SMS send, RESULT_ERROR_NO_SERVICE");
 					break;
 				case SmsManager.RESULT_ERROR_RADIO_OFF:
 					mCntFail++;
-					SVLog.d("SMS send, RESULT_ERROR_RADIO_OFF");
+					SLog.d("SMS send, RESULT_ERROR_RADIO_OFF");
 					break;
 				case SmsManager.RESULT_ERROR_NULL_PDU:
 					mCntFail++;
-					SVLog.d("SMS send, RESULT_ERROR_NULL_PDU");
+					SLog.d("SMS send, RESULT_ERROR_NULL_PDU");
 					break;
 				case 5:/*SmsManager.RESULT_ERROR_LIMIT_EXCEEDED*/
 					mCntFail++;
-					SVLog.d("SMS send, RESULT_ERROR_LIMIT_EXCEEDED");
+					SLog.d("SMS send, RESULT_ERROR_LIMIT_EXCEEDED");
 					break;
 				case 6:/*SmsManager.RESULT_ERROR_FDN_CHECK_FAILURE*/
 					mCntFail++;
-					SVLog.d("SMS send, RESULT_ERROR_FDN_CHECK_FAILURE");
+					SLog.d("SMS send, RESULT_ERROR_FDN_CHECK_FAILURE");
 					break;
 				default:
 					mCntFail++;
-					SVLog.d("SMS send, RESULT_ERROR_UNKNOWN");
+					SLog.d("SMS send, RESULT_ERROR_UNKNOWN");
 					break;
 			}
 			notifyCompleteEvent();
@@ -306,7 +306,7 @@ public class CommUnifyMessageSender extends AbsMessageSender {
 			int cntTotal = mCntSuccess + mCntFail;
 			//
 			if (mMsgSize <= cntTotal) {
-				SVLog.d("SMS send complete!!!");
+				SLog.d("SMS send complete!!!");
 				mContext.unregisterReceiver(this);
 				notifyOnEventListener("MessageSendListener.complete! size:"+ mMsgSize +",cntTotal:"+cntTotal+",mCntSuccess:"+ mCntSuccess +",mCntFail:"+ mCntFail);
 				if (mOnSendTextMessageListener != null) {
@@ -334,15 +334,15 @@ public class CommUnifyMessageSender extends AbsMessageSender {
 			switch (resCode){
 				case Activity.RESULT_OK:
 					mCntSuccess++;
-					SVLog.d("SMS delivery, RESULT_OK");
+					SLog.d("SMS delivery, RESULT_OK");
 					break;
 				case Activity.RESULT_CANCELED:
 					mCntFail++;
-					SVLog.d("SMS delivery, RESULT_CANCELED");
+					SLog.d("SMS delivery, RESULT_CANCELED");
 					break;
 				default:
 					mCntFail++;
-					SVLog.d("SMS delivery, RESULT_ERROR_UNKNOWN");
+					SLog.d("SMS delivery, RESULT_ERROR_UNKNOWN");
 					break;
 			}
 			notifyCompleteEvent();
@@ -352,7 +352,7 @@ public class CommUnifyMessageSender extends AbsMessageSender {
 			int cntTotal = mCntSuccess + mCntFail;
 			//
 			if (mMsgSize <= cntTotal) {
-				SVLog.d("SMS delivery complete!!!");
+				SLog.d("SMS delivery complete!!!");
 				mContext.unregisterReceiver(this);
 				notifyOnEventListener("MessageDeliveryListener.complete! size:"+ mMsgSize +",cntTotal:"+cntTotal+",mCntSuccess:"+ mCntSuccess +",mCntFail:"+ mCntFail);
 				if (mOnSendTextMessageListener != null) {

@@ -1,6 +1,6 @@
 package com.risewide.bdebugapp.communication.util;
 
-import com.risewide.bdebugapp.util.SVLog;
+import com.risewide.bdebugapp.util.SLog;
 
 import android.database.Cursor;
 
@@ -73,7 +73,7 @@ public class CursorUtil {
 
 	public static void printOutCursorInfo(Cursor cursor) {
 		if (cursor == null) {
-			SVLog.d(TAG, "cursor == null");
+			SLog.d(TAG, "cursor == null");
 		}
 
 		String[] columnNames = cursor.getColumnNames();
@@ -84,7 +84,7 @@ public class CursorUtil {
 					.append(columnNames[i])
 					.append(",");
 		}
-		SVLog.d("*row : "+sb.toString());
+		SLog.d("*row : "+sb.toString());
 		if (cursor.moveToFirst()) {
 			while (cursor.moveToNext()) {
 				sb.setLength(0);
@@ -93,7 +93,7 @@ public class CursorUtil {
 							.append(getCursorValue(cursor, i))
 							.append(",");
 				}
-				SVLog.d("*row : "+sb.toString());
+				SLog.d("*row : "+sb.toString());
 			}
 		}
 	}

@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import com.risewide.bdebugapp.BaseActivity;
 import com.risewide.bdebugapp.R;
-import com.risewide.bdebugapp.util.SVLog;
+import com.risewide.bdebugapp.util.SLog;
 
 public class ActivityTestCrashOnSameProcess extends BaseActivity {
 
@@ -19,7 +19,7 @@ public class ActivityTestCrashOnSameProcess extends BaseActivity {
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override
 			public void uncaughtException(Thread t, Throwable e) {
-				SVLog.w("ActivityTestCrashOnSameProcess.uncaughtException :"+e.getLocalizedMessage());
+				SLog.w("ActivityTestCrashOnSameProcess.uncaughtException :"+e.getLocalizedMessage());
 				deUncaughtExceptionHandler.uncaughtException(t, e);
 			}
 		});

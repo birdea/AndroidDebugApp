@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 /**
- * Created by sktechx on 2017-01-23.
+ * Created by birdea on 2017-01-23.
  */
 
 public class AudioWriterPCM {

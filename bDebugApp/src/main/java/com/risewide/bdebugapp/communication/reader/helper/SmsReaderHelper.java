@@ -3,7 +3,7 @@ package com.risewide.bdebugapp.communication.reader.helper;
 import com.risewide.bdebugapp.communication.model.CommMsgData;
 import com.risewide.bdebugapp.communication.util.DateUtil;
 import com.risewide.bdebugapp.communication.util.IOCloser;
-import com.risewide.bdebugapp.util.SVLog;
+import com.risewide.bdebugapp.util.SLog;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
@@ -48,11 +48,11 @@ public class SmsReaderHelper {
 			int idx_read = cursor.getColumnIndex(projection[7]); //READ
 			//
 			long date;
-			SVLog.i("*getBodyFor:"+DateUtil.getSimpleDate(timeStamp)+", raw:"+timeStamp);
+			SLog.i("*getBodyFor:"+DateUtil.getSimpleDate(timeStamp)+", raw:"+timeStamp);
 			do {
 				date = cursor.getLong(idx_date);
 				msg.body = cursor.getString(idx_body);
-				SVLog.i("*body:"+msg.body+", date:"+date);
+				SLog.i("*body:"+msg.body+", date:"+date);
 				if (CommMsgData.isEqualDateValueOnNormalize(timeStamp, date)) {
 					msg.setDate(date);
 					msg._id = cursor.getLong(idx_id);

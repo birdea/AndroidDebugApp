@@ -1,6 +1,6 @@
 package com.risewide.bdebugapp.communication.reader.projection;
 
-import com.risewide.bdebugapp.util.SVLog;
+import com.risewide.bdebugapp.util.SLog;
 
 import android.provider.Telephony;
 import android.text.TextUtils;
@@ -89,7 +89,7 @@ public class QueryConfig {
 		StringBuilder sb = new StringBuilder();
 		appendIfNotNull(sb, getSortOrderClause());
 		appendIfNotNull(sb, getClauseLimitSize());
-		SVLog.i("** ComposedSortOrderClause:"+sb.toString());
+		SLog.i("** ComposedSortOrderClause:"+sb.toString());
 		return sb.toString();
 	}
 

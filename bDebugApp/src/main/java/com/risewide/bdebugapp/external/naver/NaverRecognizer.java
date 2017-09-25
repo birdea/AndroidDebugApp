@@ -14,7 +14,7 @@ import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 /**
- * Created by sktechx on 2017-01-23.
+ * Created by birdea on 2017-01-23.
  */
 
 public class NaverRecognizer implements SpeechRecognitionListener {

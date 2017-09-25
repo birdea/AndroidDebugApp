@@ -117,5 +117,20 @@
                 android:text="TTS STOP"/>
         </TableRow>
 
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <Button
+                android:id="@+id/btnAidlService"
+                style="@style/btnCommonLayout"
+                android:text="aidl service"/>
+
+            <Button
+                android:id="@+id/btnAidlActivity"
+                style="@style/btnCommonLayout"
+                android:text="aidl activity"/>
+        </TableRow>
+
     </LinearLayout>
 </ScrollView>
