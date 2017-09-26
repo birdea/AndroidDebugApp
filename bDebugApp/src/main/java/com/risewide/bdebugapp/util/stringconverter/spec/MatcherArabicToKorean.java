@@ -2,45 +2,111 @@ package com.risewide.bdebugapp.util.stringconverter.spec;
 
 import com.risewide.bdebugapp.util.SLog;
 
-public enum MatcherArabicToKorean {
-	// scope x={1~9}
-	_1(1, '일'),
-	_2(2, '이'),
-	_3(3, '삼'),
-	_4(4, '사'),
-	_5(5, '오'),
-	_6(6, '육'),
-	_7(7, '칠'),
-	_8(8, '팔'),
-	_9(9, '구'),
-	// scope x>=10 (x*10)
-	_10p1(10, '십'),
-	_10p2(100, '백'),
-	_10p3(1000, '천'),
-	_10p4(10000, '만'),
-	// scope x>=10000 (x*10000)
-	_10p8(100000000, '억'),
-	_10p12(1000000000000L, '조'),
-	_10p16(10000000000000000L, '경'),
-	//
-	_0(0, '공'),;
+import java.math.BigInteger;
 
-	long value;
-	char korean;
+public class MatcherArabicToKorean {
 
-	MatcherArabicToKorean(long v, char k) {
-		value = v;
-		korean = k;
+	public interface IArabicKorean {
+		char getKoreanChar();
 	}
 
-	public char getKoreanChar() {
-		return korean;
+	private enum ArabicKorean implements IArabicKorean{
+		// scope x={1-9}
+		_1(1, '일'),
+		_2(2, '이'),
+		_3(3, '삼'),
+		_4(4, '사'),
+		_5(5, '오'),
+		_6(6, '육'),
+		_7(7, '칠'),
+		_8(8, '팔'),
+		_9(9, '구'),
+		// scope x={0}
+		_0(0, '공'),;
+
+		int value;
+		char korean;
+
+		ArabicKorean(int v, char k) {
+			value = v;
+			korean = k;
+		}
+
+		@Override
+		public char getKoreanChar() {
+			return korean;
+		}
 	}
 
-	public static MatcherArabicToKorean get(long value) {
+	private enum BigArabicKorean implements IArabicKorean {
+		// scope x>=10 (x*10)
+		_10p1(1, '십'), // 10
+		_10p2(2, '백'), // 100
+		_10p3(3, '천'), // 1000
+		_10p4(4, '만'), // 10000
+		// scope x>=10000 (x*10000)
+		_10p8(8, '억'), // 100000000
+		_10p12(12, '조'), // 1000000000000
+		_10p16(16, '경'), // 10000000000000000
+		;
+
+		int pow;
+		char korean;
+
+		BigArabicKorean(int p, char k) {
+			pow = p;
+			korean = k;
+		}
+
+		@Override
+		public char getKoreanChar() {
+			return korean;
+		}
+	}
+
+	private static IArabicKorean find(int value) {
+		for (ArabicKorean number : ArabicKorean.values()) {
+			if (number.value == value) {
+				return number;
+			}
+		}
+		return ArabicKorean._0;
+	}
+
+	public static IArabicKorean get(long value) {
+		SLog.d("MatcherArabicToKorean.get() value:"+value);
+		// 0 > 리턴
+		if (value == 0) {
+			return ArabicKorean._0;
+		}
+		// 음수 > 양수
 		if (value < 0) {
 			value = Math.abs(value);
 		}
+		long cipher = (long) Math.log10(value); // 자릿수
+		long divisor = (long) Math.pow(10, cipher); // 분모
+		int quotient = (int) (value / divisor); // 몫
+		int remainder = (int) (value % divisor); // 나머지
+		SLog.d(String.format("cal(base) > %s/%s=%s+%s",value,divisor,quotient,remainder));
+
+		BigArabicKorean preBigNumber = BigArabicKorean._10p1;
+		for (BigArabicKorean bigNumber : BigArabicKorean.values()) {
+			long d = (long) Math.pow(10, bigNumber.pow);
+			int q = (int) (value / d);
+			int r = (int) (value % d);
+			SLog.d(String.format("cal(loop) > %s/%s=%s+%s",value,d,q,r));
+			if (r > 0) {
+				if (r > 9) {
+					return preBigNumber;
+				} else {
+					return find(r);
+				}
+			}
+			preBigNumber = bigNumber;
+		}
+		return ArabicKorean._0;
+/*
+
 		String number = String.valueOf(value);
 		int length = number.length();
 		long divider = 1;
@@ -59,14 +125,14 @@ public enum MatcherArabicToKorean {
 			return find(divider);
 		} else {
 			return find(Long.parseLong(String.valueOf(c)));
-		}
+		}*/
 	}
 
-	private static MatcherArabicToKorean find(long value) {
+	/*private static IArabicKorean find(long value) {
 		SLog.d("MatcherArabicToKorean.find() value:" + value);
-		MatcherArabicToKorean matcher = _0;
+		IArabicKorean matcher = ArabicKorean._0;
 		if (value == 0) {
-			return _0;
+			return ArabicKorean._0;
 		}
 		for (MatcherArabicToKorean spec : values()) {
 			if (value < _10p4.value) {
@@ -89,5 +155,5 @@ public enum MatcherArabicToKorean {
 			matcher = spec;
 		}
 		return _0;
-	}
+	}*/
 }

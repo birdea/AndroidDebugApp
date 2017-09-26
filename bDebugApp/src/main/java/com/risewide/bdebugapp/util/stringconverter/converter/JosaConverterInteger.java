@@ -1,9 +1,8 @@
 package com.risewide.bdebugapp.util.stringconverter.converter;
 
 
-import android.text.TextUtils;
-
 import com.risewide.bdebugapp.util.SLog;
+import com.risewide.bdebugapp.util.stringconverter.StringUtils;
 import com.risewide.bdebugapp.util.stringconverter.data.JosaSet;
 import com.risewide.bdebugapp.util.stringconverter.spec.MatcherArabicToKorean;
 
@@ -16,12 +15,12 @@ public class JosaConverterInteger extends JosaConverter<Integer> {
 	@Override
 	public JosaSet select(Integer integer, String josaWithJongsung, String josaWithoutJongsung) {
 		// step.1 - check if param is empty
-		if (integer == null || TextUtils.isEmpty(josaWithJongsung) || TextUtils.isEmpty(josaWithoutJongsung)) {
+		if (integer == null || StringUtils.isEmpty(josaWithJongsung) || StringUtils.isEmpty(josaWithoutJongsung)) {
 			SLog.w("[except] getMultiSentenceWithJosa. StringUtils.isEmpty integer:" + integer + ", arg1:"
 					+ josaWithJongsung + ", arg2:" + josaWithoutJongsung);
 			return new JosaSet("","");
 		}
-		MatcherArabicToKorean pak = MatcherArabicToKorean.get(integer);
+		MatcherArabicToKorean.IArabicKorean pak = MatcherArabicToKorean.get(integer);
 		// step.2 - get last character
 		char lastChar = pak.getKoreanChar();
 		SLog.d("JosaConverterInteger.selected-lastChar:"+lastChar + ", word:"+integer);
