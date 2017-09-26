@@ -73,8 +73,28 @@ public class KoreanJosaStringConverterTest {
 		 * processExecuteSingleJosa(formatSentence, word); }
 		 */
 
+		// test case - digit
+		/*for (int i = 0; i < 120; i++) {
+			formatSentence = "%s가 맞나요?";
+			word = String.valueOf(i);
+			processExecuteSingleJosa(formatSentence, word);
+		}*/
+
+		/*formatSentence = "%s이 맞나요?";
+		word = null; // null
+		processExecuteSingleJosa(formatSentence, word);
+
+		formatSentence = "%s이 맞나요?";
+		word = 0; // 0
+		processExecuteSingleJosa(formatSentence, word);*/
+
 		formatSentence = "%s이 맞나요?";
 		word = 10000; // 만
+		processExecuteSingleJosa(formatSentence, word);
+
+
+		formatSentence = "%s이 맞나요?";
+		word = 10001; // 만
 		processExecuteSingleJosa(formatSentence, word);
 
 		formatSentence = "%s이 맞나요?";
@@ -93,11 +113,11 @@ public class KoreanJosaStringConverterTest {
 		word = 1000000000000L; // 조
 		processExecuteSingleJosa(formatSentence, word);
 
-		for (int i = 0; i < 50; i++) {
+		/*for (int i = 0; i < 20; i++) {
 			formatSentence = "%s이 맞나요?";
 			word = pow(10, i);
 			processExecuteSingleJosa(formatSentence, word);
-		}
+		}*/
 	}
 
 	long pow(long a, int b) {

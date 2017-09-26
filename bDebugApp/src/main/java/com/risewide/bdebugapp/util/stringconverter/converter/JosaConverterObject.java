@@ -68,6 +68,7 @@ public class JosaConverterObject extends JosaConverter<Object> {
 		if (obj instanceof String) {
 			SLog.d("obj instanceof String[true] :"+obj);
 			String word = (String)obj;
+			// case of String > Integer, ex) "1209390123"
 			try {
 				Long val = Long.parseLong(word);
 				return MatcherArabicToKorean.get(val).getKoreanChar();

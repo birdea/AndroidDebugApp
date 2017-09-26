@@ -77,6 +77,9 @@ public class KoreanJosaStringConverter implements IJosaStringConverter {
 	public String getSentenceWithSingleJosa(Object word, String formatString) {
 		Log("[start] word:" + word + ", formatSentence:" + formatString);
 		FormatSpecifier formatSpecifier = FormatSpecifier.getProperType(word);
+		if (formatSpecifier == null) {
+			return formatString;
+		}
 		int countOfFormatSpecifier = getSumOfAppearance(formatSpecifier.getFormat(), formatString);
 		Log("[valid] countOfFormatSpecifier :" + countOfFormatSpecifier);
 		// - check if params is invalid then return formatString
@@ -112,7 +115,7 @@ public class KoreanJosaStringConverter implements IJosaStringConverter {
 	public String getWordWithJosa(Object word, String josaWithJongsung, String josaWithoutJongsung) {
 		FormatSpecifier formatSpecifier = FormatSpecifier.getProperType(word);
 		if (formatSpecifier == null) {
-			return EMPTY;
+			return String.valueOf(word);
 		}
 		JosaConverter josaConverter = formatSpecifier.getConverter();
 		JosaSet setOfJosa = josaConverter.select(word, josaWithJongsung, josaWithoutJongsung);

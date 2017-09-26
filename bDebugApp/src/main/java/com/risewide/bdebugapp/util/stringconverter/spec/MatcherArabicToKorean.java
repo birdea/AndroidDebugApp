@@ -22,13 +22,12 @@ public enum MatcherArabicToKorean {
 	_10p8(100000000, '억'),
 	_10p12(1000000000000L, '조'),
 	_10p16(10000000000000000L, '경'),
-	//_해(100000000000000000000L, "해"),
-	_0(0, '공'),
-	;
-	
+	//
+	_0(0, '공'),;
+
 	long value;
 	char korean;
-	
+
 	MatcherArabicToKorean(long v, char k) {
 		value = v;
 		korean = k;
@@ -44,50 +43,50 @@ public enum MatcherArabicToKorean {
 		}
 		String number = String.valueOf(value);
 		int length = number.length();
-		int idx = length;
 		long divider = 1;
 		char c = '0';
 		//
-		while(idx > 0) {
-			c = number.charAt(idx-1);
-			if(c>'0' && c<='9') {
+		while (length-- > 0) {
+			c = number.charAt(length);
+			if (c > '0' && c <= '9') {
 				break;
 			}
-			divider = divider * 10L;
-			idx--;
+			divider *= 10;
 		}
-		SLog.d("MatcherArabicToKorean.get-value:"+value + ", divider:"+divider +", c:"+c);
+		SLog.d("MatcherArabicToKorean.get() value:" + value + ", divider:" + divider + ", c:" + c);
 		//
-		if(divider > 0 && divider > 1) {
+		if (divider > 1) {
 			return find(divider);
 		} else {
 			return find(Long.parseLong(String.valueOf(c)));
 		}
 	}
-	
-	private static MatcherArabicToKorean find(long value){
-		MatcherArabicToKorean defSpec = _0;
+
+	private static MatcherArabicToKorean find(long value) {
+		SLog.d("MatcherArabicToKorean.find() value:" + value);
+		MatcherArabicToKorean matcher = _0;
 		if (value == 0) {
 			return _0;
 		}
-		for(MatcherArabicToKorean spec : values()) {
-			if(value < _10p4.value) {
-				if(spec.value == value) {
+		for (MatcherArabicToKorean spec : values()) {
+			if (value < _10p4.value) {
+				if (spec.value == value) {
 					return spec;
 				}
 			} else {
 				long divider = spec.value;
 				if (divider == 0) {
-					return defSpec;
+					return matcher;
 				}
 				int divide = (int) (value / divider);
 				int nextDivide = (int) (value / divider * 10000);
-				SLog.d("MatcherArabicToKorean.find-korean.value, value:"+value + ", divider:"+divider +", divide:"+divide+", nextDivide:"+nextDivide);
+				SLog.d("MatcherArabicToKorean.find-korean.value, value:" + value + ", divider:" + divider + ", divide:"
+						+ divide + ", nextDivide:" + nextDivide);
 				if (divide == 0) {
-					return defSpec;
+					return matcher;
 				}
 			}
-			defSpec = spec;
+			matcher = spec;
 		}
 		return _0;
 	}
