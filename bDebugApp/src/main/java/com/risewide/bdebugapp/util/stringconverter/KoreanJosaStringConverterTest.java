@@ -74,19 +74,19 @@ public class KoreanJosaStringConverterTest {
 		 */
 
 		// test case - digit
-		/*for (int i = 0; i < 120; i++) {
+		for (int i = 0; i < 120; i++) {
 			formatSentence = "%s가 맞나요?";
 			word = String.valueOf(i);
 			processExecuteSingleJosa(formatSentence, word);
-		}*/
+		}
 
-		/*formatSentence = "%s이 맞나요?";
+		formatSentence = "%s이 맞나요?";
 		word = null; // null
 		processExecuteSingleJosa(formatSentence, word);
 
 		formatSentence = "%s이 맞나요?";
 		word = 0; // 0
-		processExecuteSingleJosa(formatSentence, word);*/
+		processExecuteSingleJosa(formatSentence, word);
 
 		formatSentence = "%s이 맞나요?";
 		word = 10000; // 만
