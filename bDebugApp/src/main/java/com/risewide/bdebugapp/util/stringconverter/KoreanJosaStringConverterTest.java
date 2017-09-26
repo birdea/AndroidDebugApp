@@ -51,7 +51,7 @@ public class KoreanJosaStringConverterTest {
 
 		// test case //
 		formatSentence = "볼륨을 %s로 설정합니다. 화면밝기를 %s으로 조정합니다.";
-		words = addWords("3", "2");
+		words = addWords("3", "7");
 		processExecuteMultiJosa(formatSentence, words);
 
 		/*

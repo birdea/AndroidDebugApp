@@ -3,8 +3,9 @@ package com.risewide.bdebugapp.util.stringconverter.converter;
 import java.util.regex.Pattern;
 
 import com.risewide.bdebugapp.util.SLog;
-import com.risewide.bdebugapp.util.stringconverter.StringUtils;
+import com.risewide.bdebugapp.util.stringconverter.helper.StringUtils;
 import com.risewide.bdebugapp.util.stringconverter.data.JosaSet;
+import com.risewide.bdebugapp.util.stringconverter.josa.KoreanJosa;
 import com.risewide.bdebugapp.util.stringconverter.spec.MatcherAlphabetToKorean;
 import com.risewide.bdebugapp.util.stringconverter.spec.MatcherArabicToKorean;
 
@@ -18,12 +19,12 @@ public class JosaConverterObject extends JosaConverter<Object> {
 	private static final String PATTERN_UNICODE_ALPHABET = "^[A-Za-z]*$";
 
 	@Override
-	public JosaSet select(Object obj, String josaWithJongsung, String josaWithoutJongsung) {
+	public JosaSet select(Object obj, KoreanJosa koreanJosa) {
 		// step.1 - check if param is empty
-		if (obj == null || StringUtils.isEmpty(josaWithJongsung)
-				|| StringUtils.isEmpty(josaWithoutJongsung)) {
-			SLog.w("[except] getMultiSentenceWithJosa. StringUtils.isEmpty obj:" + obj + ", arg1:"
-					+ josaWithJongsung + ", arg2:" + josaWithoutJongsung);
+		if (obj == null || koreanJosa == null || StringUtils.isEmpty(koreanJosa.josaWithJongsung)
+				|| StringUtils.isEmpty(koreanJosa.josaWithoutJongsung)) {
+			SLog.w("[except] getMultiSentenceWithJosa. StringUtils.isEmpty obj:" + obj + ", koreanJosa:"
+					+ koreanJosa);
 			return new JosaSet("","");
 		}
 		// step.2 - get last character and convert char (from alphabet, digit)
@@ -32,11 +33,7 @@ public class JosaConverterObject extends JosaConverter<Object> {
 		// step.3 - check if korean then process to get the set of josa
 		if (isKoreanChar(lastChar)) {
 			SLog.d("isKoreanChar[true] :"+lastChar);
-			if ((lastChar - 0xAC00) % 28 > 0) {
-				return new JosaSet(josaWithJongsung, josaWithoutJongsung);
-			} else {
-				return new JosaSet(josaWithoutJongsung, josaWithJongsung);
-			}
+			return koreanJosa.process(lastChar);
 		}
 		SLog.d("isUnknownLetter[true] :"+lastChar);
 		return new JosaSet("","");

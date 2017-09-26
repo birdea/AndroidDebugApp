@@ -4,7 +4,7 @@ import com.risewide.bdebugapp.util.SLog;
 import com.risewide.bdebugapp.util.stringconverter.converter.JosaConverter;
 import com.risewide.bdebugapp.util.stringconverter.data.JosaSet;
 import com.risewide.bdebugapp.util.stringconverter.format.FormatSpecifier;
-import com.risewide.bdebugapp.util.stringconverter.josa.CandidateJosa;
+import com.risewide.bdebugapp.util.stringconverter.josa.KoreanJosa;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,13 +93,13 @@ public class KoreanJosaStringConverter implements IJosaStringConverter {
 		}
 		Log("[valid] selected FormatSpecifier :" + formatSpecifier);
 
-		CandidateJosa josaSet = CandidateJosa.getJosaSet(formatString);
-		if (CandidateJosa.UNKNOWN.equals(josaSet)) {
-			SLog.w(TAG, "[unknown] CandidateJosa.UNKNOWN word:" + word + "/ formatSentence:" + formatString);
+		KoreanJosa josaSet = KoreanJosa.getJosaSet(formatString);
+		if (KoreanJosa.UNKNOWN.equals(josaSet)) {
+			SLog.w(TAG, "[unknown] KoreanJosa.UNKNOWN word:" + word + "/ formatSentence:" + formatString);
 			return getSafeFormatString(formatString, word);
 		}
 		JosaConverter josaConverter = formatSpecifier.getConverter();
-		JosaSet setOfJosa = josaConverter.select(word, josaSet.josaWithJongsung, josaSet.josaWithoutJongsung);
+		JosaSet setOfJosa = josaConverter.select(word, josaSet);
 		//
 		String oldWord = formatSpecifier.getFormat() + setOfJosa.getUnproperJosa();
 		String newWord = formatSpecifier.getFormat() + setOfJosa.getProperJosa();
@@ -118,7 +118,12 @@ public class KoreanJosaStringConverter implements IJosaStringConverter {
 			return String.valueOf(word);
 		}
 		JosaConverter josaConverter = formatSpecifier.getConverter();
-		JosaSet setOfJosa = josaConverter.select(word, josaWithJongsung, josaWithoutJongsung);
+		KoreanJosa koreanJosa = KoreanJosa.getKoreanJosa(josaWithJongsung, josaWithoutJongsung);
+		if (KoreanJosa.UNKNOWN.equals(koreanJosa)) {
+			SLog.w(TAG, "[unknown] KoreanJosa.UNKNOWN word:" + word);
+			return String.valueOf(word);
+		}
+		JosaSet setOfJosa = josaConverter.select(word, koreanJosa);
 		String result = word + setOfJosa.getProperJosa();
 		Log(getSafeFormatString("getSentenceWithSingleJosa result=%s on word=%s + josa=%s", new String[] { result, ""+word, setOfJosa.getProperJosa()}));
 		return result;

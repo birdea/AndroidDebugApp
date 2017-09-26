@@ -1,8 +1,10 @@
-package com.risewide.bdebugapp.util.stringconverter;
+package com.risewide.bdebugapp.util.stringconverter.helper;
 
 import android.support.annotation.Nullable;
 
 /**
+ * TextUtils 사용시 UnitTest Mock object 구현 작업을 해야해서 대용
+ * @see android.text.TextUtils#isEmpty(CharSequence)
  * Created by birdea on 2017-09-26.
  */
 
