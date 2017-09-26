@@ -1,62 +1,84 @@
 package com.risewide.bdebugapp.util.stringconverter.format;
 
-import com.risewide.bdebugapp.util.stringconverter.converter.JosaConverterObject;
-import com.risewide.bdebugapp.util.stringconverter.converter.JosaConverter;
+import com.risewide.bdebugapp.util.SLog;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by birdea on 2016-11-22.
  */
 
-public enum FormatSpecifier {
+public class FormatSpecifier {
 
-	_s("%s", 's') {
-		@Override
-		public JosaConverter getConverter() {
-			if (josaConverter == null) {
-				return new JosaConverterObject();
+	private static final String REG_EXP = "\\%(\\d+\\$)?(.\\d+)?[dfsu]";
+	private List<String> truncatedList;
+	private List<String> formatList;
+
+	public FormatSpecifier() {
+		truncatedList = new ArrayList<>();
+		formatList = new ArrayList<>();
+	}
+
+	public boolean parse(String text) {
+		Log("printPatternMatch-start:"+text+", REG_EXP:"+REG_EXP);
+		//
+		formatList.clear();
+		truncatedList.clear();
+		//
+		List<String> list = new ArrayList<>();
+		Pattern p = Pattern.compile(REG_EXP);
+		Matcher m = p.matcher(text);
+		int idxStart = 0, idxEnd = 0, idxBase = 0;
+		boolean firstMatch = false;
+		String subSentence;
+		while (m.find()) {
+			idxStart = m.start();
+			idxEnd = m.end();
+			String group = m.group();
+			formatList.add(group);
+			if (firstMatch) {
+				subSentence = text.substring(idxBase, idxStart);
+				Log("idxStart:"+idxStart + ", idxEnd:"+ idxEnd +", group:"+group + ", groupCount:"+ m.groupCount() + ", subSentence:"+subSentence);
+				idxBase = idxStart;
+				list.add(subSentence);
 			}
-			return josaConverter;
-		}
-	},
-	;
-	String format;
-	char marker;
-	JosaConverter josaConverter;
-
-	FormatSpecifier(String format, char marker) {
-		this.format = format;
-		this.marker = marker;
-	}
-
-	public String getFormat() {
-		return format;
-	}
-
-	/**
-	 * String regularExpression = "\\%[sdf]"
-	 * 
-	 * @return
-	 */
-	public static String getRegularExpression() {
-		StringBuilder sb = new StringBuilder();
-		String prefix = "\\%[";
-		String suffix = "]";
-		//
-		sb.append(prefix);
-		for (FormatSpecifier form : values()) {
-			sb.append(form.marker);
+			else {
+				firstMatch = true;
+			}
 		}
 		//
-		sb.append(suffix);
-		return sb.toString();
-	}
-
-	public static FormatSpecifier getProperType(Object value) {
-		if (value == null) {
-			return null;
+		subSentence = text.substring(idxBase);
+		list.add(subSentence);
+		Log("[last] idxStart:"+idxStart + ", idxEnd:"+ idxEnd + ", subSentence:"+subSentence);
+		// print out for debug
+		for (String item : list) {
+			Log("[result-getTruncatedSentence] item:" + item);
+			truncatedList.add(item);
 		}
-		return _s;
+		Log("printPatternMatch-end");
+		return true;
 	}
 
-	abstract public JosaConverter getConverter();
+	public List<String> getFormatSpecifiers() {
+		return formatList;
+	}
+
+	public String getFormatSpecifier() {
+		return formatList.get(0);
+	}
+
+	public int getCountOfFormatSpecifier() {
+		return truncatedList.size();
+	}
+
+	public List<String> getTruncatedSentence() {
+		return truncatedList;
+	}
+
+	private void Log(String msg) {
+		SLog.d("FormatSpecifier", msg);
+	}
 }

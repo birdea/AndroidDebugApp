@@ -21,8 +21,8 @@ public class JosaConverterObject extends JosaConverter<Object> {
 	@Override
 	public JosaSet select(Object obj, KoreanJosa koreanJosa) {
 		// step.1 - check if param is empty
-		if (obj == null || koreanJosa == null || StringUtils.isEmpty(koreanJosa.josaWithJongsung)
-				|| StringUtils.isEmpty(koreanJosa.josaWithoutJongsung)) {
+		if (obj == null || koreanJosa == null || StringUtils.isEmpty(koreanJosa.getJosaWithJongsung())
+				|| StringUtils.isEmpty(koreanJosa.getJosaWithoutJongsung())) {
 			SLog.w("[except] getMultiSentenceWithJosa. StringUtils.isEmpty obj:" + obj + ", koreanJosa:"
 					+ koreanJosa);
 			return new JosaSet("","");
@@ -92,7 +92,7 @@ public class JosaConverterObject extends JosaConverter<Object> {
 	}
 
 	public static boolean isAlphabetLetter(char c) {
-		return Character.isAlphabetic(c);
+		return Pattern.matches(PATTERN_UNICODE_ALPHABET, String.valueOf(c));
 	}
 
 	public static boolean isDigit(char c) {

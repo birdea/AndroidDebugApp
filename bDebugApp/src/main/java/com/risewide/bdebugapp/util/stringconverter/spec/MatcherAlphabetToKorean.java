@@ -36,8 +36,8 @@ public enum MatcherAlphabetToKorean {
 	UNKNOWN('0', ""),
 	;
 
-	char word;
-	String korean;
+	private char word;
+	private String korean;
 
 	MatcherAlphabetToKorean(char w, String k) {
 		word = w;

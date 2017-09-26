@@ -36,7 +36,7 @@ public class KoreanJosaStringConverterTest {
 	}
 
 	private void processExecuteSingleJosa(String formatSentence, Object word) {
-		String result = ksc.getSentenceWithSingleJosa(word, formatSentence);
+		String result = ksc.getSentenceWithSingleJosa(word, formatSentence, true);
 		SLog.i("getSentenceWithSingleJosa format:" + formatSentence);
 		SLog.i("getSentenceWithSingleJosa result:" + result);
 		SLog.i("-------------------------------------------------------------------");
@@ -54,7 +54,7 @@ public class KoreanJosaStringConverterTest {
 		words = addWords("3", "7");
 		processExecuteMultiJosa(formatSentence, words);
 
-		/*
+		/*/*
 		 * // test case // formatSentence = "%s에게 전화를 걸겠습니다"; word = "박용태"; processExecuteSingleJosa(formatSentence,
 		 * word);
 		 * 
@@ -113,11 +113,11 @@ public class KoreanJosaStringConverterTest {
 		word = 1000000000000L; // 조
 		processExecuteSingleJosa(formatSentence, word);
 
-		/*for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 20; i++) {
 			formatSentence = "%s이 맞나요?";
 			word = pow(10, i);
 			processExecuteSingleJosa(formatSentence, word);
-		}*/
+		}
 	}
 
 	long pow(long a, int b) {

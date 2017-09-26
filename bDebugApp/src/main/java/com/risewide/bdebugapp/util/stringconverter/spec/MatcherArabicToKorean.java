@@ -2,8 +2,6 @@ package com.risewide.bdebugapp.util.stringconverter.spec;
 
 import com.risewide.bdebugapp.util.SLog;
 
-import java.math.BigInteger;
-
 public class MatcherArabicToKorean {
 
 	public interface IArabicKorean {
@@ -105,55 +103,5 @@ public class MatcherArabicToKorean {
 			preBigNumber = bigNumber;
 		}
 		return ArabicKorean._0;
-/*
-
-		String number = String.valueOf(value);
-		int length = number.length();
-		long divider = 1;
-		char c = '0';
-		//
-		while (length-- > 0) {
-			c = number.charAt(length);
-			if (c > '0' && c <= '9') {
-				break;
-			}
-			divider *= 10;
-		}
-		SLog.d("MatcherArabicToKorean.get() value:" + value + ", divider:" + divider + ", c:" + c);
-		//
-		if (divider > 1) {
-			return find(divider);
-		} else {
-			return find(Long.parseLong(String.valueOf(c)));
-		}*/
 	}
-
-	/*private static IArabicKorean find(long value) {
-		SLog.d("MatcherArabicToKorean.find() value:" + value);
-		IArabicKorean matcher = ArabicKorean._0;
-		if (value == 0) {
-			return ArabicKorean._0;
-		}
-		for (MatcherArabicToKorean spec : values()) {
-			if (value < _10p4.value) {
-				if (spec.value == value) {
-					return spec;
-				}
-			} else {
-				long divider = spec.value;
-				if (divider == 0) {
-					return matcher;
-				}
-				int divide = (int) (value / divider);
-				int nextDivide = (int) (value / divider * 10000);
-				SLog.d("MatcherArabicToKorean.find-korean.value, value:" + value + ", divider:" + divider + ", divide:"
-						+ divide + ", nextDivide:" + nextDivide);
-				if (divide == 0) {
-					return matcher;
-				}
-			}
-			matcher = spec;
-		}
-		return _0;
-	}*/
 }

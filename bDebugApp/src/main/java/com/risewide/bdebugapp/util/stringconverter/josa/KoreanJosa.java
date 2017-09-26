@@ -1,7 +1,8 @@
 package com.risewide.bdebugapp.util.stringconverter.josa;
 
 import com.risewide.bdebugapp.util.stringconverter.data.JosaSet;
-import com.risewide.bdebugapp.util.stringconverter.format.FormatSpecifier;
+
+import java.util.List;
 
 /**
  * 각 korean enum 에 대한 로마자 변환은 아래 사이트를 참고.
@@ -52,20 +53,27 @@ public enum KoreanJosa {
 			devide[2] = 0x11a8 + (x % 28);
 			if(4520 == devide[2]           // 받침 없음
 					|| 4528 == devide[2]){ // 받침 'ㄹ'
-				return new JosaSet(josaWithoutJongsung, josaWithJongsung); //로
+				return new JosaSet(getJosaWithoutJongsung(), getJosaWithJongsung()); //로
 			} else {
-				return new JosaSet(josaWithJongsung, josaWithoutJongsung); //으로
+				return new JosaSet(getJosaWithJongsung(), getJosaWithoutJongsung()); //으로
 			}
 		}
 	},
 	;
-	public String josaWithJongsung = "";
-	public String josaWithoutJongsung = "";
+	private final String josaWithJongsung;
+	private final String josaWithoutJongsung;
 
-	//
 	KoreanJosa(String josaWith, String josaWithout) {
 		josaWithJongsung = josaWith;
 		josaWithoutJongsung = josaWithout;
+	}
+
+	public String getJosaWithJongsung()	{
+		return josaWithJongsung;
+	}
+
+	public String getJosaWithoutJongsung() {
+		return josaWithoutJongsung;
 	}
 
 	public abstract JosaSet process(char lastChar);
@@ -80,6 +88,9 @@ public enum KoreanJosa {
 
 	public static KoreanJosa getKoreanJosa(String josawithJongsung, String josawithoutJongsung) {
 		for (KoreanJosa item : values()) {
+			if (item.josaWithJongsung == null || item.josaWithoutJongsung == null) {
+				continue;
+			}
 			if (item.josaWithJongsung.equals(josawithJongsung) &&
 					item.josaWithoutJongsung.equals(josawithoutJongsung))
 				return item;
@@ -87,10 +98,9 @@ public enum KoreanJosa {
 		return UNKNOWN;
 	}
 
-	public static KoreanJosa getJosaSet(String formatSentence) {
-		FormatSpecifier[] formats = FormatSpecifier.values();
+	public static KoreanJosa getJosaSet(String formatSentence, List<String> formatArray) {
 		for (KoreanJosa josa : values()) {
-			if (josa.isContained(formatSentence, formats)) {
+			if (josa.isContained(formatSentence, formatArray)) {
 				return josa;
 			}
 		}
@@ -105,13 +115,13 @@ public enum KoreanJosa {
 	 * @param formatArray
 	 * @return
 	 */
-	public boolean isContained(String sentence, FormatSpecifier[] formatArray) {
+	public boolean isContained(String sentence, List<String> formatArray) {
 		if (josaWithJongsung == null || josaWithoutJongsung == null) {
 			return false;
 		}
-		for (FormatSpecifier formatSpecifier : formatArray) {
-			String prefix = formatSpecifier.getFormat();
-			if ((sentence.contains(prefix + josaWithJongsung) || sentence.contains(prefix + josaWithoutJongsung))) {
+		for (String formatSpecifier : formatArray) {
+			if ((sentence.contains(formatSpecifier + josaWithJongsung) ||
+				sentence.contains(formatSpecifier + josaWithoutJongsung))) {
 				return true;
 			}
 		}
