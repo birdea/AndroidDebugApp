@@ -137,9 +137,9 @@
             android:layout_height="wrap_content"
             >
             <Button
-                android:id="@+id/btnKoreanJosaComposerTest"
+                android:id="@+id/btnKoreanJosaConverterTest"
                 style="@style/btnCommonLayout"
-                android:text="Korean Josa Composer Test"/>
+                android:text="Korean Josa Converter Test"/>
         </TableRow>
 
     </LinearLayout>

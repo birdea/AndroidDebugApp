@@ -1,8 +1,8 @@
-package com.risewide.bdebugapp.util.stringcomposer.format;
+package com.risewide.bdebugapp.util.stringconverter.format;
 
-import com.risewide.bdebugapp.util.stringcomposer.composer.JosaComposerInteger;
-import com.risewide.bdebugapp.util.stringcomposer.composer.JosaComposerObject;
-import com.risewide.bdebugapp.util.stringcomposer.composer.JosaComposer;
+import com.risewide.bdebugapp.util.stringconverter.converter.JosaConverterInteger;
+import com.risewide.bdebugapp.util.stringconverter.converter.JosaConverterObject;
+import com.risewide.bdebugapp.util.stringconverter.converter.JosaConverter;
 
 /**
  * Created by birdea on 2016-11-22.
@@ -12,25 +12,25 @@ public enum FormatSpecifier {
 
 	_s("%s", 's') {
 		@Override
-		public JosaComposer getComposer() {
-			if (josaComposer == null) {
-				return new JosaComposerObject();
+		public JosaConverter getConverter() {
+			if (josaConverter == null) {
+				return new JosaConverterObject();
 			}
-			return josaComposer;
+			return josaConverter;
 		}
 	},
 	_d("%d", 'd') {
 		@Override
-		public JosaComposer getComposer() {
-			if (josaComposer == null) {
-				return new JosaComposerInteger();
+		public JosaConverter getConverter() {
+			if (josaConverter == null) {
+				return new JosaConverterInteger();
 			}
-			return josaComposer;
+			return josaConverter;
 		}
 	},;
 	String format;
 	char marker;
-	JosaComposer josaComposer;
+	JosaConverter josaConverter;
 
 	FormatSpecifier(String format, char marker) {
 		this.format = format;
@@ -85,5 +85,5 @@ public enum FormatSpecifier {
 		}
 	}
 
-	abstract public JosaComposer getComposer();
+	abstract public JosaConverter getConverter();
 }

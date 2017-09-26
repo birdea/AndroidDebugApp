@@ -1,6 +1,6 @@
-package com.risewide.bdebugapp.util.stringcomposer.josa;
+package com.risewide.bdebugapp.util.stringconverter.josa;
 
-import com.risewide.bdebugapp.util.stringcomposer.format.FormatSpecifier;
+import com.risewide.bdebugapp.util.stringconverter.format.FormatSpecifier;
 
 /**
  * 각 korean enum 에 대한 로마자 변환은 아래 사이트를 참고.

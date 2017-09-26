@@ -1,17 +1,17 @@
-package com.risewide.bdebugapp.util.stringcomposer.composer;
+package com.risewide.bdebugapp.util.stringconverter.converter;
 
 
 import android.text.TextUtils;
 
 import com.risewide.bdebugapp.util.SLog;
-import com.risewide.bdebugapp.util.stringcomposer.data.JosaSet;
-import com.risewide.bdebugapp.util.stringcomposer.spec.MatcherArabicToKorean;
+import com.risewide.bdebugapp.util.stringconverter.data.JosaSet;
+import com.risewide.bdebugapp.util.stringconverter.spec.MatcherArabicToKorean;
 
 /**
  * Created by birdea on 2016-11-22.
  */
 
-public class JosaComposerInteger extends JosaComposer<Integer> {
+public class JosaConverterInteger extends JosaConverter<Integer> {
 
 	@Override
 	public JosaSet select(Integer integer, String josaWithJongsung, String josaWithoutJongsung) {
@@ -24,9 +24,9 @@ public class JosaComposerInteger extends JosaComposer<Integer> {
 		MatcherArabicToKorean pak = MatcherArabicToKorean.get(integer);
 		// step.2 - get last character
 		char lastChar = pak.getKoreanChar();
-		SLog.d("JosaComposerInteger.selected-lastChar:"+lastChar + ", word:"+integer);
+		SLog.d("JosaConverterInteger.selected-lastChar:"+lastChar + ", word:"+integer);
 		// step.3 - check if korean, since it should be
-		if (JosaComposerObject.isKoreanChar(lastChar)) {
+		if (JosaConverterObject.isKoreanChar(lastChar)) {
 			// step.3 - select the josa
 			if ((lastChar - 0xAC00) % 28 > 0) {
 				return new JosaSet(josaWithJongsung, josaWithoutJongsung);

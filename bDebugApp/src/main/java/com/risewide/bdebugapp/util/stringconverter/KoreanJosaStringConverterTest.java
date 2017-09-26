@@ -1,4 +1,4 @@
-package com.risewide.bdebugapp.util.stringcomposer;
+package com.risewide.bdebugapp.util.stringconverter;
 
 import com.risewide.bdebugapp.util.SLog;
 import com.risewide.bdebugapp.util.TimeLap;
@@ -7,16 +7,16 @@ import com.risewide.bdebugapp.util.TimeLap;
  * Created by birdea on 2017-09-25.
  */
 
-public class KoreanStringJosaComposerTest {
+public class KoreanJosaStringConverterTest {
 
-	private KoreanStringJosaComposer ksc;
+	private KoreanJosaStringConverter ksc;
 
-	public KoreanStringJosaComposerTest() {
-		ksc = new KoreanStringJosaComposer();
+	public KoreanJosaStringConverterTest() {
+		ksc = new KoreanJosaStringConverter();
 	}
 
 	public void test() {
-		SLog.i("[testSentenceComposer] start");
+		SLog.i("[testSentenceConverter] start");
 		TimeLap time = new TimeLap();
 		time.start();
 		///////////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ public class KoreanStringJosaComposerTest {
 		// testFailCase();
 		///////////////////////////////////////////////////////////////////////////////
 		time.end();
-		SLog.i("[testSentenceComposer] end");
+		SLog.i("[testSentenceConverter] end");
 	}
 
 	private void processExecuteMultiJosa(String formatSentence, Object[] words) {

@@ -2,7 +2,7 @@ package com.risewide.bdebugapp;
 
 import com.risewide.bdebugapp.util.SLog;
 import com.risewide.bdebugapp.util.TimeLap;
-import com.risewide.bdebugapp.util.stringcomposer.KoreanStringJosaComposer;
+import com.risewide.bdebugapp.util.stringconverter.KoreanJosaStringConverter;
 
 import org.junit.Test;
 
@@ -14,10 +14,10 @@ public class KoreanJosaStringTest {
 
 	@Test
 	public void test_josa() throws Exception{
-		SLog.i("[testSentenceComposer] start");
+		SLog.i("[testSentenceConverter] start");
 		TimeLap time = new TimeLap();
 		time.start();
-		KoreanStringJosaComposer ksc = new KoreanStringJosaComposer();
+		KoreanJosaStringConverter ksc = new KoreanJosaStringConverter();
 		String result;
 		// case.1 - getSentenceWithSingleJosa
 		result = ksc.getSentenceWithSingleJosa("카카오", "%s를 실행합니다.");
@@ -64,12 +64,12 @@ public class KoreanJosaStringTest {
 				25
 		};
 		String sentence = "%s은 %s년 %s월 %d일 %s요일입니다.";
-		//StringComposerTest.taskMultiWordsWith(params, sentence, "영국은 2016년 11월 24일 수요일입니다.");
+		//StringTest.taskMultiWordsWith(params, sentence, "영국은 2016년 11월 24일 수요일입니다.");
 		result = ksc.getSentenceWithMultiJosa(params, sentence);
 		SLog.d("getSentenceWithMultiJosa result:"+result+", words_3, "+formatSentence);
 		//
 		time.end();
-		SLog.i("[testSentenceComposer] end");
+		SLog.i("[testSentenceConverter] end");
 	}
 
 }

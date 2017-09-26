@@ -1,4 +1,4 @@
-package com.risewide.bdebugapp.util.stringcomposer.data;
+package com.risewide.bdebugapp.util.stringconverter.data;
 
 /**
  * Created by birdea on 2016-11-22.

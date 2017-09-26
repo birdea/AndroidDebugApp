@@ -22,7 +22,7 @@ import com.risewide.bdebugapp.process.ActivityTestCrashOnOtherProcess;
 import com.risewide.bdebugapp.process.ActivityTestCrashOnSameProcess;
 import com.risewide.bdebugapp.util.AudioFocusManager;
 import com.risewide.bdebugapp.util.SLog;
-import com.risewide.bdebugapp.util.stringcomposer.KoreanStringJosaComposerTest;
+import com.risewide.bdebugapp.util.stringconverter.KoreanJosaStringConverterTest;
 import com.skt.prod.voice.v2.aidl.ISmartVoice;
 import com.skt.prod.voice.v2.aidl.ITextToSpeechCallback;
 
@@ -64,8 +64,8 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 
 	public void onClickView(View view) {
 		switch (view.getId()) {
-			case R.id.btnKoreanJosaComposerTest: {
-				new KoreanStringJosaComposerTest().test();
+			case R.id.btnKoreanJosaConverterTest: {
+				new KoreanJosaStringConverterTest().test();
 				break;
 			}
 			case R.id.btnAidlService: {

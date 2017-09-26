@@ -1,4 +1,4 @@
-package com.risewide.bdebugapp.util.stringcomposer.spec;
+package com.risewide.bdebugapp.util.stringconverter.spec;
 
 import com.risewide.bdebugapp.util.SLog;
 

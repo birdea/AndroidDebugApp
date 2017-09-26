@@ -1,12 +1,11 @@
-package com.risewide.bdebugapp.util.stringcomposer.composer;
+package com.risewide.bdebugapp.util.stringconverter.converter;
 
-import java.text.NumberFormat;
 import java.util.regex.Pattern;
 
 import com.risewide.bdebugapp.util.SLog;
-import com.risewide.bdebugapp.util.stringcomposer.data.JosaSet;
-import com.risewide.bdebugapp.util.stringcomposer.spec.MatcherAlphabetToKorean;
-import com.risewide.bdebugapp.util.stringcomposer.spec.MatcherArabicToKorean;
+import com.risewide.bdebugapp.util.stringconverter.data.JosaSet;
+import com.risewide.bdebugapp.util.stringconverter.spec.MatcherAlphabetToKorean;
+import com.risewide.bdebugapp.util.stringconverter.spec.MatcherArabicToKorean;
 
 import android.text.TextUtils;
 
@@ -14,7 +13,7 @@ import android.text.TextUtils;
  * Created by birdea on 2016-11-22.
  */
 
-public class JosaComposerObject extends JosaComposer<Object> {
+public class JosaConverterObject extends JosaConverter<Object> {
 
 	private static final String PATTERN_UNICODE_KOREAN = "^[가-힝]*$";
 	private static final String PATTERN_UNICODE_ALPHABET = "^[A-Za-z]*$";

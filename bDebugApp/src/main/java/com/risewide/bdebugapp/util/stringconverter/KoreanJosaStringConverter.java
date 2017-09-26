@@ -1,10 +1,10 @@
-package com.risewide.bdebugapp.util.stringcomposer;
+package com.risewide.bdebugapp.util.stringconverter;
 
 import com.risewide.bdebugapp.util.SLog;
-import com.risewide.bdebugapp.util.stringcomposer.data.JosaSet;
-import com.risewide.bdebugapp.util.stringcomposer.format.FormatSpecifier;
-import com.risewide.bdebugapp.util.stringcomposer.composer.JosaComposer;
-import com.risewide.bdebugapp.util.stringcomposer.josa.CandidateJosa;
+import com.risewide.bdebugapp.util.stringconverter.converter.JosaConverter;
+import com.risewide.bdebugapp.util.stringconverter.data.JosaSet;
+import com.risewide.bdebugapp.util.stringconverter.format.FormatSpecifier;
+import com.risewide.bdebugapp.util.stringconverter.josa.CandidateJosa;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +33,12 @@ import java.util.regex.Pattern;
  * @see <a href="http://blog.naver.com/PostView.nhn?blogId=kkson50&logNo=120200156752&parentCategoryNo=&categoryNo=9&viewDate=&isShowPopularPosts=false&from=postView">Refer#5</a>
  */
 
-public class KoreanStringJosaComposer implements IStringJosaComposer {
+public class KoreanJosaStringConverter implements IJosaStringConverter {
 
-	private static final String TAG = "KoreanStringJosaComposer";
+	private static final String TAG = "KoreanJosaStringConverter";
 	private static final String EMPTY = "";
 
-	public KoreanStringJosaComposer() {
+	public KoreanJosaStringConverter() {
 	}
 
 	/**
@@ -95,8 +95,8 @@ public class KoreanStringJosaComposer implements IStringJosaComposer {
 			SLog.w(TAG, "[unknown] CandidateJosa.UNKNOWN word:" + word + "/ formatSentence:" + formatString);
 			return getSafeFormatString(formatString, word);
 		}
-		JosaComposer josaComposer = formatSpecifier.getComposer();
-		JosaSet setOfJosa = josaComposer.select(word, josaSet.josaWithJongsung, josaSet.josaWithoutJongsung);
+		JosaConverter josaConverter = formatSpecifier.getConverter();
+		JosaSet setOfJosa = josaConverter.select(word, josaSet.josaWithJongsung, josaSet.josaWithoutJongsung);
 		//
 		String oldWord = formatSpecifier.getFormat() + setOfJosa.getUnproperJosa();
 		String newWord = formatSpecifier.getFormat() + setOfJosa.getProperJosa();
@@ -114,8 +114,8 @@ public class KoreanStringJosaComposer implements IStringJosaComposer {
 		if (formatSpecifier == null) {
 			return EMPTY;
 		}
-		JosaComposer josaComposer = formatSpecifier.getComposer();
-		JosaSet setOfJosa = josaComposer.select(word, josaWithJongsung, josaWithoutJongsung);
+		JosaConverter josaConverter = formatSpecifier.getConverter();
+		JosaSet setOfJosa = josaConverter.select(word, josaWithJongsung, josaWithoutJongsung);
 		String result = word + setOfJosa.getProperJosa();
 		Log(getSafeFormatString("getSentenceWithSingleJosa result=%s on word=%s + josa=%s", new String[] { result, ""+word, setOfJosa.getProperJosa()}));
 		return result;
