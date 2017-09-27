@@ -19,7 +19,10 @@ import java.util.List;
  *
  * <p>
  * [예제]<br>
- * ex: 보이스을 실행합니다.(x) -> 보이스를 실행합니다.(o) <br>
+ * ex.1: %s을 실행합니다. -> 보이스를 실행합니다. <br>
+ * ex.2: 볼륨을 %s로 설정합니다. 화면 밝기를 %s으로 조정합니다. -> 볼륨을 3으로 설정합니다. 화면 밝기를 7로 조정합니다.<br>
+ * ex.3: %1$s%2$s가 맞으면 전화연결이라고 말씀하세요. -> 조금 전 통화한 박지성이 맞으면 전화연결이라고 말씀하세요.<br>
+ *
  * </P>
  *
  * <p>Created by birdea on 2016-11-16.</p>
@@ -136,12 +139,12 @@ public class KoreanJosaStringConverter implements IJosaStringConverter {
 	}
 
 	private String getSafeFormatString(String formatString, Object... values) {
-		//try {
+		try {
 			return String.format(formatString, values);
-		//} catch (Exception ignore) {
-		//	ignore.printStackTrace();
-		//	return formatString;
-		//}
+		} catch (Exception ignore) {
+			ignore.printStackTrace();
+			return formatString;
+		}
 	}
 
 	private void log(String msg) {
