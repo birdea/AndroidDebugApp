@@ -221,6 +221,11 @@ public class KoreanJosaStringTest {
 		//words = addWords("황승택", "김용택");
 		result = processExecuteMultiJosa(formatSentence, "황승택", "김용택");
 		assertEquals("<![CDATA[<skml domain=\"phone\">연락처 황승택과 김용택이 있어요. 몇 번째 분에게 전화를 걸까요?</skml>]]>", result);
+
+		formatSentence = "<![CDATA[<skml domain=\\\"phone\\\">%1$s%2$s가 맞으면 전화연결이라고 말씀하세요.</skml>]]>";
+		//words = addWords("황승택", "김용택");
+		result = processExecuteMultiJosa(formatSentence, "조금 전 통화한 ", "김용택");
+		assertEquals("<![CDATA[<skml domain=\\\"phone\\\">조금 전 통화한 김용택이 맞으면 전화연결이라고 말씀하세요.</skml>]]>", result);
 	}
 
 	private void testScenarioCase() {
