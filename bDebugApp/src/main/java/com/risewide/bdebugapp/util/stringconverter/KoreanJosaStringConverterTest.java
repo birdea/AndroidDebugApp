@@ -16,7 +16,7 @@ public class KoreanJosaStringConverterTest {
 	}
 
 	public void test() {
-		SLog.i("[testSentenceConverter] start");
+		log("[testSentenceConverter] start");
 		TimeLap time = new TimeLap();
 		time.start();
 		///////////////////////////////////////////////////////////////////////////////
@@ -25,21 +25,21 @@ public class KoreanJosaStringConverterTest {
 		// testFailCase();
 		///////////////////////////////////////////////////////////////////////////////
 		time.end();
-		SLog.i("[testSentenceConverter] end");
+		log("[testSentenceConverter] end");
 	}
 
 	private void processExecuteMultiJosa(String formatSentence, Object... words) {
 		String result = ksc.getSentenceWithMultiJosa(formatSentence, words);
-		SLog.i("getSentenceWithMultiJosa format:" + formatSentence);
-		SLog.i("getSentenceWithMultiJosa result:" + result);
-		SLog.i("-------------------------------------------------------------------");
+		log("getSentenceWithMultiJosa format:" + formatSentence);
+		log("getSentenceWithMultiJosa result:" + result);
+		log("-------------------------------------------------------------------");
 	}
 
 	private void processExecuteSingleJosa(String formatSentence, Object word) {
 		String result = ksc.getSentenceWithSingleJosa(formatSentence, word, true);
-		SLog.i("getSentenceWithSingleJosa format:" + formatSentence);
-		SLog.i("getSentenceWithSingleJosa result:" + result);
-		SLog.i("-------------------------------------------------------------------");
+		log("getSentenceWithSingleJosa format:" + formatSentence);
+		log("getSentenceWithSingleJosa result:" + result);
+		log("-------------------------------------------------------------------");
 	}
 
 	private void testSuccessCase() {
@@ -171,4 +171,9 @@ public class KoreanJosaStringConverterTest {
 		}
 		return wordArray;
 	}
+
+	private void log(String msg) {
+		//SLog.d(msg);
+	}
+
 }

@@ -1,7 +1,5 @@
 package com.risewide.bdebugapp.util.stringconverter.spec;
 
-import com.risewide.bdebugapp.util.SLog;
-
 public class MatcherArabicToKorean {
 
 	public interface IArabicKorean {
@@ -72,7 +70,7 @@ public class MatcherArabicToKorean {
 	}
 
 	public static IArabicKorean get(long value) {
-		Log("MatcherArabicToKorean.get() value:"+value);
+		log("MatcherArabicToKorean.get() value:"+value);
 		// 0 > 리턴
 		if (value == 0) {
 			return ArabicKorean._0;
@@ -85,14 +83,14 @@ public class MatcherArabicToKorean {
 		long divisor = (long) Math.pow(10, cipher); // 분모
 		int quotient = (int) (value / divisor); // 몫
 		int remainder = (int) (value % divisor); // 나머지
-		Log(String.format("cal(base) > %s/%s=%s+%s",value,divisor,quotient,remainder));
+		log(String.format("cal(base) > %s/%s=%s+%s",value,divisor,quotient,remainder));
 
 		BigArabicKorean preBigNumber = BigArabicKorean._10p1;
 		for (BigArabicKorean bigNumber : BigArabicKorean.values()) {
 			long d = (long) Math.pow(10, bigNumber.pow);
 			int q = (int) (value / d);
 			int r = (int) (value % d);
-			Log(String.format("cal(loop) > %s/%s=%s+%s",value,d,q,r));
+			log(String.format("cal(loop) > %s/%s=%s+%s",value,d,q,r));
 			if (r > 0) {
 				if (r > 9) {
 					return preBigNumber;
@@ -105,7 +103,7 @@ public class MatcherArabicToKorean {
 		return ArabicKorean._0;
 	}
 	
-	private static void Log(String msg) {
+	private static void log(String msg) {
 		//SLog.d(msg);
 	}
 }

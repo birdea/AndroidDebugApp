@@ -1,7 +1,5 @@
 package com.risewide.bdebugapp.util.stringconverter.format;
 
-import com.risewide.bdebugapp.util.SLog;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -21,7 +19,7 @@ public class FormatSpecifier {
 	}
 
 	public boolean parse(String text) {
-		Log("printPatternMatch-start:"+text+", REG_EXP:"+REG_EXP);
+		log("printPatternMatch-start:"+text+", REG_EXP:"+REG_EXP);
 		truncatedList = new ArrayList<>();
 		formatList = new ArrayList<>();
 		Pattern p = Pattern.compile(REG_EXP);
@@ -40,17 +38,17 @@ public class FormatSpecifier {
 			} else {
 				ignoreFirstFind = false;
 			}
-			Log("[find] idxStart:"+idxStart + ", group:"+group + ", subSentence:"+subSentence);
+			log("[find] idxStart:"+idxStart + ", group:"+group + ", subSentence:"+subSentence);
 		}
 		//
 		subSentence = text.substring(idxBase);
 		truncatedList.add(subSentence);
-		Log("[remain] idxStart:"+idxStart + ", subSentence:"+subSentence);
+		log("[remain] idxStart:"+idxStart + ", subSentence:"+subSentence);
 		// print out for debug
 		for (String item : truncatedList) {
-			Log("[result-getTruncatedSentence] item:" + item);
+			log("[result-getTruncatedSentence] item:" + item);
 		}
-		Log("printPatternMatch-end");
+		log("printPatternMatch-end");
 		return true;
 	}
 
@@ -70,7 +68,7 @@ public class FormatSpecifier {
 		return truncatedList;
 	}
 
-	private void Log(String msg) {
+	private void log(String msg) {
 		//SLog.d("FormatSpecifier", msg);
 	}
 }

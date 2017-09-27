@@ -48,7 +48,7 @@ public class FindStringFormatter {
 	private static final String REG_EXP = "\\%(\\d+\\$)?(.\\d+)?[dfsu]";
 
 	public String[] find(String sentence) {
-		Log("printPatternMatch-start:"+sentence+", reg:"+REG_EXP);
+		log("printPatternMatch-start:"+sentence+", reg:"+REG_EXP);
 		List<String> list = new ArrayList<>();
 		Pattern p = Pattern.compile(REG_EXP);
 		Matcher m = p.matcher(sentence);
@@ -61,7 +61,7 @@ public class FindStringFormatter {
 			String group = m.group();
 			if (firstMatch) {
 				subSentence = sentence.substring(idxBase, idxStart);
-				Log("idxStart:"+idxStart + ", idxEnd:"+ idxEnd +", group:"+group + ", groupCount:"+ m.groupCount() + ", subSentence:"+subSentence);
+				log("idxStart:"+idxStart + ", idxEnd:"+ idxEnd +", group:"+group + ", groupCount:"+ m.groupCount() + ", subSentence:"+subSentence);
 				idxBase = idxStart;
 				list.add(subSentence);
 			}
@@ -72,27 +72,27 @@ public class FindStringFormatter {
 		//
 		subSentence = sentence.substring(idxBase);
 		list.add(subSentence);
-		Log("[last] idxStart:"+idxStart + ", idxEnd:"+ idxEnd + ", subSentence:"+subSentence);
+		log("[last] idxStart:"+idxStart + ", idxEnd:"+ idxEnd + ", subSentence:"+subSentence);
 		// print out for debug
 		///for (String text : list) {
-		//	Log("[result-getTruncatedSentence] text:" + text);
+		//	log("[result-getTruncatedSentence] text:" + text);
 		//}
-		Log("printPatternMatch-end");
+		log("printPatternMatch-end");
 		return list.toArray(new String[0]);
 	}
 
-	private void Log(String msg) {
+	private void log(String msg) {
 		SLog.d(TAG, msg);
 	}
 
 	private void printList(String[] array) {
 		if (array == null) {
-			Log("array is null");
+			log("array is null");
 		}
-		Log("-- array print(start) ------------------");
+		log("-- array print(start) ------------------");
 		for (String item : array) {
-			Log("- item:"+item);
+			log("- item:"+item);
 		}
-		Log("-- array print(end) ------------------");
+		log("-- array print(end) ------------------");
 	}
 }

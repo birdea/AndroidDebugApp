@@ -19,19 +19,19 @@ public class KoreanJosaStringTest {
 
 	//@Test
 	public void test_josa_arabic() throws Exception {
-		Log("[test_josa_arabic] start");
+		log("[test_josa_arabic] start");
 		for (int i=0;i<101;i++) {
 			char c = MatcherArabicToKorean.get(i).getKoreanChar();
-			Log("result c:"+c);
+			log("result c:"+c);
 		}
 		char c = MatcherArabicToKorean.get(10001).getKoreanChar();
-		Log("result c:"+c);
-		Log("[test_josa_arabic] end");
+		log("result c:"+c);
+		log("[test_josa_arabic] end");
 	}
 
 	@Test
 	public void test() {
-		Log("[testSentenceConverter] start");
+		log("[testSentenceConverter] start");
 		TimeLap time = new TimeLap();
 		time.start();
 		///////////////////////////////////////////////////////////////////////////////
@@ -43,37 +43,37 @@ public class KoreanJosaStringTest {
 		testScenarioCase();
 		///////////////////////////////////////////////////////////////////////////////
 		time.end();
-		Log("[testSentenceConverter] end");
+		log("[testSentenceConverter] end");
 	}
 
-	private void Log(String msg) {
+	private void log(String msg) {
 		SLog.d(msg);
 	}
 
 	private String processExecuteWordJosa(Object word, String josaWith, String josaWithout) {
 		String result = ksc.getWordWithJosa(word, josaWith, josaWithout);
-		Log("-------------------------------------------------------------------");
-		Log("getSentenceWithMultiJosa word:" + word + ", josaWith:"+josaWith + ", josaWithout:"+josaWithout);
-		Log("getSentenceWithMultiJosa result:" + result);
-		Log("-------------------------------------------------------------------");
+		log("-------------------------------------------------------------------");
+		log("getSentenceWithMultiJosa word:" + word + ", josaWith:"+josaWith + ", josaWithout:"+josaWithout);
+		log("getSentenceWithMultiJosa result:" + result);
+		log("-------------------------------------------------------------------");
 		return result;
 	}
 
 	private synchronized String processExecuteMultiJosa(String formatSentence, Object... words) {
 		String result = ksc.getSentenceWithMultiJosa(formatSentence, words);
-		Log("-------------------------------------------------------------------");
-		Log("getSentenceWithMultiJosa format:" + formatSentence + ", word: "+getReadable(words));
-		Log("getSentenceWithMultiJosa result:" + result);
-		Log("-------------------------------------------------------------------");
+		log("-------------------------------------------------------------------");
+		log("getSentenceWithMultiJosa format:" + formatSentence + ", word: "+getReadable(words));
+		log("getSentenceWithMultiJosa result:" + result);
+		log("-------------------------------------------------------------------");
 		return result;
 	}
 
 	private String processExecuteSingleJosa(String formatSentence, Object word) {
 		String result = ksc.getSentenceWithSingleJosa(formatSentence, word, true);
-		Log("-------------------------------------------------------------------");
-		Log("getSentenceWithSingleJosa format:" + formatSentence + ", word:"+word);
-		Log("getSentenceWithSingleJosa result:" + result);
-		Log("-------------------------------------------------------------------");
+		log("-------------------------------------------------------------------");
+		log("getSentenceWithSingleJosa format:" + formatSentence + ", word:"+word);
+		log("getSentenceWithSingleJosa result:" + result);
+		log("-------------------------------------------------------------------");
 		return result;
 	}
 
@@ -221,15 +221,22 @@ public class KoreanJosaStringTest {
 		//words = addWords("황승택", "김용택");
 		result = processExecuteMultiJosa(formatSentence, "황승택", "김용택");
 		assertEquals("<![CDATA[<skml domain=\"phone\">연락처 황승택과 김용택이 있어요. 몇 번째 분에게 전화를 걸까요?</skml>]]>", result);
+	}
+
+	private void testScenarioCase() {
+		Object[] words;
+		String formatSentence;
+		String result;
 
 		formatSentence = "<![CDATA[<skml domain=\\\"phone\\\">%1$s%2$s가 맞으면 전화연결이라고 말씀하세요.</skml>]]>";
 		//words = addWords("황승택", "김용택");
 		result = processExecuteMultiJosa(formatSentence, "조금 전 통화한 ", "김용택");
 		assertEquals("<![CDATA[<skml domain=\\\"phone\\\">조금 전 통화한 김용택이 맞으면 전화연결이라고 말씀하세요.</skml>]]>", result);
-	}
 
-	private void testScenarioCase() {
-
+		formatSentence = "<![CDATA[<skml domain=\\\"phone\\\">%s가 맞으면 전화연결이라고 말씀하세요.</skml>]]>";
+		//words = addWords("황승택", "김용택");
+		result = processExecuteMultiJosa(formatSentence, "김용택");
+		assertEquals("<![CDATA[<skml domain=\\\"phone\\\">김용택이 맞으면 전화연결이라고 말씀하세요.</skml>]]>", result);
 	}
 
 	long pow(long a, int b) {
