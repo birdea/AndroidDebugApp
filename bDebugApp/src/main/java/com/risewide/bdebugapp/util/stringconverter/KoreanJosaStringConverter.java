@@ -43,7 +43,7 @@ public class KoreanJosaStringConverter implements IJosaStringConverter {
 	 * @param formatString %s 인자를 지니고 있는 포맷 문장 "%s는 활성화됐지만 %s가 종료되었네요." 형태의 문장<br>
 	 */
 	@Override
-	public String getSentenceWithMultiJosa(Object[] words, String formatString) {
+	public String getSentenceWithMultiJosa(String formatString, Object... words) {
 		FormatSpecifier formatSpecifier = new FormatSpecifier();
 		// - init
 		if (!formatSpecifier.parse(formatString)) {
@@ -66,15 +66,17 @@ public class KoreanJosaStringConverter implements IJosaStringConverter {
 		StringBuilder sb = new StringBuilder();
 		int length = truncated.size();
 		for (int i=0; i<length; i++) {
-			String aWord = getSentenceWithSingleJosa(words[i], truncated.get(i), false);
+			String aWord = getSentenceWithSingleJosa(truncated.get(i), words[i], false);
 			sb.append(aWord);
 		}
 		//- applyWord
-		return getSafeFormatString(sb.toString(), words);
+		String completeSentence = sb.toString();
+		Log("final getSentenceWithMultiJosa() --- end :" + completeSentence + ", countOfFormatSpecifier :" + countOfFormatSpecifier);
+		return getSafeFormatString(completeSentence, words);
 	}
 
 	@Override
-	public String getSentenceWithSingleJosa(Object word, String formatString, boolean applyWordOnFormatSentence) {
+	public String getSentenceWithSingleJosa(String formatString, Object word, boolean applyWordOnFormatSentence) {
 		Log("--- getSentenceWithSingleJosa() --- start word:" + word + ", formatSentence:" + formatString);
 		if (word == null) {
 			return formatString;
@@ -88,16 +90,21 @@ public class KoreanJosaStringConverter implements IJosaStringConverter {
 		Log("[valid] countOfFormatSpecifier :" + countOfFormatSpecifier);
 		// - check if params is invalid then return formatString
 		if (countOfFormatSpecifier != 1) {
-			SLog.w(TAG, "The formatSentence should has only one letter of %s or %d...");
+			Log("The formatSentence should has only one letter of %s or %d...");
 			return formatString;
 		}
 
+		// - formatSpecifier와 한국어 조사가 정규적으로 구성되어 있지 않다면, 조사 처리 필요 없음
 		KoreanJosa josaSet = KoreanJosa.getJosaSet(formatString, formatSpecifier.getFormatSpecifiers());
 		if (KoreanJosa.UNKNOWN.equals(josaSet)) {
-			SLog.w(TAG, "[unknown] KoreanJosa.UNKNOWN word:" + word + "/ formatSentence:" + formatString);
-			return getSafeFormatString(formatString, word);
+			Log("[unknown] KoreanJosa.UNKNOWN word:" + word + "/ formatSentence:" + formatString);
+			if (applyWordOnFormatSentence) {
+				return getSafeFormatString(formatString, word);
+			} else {
+				return formatString;
+			}
 		}
-
+		// - formatSpecifier와 한국어 조사가 정규적으로 구성되어 있으므로, 조사 처리 진행 후 결과값 반환
 		JosaConverter josaConverter = new JosaConverterObject();
 		JosaSet setOfJosa = josaConverter.select(word, josaSet);
 		//
@@ -110,7 +117,7 @@ public class KoreanJosaStringConverter implements IJosaStringConverter {
 			completeSentence = getSafeFormatString(replacedSentence, word);
 			Log("[swap] oldSentence:" + formatString + ", newSentence:" + replacedSentence);
 		}
-		Log("--- getSentenceWithSingleJosa() --- end :"+completeSentence);
+		Log("final getSentenceWithSingleJosa() --- end :"+completeSentence);
 		return completeSentence;
 	}
 
@@ -119,7 +126,7 @@ public class KoreanJosaStringConverter implements IJosaStringConverter {
 		JosaConverter josaConverter = new JosaConverterObject();
 		KoreanJosa koreanJosa = KoreanJosa.getKoreanJosa(josaWithJongsung, josaWithoutJongsung);
 		if (KoreanJosa.UNKNOWN.equals(koreanJosa)) {
-			SLog.w(TAG, "[unknown] KoreanJosa.UNKNOWN word:" + word);
+			Log("[unknown] KoreanJosa.UNKNOWN word:" + word);
 			return String.valueOf(word);
 		}
 		JosaSet setOfJosa = josaConverter.select(word, koreanJosa);
@@ -128,17 +135,13 @@ public class KoreanJosaStringConverter implements IJosaStringConverter {
 		return result;
 	}
 
-	private String getSafeFormatString(String formatString, Object value) {
-		return getSafeFormatString(formatString, new Object[]{ value });
-	}
-
-	private String getSafeFormatString(String formatString, Object[] values) {
-		try {
+	private String getSafeFormatString(String formatString, Object... values) {
+		//try {
 			return String.format(formatString, values);
-		} catch (Exception ignore) {
-			ignore.printStackTrace();
-			return formatString;
-		}
+		//} catch (Exception ignore) {
+		//	ignore.printStackTrace();
+		//	return formatString;
+		//}
 	}
 
 	private void Log(String msg) {

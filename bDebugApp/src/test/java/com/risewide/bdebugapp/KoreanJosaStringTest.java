@@ -31,16 +31,19 @@ public class KoreanJosaStringTest {
 
 	@Test
 	public void test() {
-		SLog.i("[testSentenceConverter] start");
+		Log("[testSentenceConverter] start");
 		TimeLap time = new TimeLap();
 		time.start();
 		///////////////////////////////////////////////////////////////////////////////
-		//testWordCase();
-		//testSingleSentenceCase();
+		testWordCase();
+		testSingleSentenceCase();
 		testMultiSentenceCase();
+
+		testDone();
+		testScenarioCase();
 		///////////////////////////////////////////////////////////////////////////////
 		time.end();
-		SLog.i("[testSentenceConverter] end");
+		Log("[testSentenceConverter] end");
 	}
 
 	private void Log(String msg) {
@@ -49,28 +52,28 @@ public class KoreanJosaStringTest {
 
 	private String processExecuteWordJosa(Object word, String josaWith, String josaWithout) {
 		String result = ksc.getWordWithJosa(word, josaWith, josaWithout);
-		SLog.i("-------------------------------------------------------------------");
-		SLog.i("getSentenceWithMultiJosa word:" + word + ", josaWith:"+josaWith + ", josaWithout:"+josaWithout);
-		SLog.i("getSentenceWithMultiJosa result:" + result);
-		SLog.i("-------------------------------------------------------------------");
+		Log("-------------------------------------------------------------------");
+		Log("getSentenceWithMultiJosa word:" + word + ", josaWith:"+josaWith + ", josaWithout:"+josaWithout);
+		Log("getSentenceWithMultiJosa result:" + result);
+		Log("-------------------------------------------------------------------");
 		return result;
 	}
 
-	private String processExecuteMultiJosa(String formatSentence, Object[] words) {
-		String result = ksc.getSentenceWithMultiJosa(words, formatSentence);
-		SLog.i("-------------------------------------------------------------------");
-		SLog.i("getSentenceWithMultiJosa format:" + formatSentence + ", word:"+words);
-		SLog.i("getSentenceWithMultiJosa result:" + result);
-		SLog.i("-------------------------------------------------------------------");
+	private synchronized String processExecuteMultiJosa(String formatSentence, Object... words) {
+		String result = ksc.getSentenceWithMultiJosa(formatSentence, words);
+		Log("-------------------------------------------------------------------");
+		Log("getSentenceWithMultiJosa format:" + formatSentence + ", word: "+getReadable(words));
+		Log("getSentenceWithMultiJosa result:" + result);
+		Log("-------------------------------------------------------------------");
 		return result;
 	}
 
 	private String processExecuteSingleJosa(String formatSentence, Object word) {
-		String result = ksc.getSentenceWithSingleJosa(word, formatSentence, true);
-		SLog.i("-------------------------------------------------------------------");
-		SLog.i("getSentenceWithSingleJosa format:" + formatSentence + ", word:"+word);
-		SLog.i("getSentenceWithSingleJosa result:" + result);
-		SLog.i("-------------------------------------------------------------------");
+		String result = ksc.getSentenceWithSingleJosa(formatSentence, word, true);
+		Log("-------------------------------------------------------------------");
+		Log("getSentenceWithSingleJosa format:" + formatSentence + ", word:"+word);
+		Log("getSentenceWithSingleJosa result:" + result);
+		Log("-------------------------------------------------------------------");
 		return result;
 	}
 
@@ -107,6 +110,13 @@ public class KoreanJosaStringTest {
 		josaWithout = "가";
 		result = processExecuteWordJosa(word, josaWith, josaWithout);
 		assertEquals("박용택a가", result);
+
+		// test case
+		word = "박용택M";
+		josaWith = "이";
+		josaWithout = "가";
+		result = processExecuteWordJosa(word, josaWith, josaWithout);
+		assertEquals("박용택M이", result);
 	}
 
 	private void testSingleSentenceCase() {
@@ -123,9 +133,9 @@ public class KoreanJosaStringTest {
 
 		// test case
 		formatSentence = "%s이 맞나요?";
-		word = "박용태";
+		word = "박용택";
 		result = processExecuteSingleJosa(formatSentence, word);
-		assertEquals("박용태가 맞나요?", result);
+		assertEquals("박용택이 맞나요?", result);
 
 		// test case
 		formatSentence = "%s가 맞나요?";
@@ -177,6 +187,16 @@ public class KoreanJosaStringTest {
 		word = "황승택o";
 		result = processExecuteSingleJosa(formatSentence, word);
 		assertEquals("<![CDATA[<skml domain=\\\"phone\">황승택o가 맞으면 전화연결이라고 말씀하세요.</skml>]]>", result);
+
+		formatSentence = "<![CDATA[<skml domain=\\\"phone\">%s가 맞으면 전화연결이라고 말씀하세요.</skml>]]>";
+		word = "Mr.모현호80";
+		result = processExecuteSingleJosa(formatSentence, word);
+		assertEquals("<![CDATA[<skml domain=\\\"phone\">Mr.모현호80이 맞으면 전화연결이라고 말씀하세요.</skml>]]>", result);
+
+		formatSentence = "<![CDATA[<skml domain=\\\"phone\">%s가 맞으면 전화연결이라고 말씀하세요.</skml>]]>";
+		word = "이대범.M";
+		result = processExecuteSingleJosa(formatSentence, word);
+		assertEquals("<![CDATA[<skml domain=\\\"phone\">이대범.M이 맞으면 전화연결이라고 말씀하세요.</skml>]]>", result);
 	}
 
 	private void testMultiSentenceCase() {
@@ -187,20 +207,24 @@ public class KoreanJosaStringTest {
 
 		// test case //
 		formatSentence = "%s 볼륨을 %s로 설정합니다. 화면밝기를 %s으로 조정합니다. %s";
-		words = addWords("3", "7", "4", "안녕히가세요");
-		result = processExecuteMultiJosa(formatSentence, words);
-		assertEquals("3 볼륨을 3로 설정합니다. 화면밝기를 7로 조정합니다. 안녕히가세요", result);
+		//words = addWords("스피커", "3", "7", "감사합니다.");
+		result = processExecuteMultiJosa(formatSentence, "스피커", "3", "7", "감사합니다.");
+		assertEquals("스피커 볼륨을 3으로 설정합니다. 화면밝기를 7로 조정합니다. 감사합니다.", result);
 
 		// test case //
 		formatSentence = "볼륨을 %s로 설정합니다. 화면밝기를 %s으로 조정합니다.";
-		words = addWords("3", "7");
-		result = processExecuteMultiJosa(formatSentence, words);
+		//words = addWords("3", "7");
+		result = processExecuteMultiJosa(formatSentence, "3", "7");
 		assertEquals("볼륨을 3으로 설정합니다. 화면밝기를 7로 조정합니다.", result);
 
 		formatSentence = "<![CDATA[<skml domain=\"phone\">연락처 %1$s와 %2$s가 있어요. 몇 번째 분에게 전화를 걸까요?</skml>]]>";
-		words = addWords("황승택", "김용택");
-		result = processExecuteMultiJosa(formatSentence, words);
+		//words = addWords("황승택", "김용택");
+		result = processExecuteMultiJosa(formatSentence, "황승택", "김용택");
 		assertEquals("<![CDATA[<skml domain=\"phone\">연락처 황승택과 김용택이 있어요. 몇 번째 분에게 전화를 걸까요?</skml>]]>", result);
+	}
+
+	private void testScenarioCase() {
+
 	}
 
 	long pow(long a, int b) {
@@ -232,21 +256,21 @@ public class KoreanJosaStringTest {
 
 		// test case
 		formatSentence = "%s와 자료를 공유합니다. %s로서 활성화되었고 %s를 실행할게요, %s은 좋아요!";
-		words = addWords("카카오톡", "카카오", "라인", "플래이");
-		result = processExecuteMultiJosa(formatSentence, words);
+		//words = addWords("카카오톡", "카카오", "라인", "플래이");
+		result = processExecuteMultiJosa(formatSentence, "카카오톡", "카카오", "라인", "플래이");
 		assertEquals("카카오톡과 자료를 공유합니다. 카카오로서 활성화되었고 라인을 실행할게요, 플래이는 좋아요!", result);
 
 		// test case
 		formatSentence = "%s와 자료를 공유합니다. %s로서 활성화되었고 %s를 실행할게요, %s은 좋아요!";
-		words = addWords("런처플레닛", "SK텔레콤", "A-TF", "나3나");
-		result = processExecuteMultiJosa(formatSentence, words);
+		//words = addWords("런처플레닛", "SK텔레콤", "A-TF", "나3나");
+		result = processExecuteMultiJosa(formatSentence, "런처플레닛", "SK텔레콤", "A-TF", "나3나");
 		assertEquals("런처플레닛과 자료를 공유합니다. SK텔레콤으로서 활성화되었고 A-TF를 실행할게요, 나3나는 좋아요!", result);
 
 		// test case
-		formatSentence = "%s은 %s년 %s월 %s일 %s요일입니다.";
-		words = addWords("영국", 2016, 11, 24, "수", 25);
-		result = processExecuteMultiJosa(formatSentence, words);
-		assertEquals("영국은 2016년 11월 24일 수요일입니다.", result);
+		formatSentence = "%s은 %d년 %d월 %s일 %s요일입니다. %.2f 수량";
+		//words = addWords("영국", 2016, 11, 24, "수", 25, 0.343232f);
+		result = processExecuteMultiJosa(formatSentence, "영국", 2016, 11, 24, "수", 0.3343f);
+		assertEquals("영국은 2016년 11월 24일 수요일입니다. 0.33 수량", result);
 
 		char idx_a = 'a';
 		char idx_z = 'z';
@@ -267,6 +291,7 @@ public class KoreanJosaStringTest {
 			result = processExecuteSingleJosa(formatSentence, word);
 			//assertEquals("", result);
 		}
+
 		// test case - digit
 		for(int i=0;i<20;i++) {
 			formatSentence = "%s가 맞나요?";
@@ -274,16 +299,9 @@ public class KoreanJosaStringTest {
 			result = processExecuteSingleJosa(formatSentence, word);
 			//assertEquals("", result);
 		}
-		// test case - digit
-		for (int i = 0; i < 120; i++) {
-			formatSentence = "%s가 맞나요?";
-			word = String.valueOf(i);
-			result = processExecuteSingleJosa(formatSentence, word);
-			//assertEquals("", result);
-		}
 	}
 
-	private Object[] addWords(Object... args) {
+	/*private Object[] addWords(Object... args) {
 		int size = args.length;
 		Object[] wordArray = new Object[size];
 		int idx = 0;
@@ -291,5 +309,13 @@ public class KoreanJosaStringTest {
 			wordArray[idx++] = word;
 		}
 		return wordArray;
+	}*/
+
+	private String getReadable(Object[] objArray) {
+		StringBuilder sb = new StringBuilder();
+		for (Object item : objArray) {
+			sb.append(item).append(",");
+		}
+		return sb.toString();
 	}
 }

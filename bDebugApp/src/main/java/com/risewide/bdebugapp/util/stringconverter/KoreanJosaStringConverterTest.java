@@ -28,15 +28,15 @@ public class KoreanJosaStringConverterTest {
 		SLog.i("[testSentenceConverter] end");
 	}
 
-	private void processExecuteMultiJosa(String formatSentence, Object[] words) {
-		String result = ksc.getSentenceWithMultiJosa(words, formatSentence);
+	private void processExecuteMultiJosa(String formatSentence, Object... words) {
+		String result = ksc.getSentenceWithMultiJosa(formatSentence, words);
 		SLog.i("getSentenceWithMultiJosa format:" + formatSentence);
 		SLog.i("getSentenceWithMultiJosa result:" + result);
 		SLog.i("-------------------------------------------------------------------");
 	}
 
 	private void processExecuteSingleJosa(String formatSentence, Object word) {
-		String result = ksc.getSentenceWithSingleJosa(word, formatSentence, true);
+		String result = ksc.getSentenceWithSingleJosa(formatSentence, word, true);
 		SLog.i("getSentenceWithSingleJosa format:" + formatSentence);
 		SLog.i("getSentenceWithSingleJosa result:" + result);
 		SLog.i("-------------------------------------------------------------------");

@@ -71,6 +71,6 @@ public class FormatSpecifier {
 	}
 
 	private void Log(String msg) {
-		SLog.d("FormatSpecifier", msg);
+		//SLog.d("FormatSpecifier", msg);
 	}
 }

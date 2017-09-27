@@ -23,7 +23,7 @@ public class JosaConverterObject extends JosaConverter<Object> {
 		// step.1 - check if param is empty
 		if (obj == null || koreanJosa == null || StringUtils.isEmpty(koreanJosa.getJosaWithJongsung())
 				|| StringUtils.isEmpty(koreanJosa.getJosaWithoutJongsung())) {
-			SLog.w("[except] getMultiSentenceWithJosa. StringUtils.isEmpty obj:" + obj + ", koreanJosa:"
+			Log("[except] StringUtils.isEmpty obj:" + obj + ", koreanJosa:"
 					+ koreanJosa);
 			return new JosaSet("","");
 		}
@@ -32,10 +32,10 @@ public class JosaConverterObject extends JosaConverter<Object> {
 
 		// step.3 - check if korean then process to get the set of josa
 		if (isKoreanChar(lastChar)) {
-			SLog.d("isKoreanChar[true] :"+lastChar);
+			Log("isKoreanChar[true] :"+lastChar);
 			return koreanJosa.process(lastChar);
 		}
-		SLog.d("isUnknownLetter[true] :"+lastChar);
+		Log("isUnknownLetter[true] :"+lastChar);
 		return new JosaSet("","");
 	}
 
@@ -43,26 +43,26 @@ public class JosaConverterObject extends JosaConverter<Object> {
 		char lastChar = 1;
 		// case of Long
 		if (obj instanceof Long) {
-			SLog.d("obj instanceof Long[true] :"+obj);
+			Log("obj instanceof Long[true] :"+obj);
 			Long val = (Long)obj;
 			return MatcherArabicToKorean.get(val).getKoreanChar();
 		}
 		// case of Integer
 		if (obj instanceof Integer) {
-			SLog.d("obj instanceof Integer[true] :"+obj);
+			Log("obj instanceof Integer[true] :"+obj);
 			Integer val = (Integer)obj;
 			return MatcherArabicToKorean.get(val).getKoreanChar();
 		}
 		// case of Short
 		if (obj instanceof Short) {
-			SLog.d("obj instanceof Short[true] :"+obj);
+			Log("obj instanceof Short[true] :"+obj);
 			Short val = (Short)obj;
 			return MatcherArabicToKorean.get(val).getKoreanChar();
 		}
 
 		// case of String
 		if (obj instanceof String) {
-			SLog.d("obj instanceof String[true] :"+obj);
+			Log("obj instanceof String[true] :"+obj);
 			String word = (String)obj;
 			// case of String > Integer, ex) "1209390123"
 			try {
@@ -73,11 +73,11 @@ public class JosaConverterObject extends JosaConverter<Object> {
 			lastChar = word.charAt(word.length() - 1);
 		}
 		if (isAlphabetLetter(lastChar)) {
-			SLog.d("isAlphabetLetter[true] :"+lastChar);
+			Log("isAlphabetLetter[true] :"+lastChar);
 			lastChar = MatcherAlphabetToKorean.getKoreanWord(lastChar).getKoreanLastChar();
 		}
 		if (isDigit(lastChar)) {
-			SLog.d("isDigit[true] :"+lastChar);
+			Log("isDigit[true] :"+lastChar);
 			lastChar = MatcherArabicToKorean.get(Character.getNumericValue(lastChar)).getKoreanChar();
 		}
 		return lastChar;
@@ -97,5 +97,9 @@ public class JosaConverterObject extends JosaConverter<Object> {
 
 	public static boolean isDigit(char c) {
 		return Character.isDigit(c);
+	}
+	
+	private void Log(String msg) {
+		//SLog.d(msg);
 	}
 }

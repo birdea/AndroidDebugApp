@@ -72,7 +72,7 @@ public class MatcherArabicToKorean {
 	}
 
 	public static IArabicKorean get(long value) {
-		SLog.d("MatcherArabicToKorean.get() value:"+value);
+		Log("MatcherArabicToKorean.get() value:"+value);
 		// 0 > 리턴
 		if (value == 0) {
 			return ArabicKorean._0;
@@ -85,14 +85,14 @@ public class MatcherArabicToKorean {
 		long divisor = (long) Math.pow(10, cipher); // 분모
 		int quotient = (int) (value / divisor); // 몫
 		int remainder = (int) (value % divisor); // 나머지
-		SLog.d(String.format("cal(base) > %s/%s=%s+%s",value,divisor,quotient,remainder));
+		Log(String.format("cal(base) > %s/%s=%s+%s",value,divisor,quotient,remainder));
 
 		BigArabicKorean preBigNumber = BigArabicKorean._10p1;
 		for (BigArabicKorean bigNumber : BigArabicKorean.values()) {
 			long d = (long) Math.pow(10, bigNumber.pow);
 			int q = (int) (value / d);
 			int r = (int) (value % d);
-			SLog.d(String.format("cal(loop) > %s/%s=%s+%s",value,d,q,r));
+			Log(String.format("cal(loop) > %s/%s=%s+%s",value,d,q,r));
 			if (r > 0) {
 				if (r > 9) {
 					return preBigNumber;
@@ -103,5 +103,9 @@ public class MatcherArabicToKorean {
 			preBigNumber = bigNumber;
 		}
 		return ArabicKorean._0;
+	}
+	
+	private static void Log(String msg) {
+		//SLog.d(msg);
 	}
 }
