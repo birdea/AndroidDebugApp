@@ -18,45 +18,37 @@ public class FormatSpecifier {
 	private List<String> formatList;
 
 	public FormatSpecifier() {
-		truncatedList = new ArrayList<>();
-		formatList = new ArrayList<>();
 	}
 
 	public boolean parse(String text) {
 		Log("printPatternMatch-start:"+text+", REG_EXP:"+REG_EXP);
-		//
-		formatList.clear();
-		truncatedList.clear();
-		//
-		List<String> list = new ArrayList<>();
+		truncatedList = new ArrayList<>();
+		formatList = new ArrayList<>();
 		Pattern p = Pattern.compile(REG_EXP);
 		Matcher m = p.matcher(text);
-		int idxStart = 0, idxEnd = 0, idxBase = 0;
-		boolean firstMatch = false;
-		String subSentence;
+		int idxStart = 0, idxBase = 0;
+		boolean ignoreFirstFind = true;
+		String subSentence = null;
 		while (m.find()) {
 			idxStart = m.start();
-			idxEnd = m.end();
 			String group = m.group();
 			formatList.add(group);
-			if (firstMatch) {
+			if (!ignoreFirstFind) {
 				subSentence = text.substring(idxBase, idxStart);
-				Log("idxStart:"+idxStart + ", idxEnd:"+ idxEnd +", group:"+group + ", groupCount:"+ m.groupCount() + ", subSentence:"+subSentence);
 				idxBase = idxStart;
-				list.add(subSentence);
+				truncatedList.add(subSentence);
+			} else {
+				ignoreFirstFind = false;
 			}
-			else {
-				firstMatch = true;
-			}
+			Log("[find] idxStart:"+idxStart + ", group:"+group + ", subSentence:"+subSentence);
 		}
 		//
 		subSentence = text.substring(idxBase);
-		list.add(subSentence);
-		Log("[last] idxStart:"+idxStart + ", idxEnd:"+ idxEnd + ", subSentence:"+subSentence);
+		truncatedList.add(subSentence);
+		Log("[remain] idxStart:"+idxStart + ", subSentence:"+subSentence);
 		// print out for debug
-		for (String item : list) {
+		for (String item : truncatedList) {
 			Log("[result-getTruncatedSentence] item:" + item);
-			truncatedList.add(item);
 		}
 		Log("printPatternMatch-end");
 		return true;

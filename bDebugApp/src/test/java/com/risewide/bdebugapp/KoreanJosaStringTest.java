@@ -8,7 +8,6 @@ import com.risewide.bdebugapp.util.stringconverter.spec.MatcherArabicToKorean;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by birdea on 2017-09-25.
@@ -36,9 +35,9 @@ public class KoreanJosaStringTest {
 		TimeLap time = new TimeLap();
 		time.start();
 		///////////////////////////////////////////////////////////////////////////////
-		testWordCase();
+		//testWordCase();
 		//testSingleSentenceCase();
-		//testMultiSentenceCase();
+		testMultiSentenceCase();
 		///////////////////////////////////////////////////////////////////////////////
 		time.end();
 		SLog.i("[testSentenceConverter] end");
@@ -185,6 +184,12 @@ public class KoreanJosaStringTest {
 		Object[] words;
 		String formatSentence;
 		String result;
+
+		// test case //
+		formatSentence = "%s 볼륨을 %s로 설정합니다. 화면밝기를 %s으로 조정합니다. %s";
+		words = addWords("3", "7", "4", "안녕히가세요");
+		result = processExecuteMultiJosa(formatSentence, words);
+		assertEquals("3 볼륨을 3로 설정합니다. 화면밝기를 7로 조정합니다. 안녕히가세요", result);
 
 		// test case //
 		formatSentence = "볼륨을 %s로 설정합니다. 화면밝기를 %s으로 조정합니다.";
