@@ -15,13 +15,14 @@ public class FormatSpecifier {
 	private List<String> truncatedList;
 	private List<String> formatList;
 
-	public FormatSpecifier() {
-	}
-
-	public boolean parse(String text) {
-		log("printPatternMatch-start:"+text+", REG_EXP:"+REG_EXP);
+	public FormatSpecifier(String text) {
 		truncatedList = new ArrayList<>();
 		formatList = new ArrayList<>();
+		parse(text);
+	}
+
+	private void parse(String text) {
+		log("printPatternMatch-start:"+text+", REG_EXP:"+REG_EXP);
 		Pattern p = Pattern.compile(REG_EXP);
 		Matcher m = p.matcher(text);
 		int idxStart = 0, idxBase = 0;
@@ -49,7 +50,6 @@ public class FormatSpecifier {
 			log("[result-getTruncatedSentence] item:" + item);
 		}
 		log("printPatternMatch-end");
-		return true;
 	}
 
 	public List<String> getFormatSpecifiers() {

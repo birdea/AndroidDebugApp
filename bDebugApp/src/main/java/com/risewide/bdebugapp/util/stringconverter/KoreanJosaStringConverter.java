@@ -47,11 +47,7 @@ public class KoreanJosaStringConverter implements IJosaStringConverter {
 	 */
 	@Override
 	public String getSentenceWithMultiJosa(String formatString, Object... words) {
-		FormatSpecifier formatSpecifier = new FormatSpecifier();
-		// - init
-		if (!formatSpecifier.parse(formatString)) {
-			return formatString;
-		}
+		FormatSpecifier formatSpecifier = new FormatSpecifier(formatString);
 		// - get count of params
 		int countOfWord = words.length;
 		int countOfFormatSpecifier = formatSpecifier.getCountOfFormatSpecifier();
@@ -84,11 +80,7 @@ public class KoreanJosaStringConverter implements IJosaStringConverter {
 		if (word == null) {
 			return formatString;
 		}
-		FormatSpecifier formatSpecifier = new FormatSpecifier();
-		// - init
-		if (!formatSpecifier.parse(formatString)) {
-			return formatString;
-		}
+		FormatSpecifier formatSpecifier = new FormatSpecifier(formatString);
 		int countOfFormatSpecifier = formatSpecifier.getCountOfFormatSpecifier();
 		log("[valid] countOfFormatSpecifier :" + countOfFormatSpecifier);
 		// - check if params is invalid then return formatString
