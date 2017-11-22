@@ -9,10 +9,10 @@ import com.risewide.bdebugapp.util.TimeLap;
 
 public class KoreanJosaStringConverterTest {
 
-	private KoreanJosaStringConverter ksc;
+	private KorStringJosaConverter ksc;
 
 	public KoreanJosaStringConverterTest() {
-		ksc = new KoreanJosaStringConverter();
+		ksc = new KorStringJosaConverter();
 	}
 
 	public void test() {
@@ -29,14 +29,14 @@ public class KoreanJosaStringConverterTest {
 	}
 
 	private void processExecuteMultiJosa(String formatSentence, Object... words) {
-		String result = ksc.getSentenceWithMultiJosa(formatSentence, words);
+		String result = ksc.getSentence(formatSentence, words);
 		log("getSentenceWithMultiJosa format:" + formatSentence);
 		log("getSentenceWithMultiJosa result:" + result);
 		log("-------------------------------------------------------------------");
 	}
 
 	private void processExecuteSingleJosa(String formatSentence, Object word) {
-		String result = ksc.getSentenceWithSingleJosa(formatSentence, word, true);
+		String result = ksc.getSentence(formatSentence, word, true);
 		log("getSentenceWithSingleJosa format:" + formatSentence);
 		log("getSentenceWithSingleJosa result:" + result);
 		log("-------------------------------------------------------------------");

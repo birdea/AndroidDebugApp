@@ -1,6 +1,4 @@
-package com.risewide.bdebugapp.util.stringconverter.josa;
-
-import com.risewide.bdebugapp.util.stringconverter.data.JosaSet;
+package com.risewide.bdebugapp.util.stringconverter.data;
 
 import java.util.List;
 

@@ -2,8 +2,8 @@ package com.risewide.bdebugapp;
 
 import com.risewide.bdebugapp.util.SLog;
 import com.risewide.bdebugapp.util.TimeLap;
-import com.risewide.bdebugapp.util.stringconverter.KoreanJosaStringConverter;
-import com.risewide.bdebugapp.util.stringconverter.spec.MatcherArabicToKorean;
+import com.risewide.bdebugapp.util.stringconverter.KorStringJosaConverter;
+import com.risewide.bdebugapp.util.stringconverter.data.MatcherArabicToKorean;
 
 import org.junit.Test;
 
@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 
 public class KoreanJosaStringTest {
 
-	private KoreanJosaStringConverter ksc = new KoreanJosaStringConverter();
+	private KorStringJosaConverter ksc = new KorStringJosaConverter();
 
 	//@Test
 	public void test_josa_arabic() throws Exception {
@@ -51,7 +51,7 @@ public class KoreanJosaStringTest {
 	}
 
 	private String processExecuteWordJosa(Object word, String josaWith, String josaWithout) {
-		String result = ksc.getWordWithJosa(word, josaWith, josaWithout);
+		String result = ksc.getWord(word, josaWith, josaWithout);
 		log("-------------------------------------------------------------------");
 		log("getSentenceWithMultiJosa word:" + word + ", josaWith:"+josaWith + ", josaWithout:"+josaWithout);
 		log("getSentenceWithMultiJosa result:" + result);
@@ -60,7 +60,7 @@ public class KoreanJosaStringTest {
 	}
 
 	private synchronized String processExecuteMultiJosa(String formatSentence, Object... words) {
-		String result = ksc.getSentenceWithMultiJosa(formatSentence, words);
+		String result = ksc.getSentence(formatSentence, words);
 		log("-------------------------------------------------------------------");
 		log("getSentenceWithMultiJosa format:" + formatSentence + ", word: "+getReadable(words));
 		log("getSentenceWithMultiJosa result:" + result);
@@ -69,7 +69,7 @@ public class KoreanJosaStringTest {
 	}
 
 	private String processExecuteSingleJosa(String formatSentence, Object word) {
-		String result = ksc.getSentenceWithSingleJosa(formatSentence, word, true);
+		String result = ksc.getSentence(formatSentence, word, true);
 		log("-------------------------------------------------------------------");
 		log("getSentenceWithSingleJosa format:" + formatSentence + ", word:"+word);
 		log("getSentenceWithSingleJosa result:" + result);

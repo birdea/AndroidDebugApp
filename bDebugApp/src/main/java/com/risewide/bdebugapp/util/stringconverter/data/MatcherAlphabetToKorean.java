@@ -1,4 +1,4 @@
-package com.risewide.bdebugapp.util.stringconverter.spec;
+package com.risewide.bdebugapp.util.stringconverter.data;
 
 import android.support.annotation.NonNull;
 

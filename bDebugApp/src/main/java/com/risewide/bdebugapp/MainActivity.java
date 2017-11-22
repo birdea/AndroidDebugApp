@@ -1,5 +1,22 @@
 package com.risewide.bdebugapp;
 
+import com.risewide.bdebugapp.aidltest.TestAidlActivity;
+import com.risewide.bdebugapp.aidltest.TestAidlService;
+import com.risewide.bdebugapp.communication.MessageReaderTestActivity;
+import com.risewide.bdebugapp.communication.MessageSenderTestActivity;
+import com.risewide.bdebugapp.external.SpeechDemoGoogleActivity;
+import com.risewide.bdebugapp.external.SpeechDemoKakaoActivity;
+import com.risewide.bdebugapp.external.SpeechDemoNaverActivity;
+import com.risewide.bdebugapp.process.ActivityTestCrashOnOtherProcess;
+import com.risewide.bdebugapp.process.ActivityTestCrashOnSameProcess;
+import com.risewide.bdebugapp.process.ExecuterAdbShellCommand;
+import com.risewide.bdebugapp.receiver.AladdinCallManager;
+import com.risewide.bdebugapp.util.AudioFocusManager;
+import com.risewide.bdebugapp.util.SLog;
+import com.risewide.bdebugapp.util.stringconverter.KoreanJosaStringConverterTest;
+import com.skt.prod.voice.v2.aidl.ISmartVoice;
+import com.skt.prod.voice.v2.aidl.ITextToSpeechCallback;
+
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -11,25 +28,13 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 
-import com.risewide.bdebugapp.aidltest.TestAidlActivity;
-import com.risewide.bdebugapp.aidltest.TestAidlService;
-import com.risewide.bdebugapp.communication.MessageReaderTestActivity;
-import com.risewide.bdebugapp.communication.MessageSenderTestActivity;
-import com.risewide.bdebugapp.external.SpeechDemoGoogleActivity;
-import com.risewide.bdebugapp.external.SpeechDemoKakaoActivity;
-import com.risewide.bdebugapp.external.SpeechDemoNaverActivity;
-import com.risewide.bdebugapp.process.ActivityTestCrashOnOtherProcess;
-import com.risewide.bdebugapp.process.ActivityTestCrashOnSameProcess;
-import com.risewide.bdebugapp.util.AudioFocusManager;
-import com.risewide.bdebugapp.util.SLog;
-import com.risewide.bdebugapp.util.stringconverter.KoreanJosaStringConverterTest;
-import com.skt.prod.voice.v2.aidl.ISmartVoice;
-import com.skt.prod.voice.v2.aidl.ITextToSpeechCallback;
-
 public class MainActivity extends BaseActivity implements AudioManager.OnAudioFocusChangeListener{
+
+	private static final String TAG = MainActivity.class.getSimpleName();
 
 	private Thread.UncaughtExceptionHandler deUncaughtExceptionHandler;
 	private ISmartVoice iSmartVoice;
+	private AladdinCallManager aladdinCallManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +51,15 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 				deUncaughtExceptionHandler.uncaughtException(t, e);
 			}
 		});
+
+		aladdinCallManager = new AladdinCallManager(this);
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		unbindService();
+		aladdinCallManager.destroy();
 
 		AudioFocusManager.getInstance().release(this, this);
 
@@ -64,6 +72,12 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 
 	public void onClickView(View view) {
 		switch (view.getId()) {
+			case R.id.btnExecuteAdbCommand: {
+				EditText etAdbCommand = (EditText) findViewById(R.id.etAdbCommand);
+				String cmd = etAdbCommand.getText().toString();
+				ExecuterAdbShellCommand.exec(cmd);
+				break;
+			}
 			case R.id.btnKoreanJosaConverterTest: {
 				new KoreanJosaStringConverterTest().test();
 				break;

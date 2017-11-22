@@ -1,13 +1,12 @@
 package com.risewide.bdebugapp.util.stringconverter;
 
+import java.util.List;
+
 import com.risewide.bdebugapp.util.SLog;
 import com.risewide.bdebugapp.util.stringconverter.converter.JosaConverter;
 import com.risewide.bdebugapp.util.stringconverter.converter.JosaConverterObject;
 import com.risewide.bdebugapp.util.stringconverter.data.JosaSet;
-import com.risewide.bdebugapp.util.stringconverter.format.FormatSpecifier;
-import com.risewide.bdebugapp.util.stringconverter.josa.KoreanJosa;
-
-import java.util.List;
+import com.risewide.bdebugapp.util.stringconverter.data.KoreanJosa;
 
 /**
  * <p>한글 종성의 받침 여부를 파악해서 조사 선택 및 문장 구성</p>
@@ -28,17 +27,17 @@ import java.util.List;
  * <p>Created by birdea on 2016-11-16.</p>
  *
  * @see <a href="http://d2.naver.com/helloworld/76650">Refer#1</a>
- * @see <a href="http://blog.jongminkim.co.kr/?p=252">Refer#2</a>
+ * @see <a href="http://SLog.jongminkim.co.kr/?p=252">Refer#2</a>
  * @see <a href="http://okky.kr/article/33317">Refer#3</a>
  * @see <a href="http://gun0912.tistory.com/65">Refer#4</a>
- * @see <a href="http://blog.naver.com/PostView.nhn?blogId=kkson50&logNo=120200156752&parentCategoryNo=&categoryNo=9&viewDate=&isShowPopularPosts=false&from=postView">Refer#5</a>
+ * @see <a href="http://SLog.naver.com/PostView.nhn?blogId=kkson50&logNo=120200156752&parentCategoryNo=&categoryNo=9&viewDate=&isShowPopularPosts=false&from=postView">Refer#5</a>
  */
 
-public class KoreanJosaStringConverter implements IJosaStringConverter {
+public class KorStringJosaConverter implements IStringJosaConverter {
 
-	private static final String TAG = "KoreanJosaStringConverter";
+	private static final String TAG = "KorStringJosaConverter";
 
-	public KoreanJosaStringConverter() {
+	public KorStringJosaConverter() {
 	}
 
 	/**
@@ -46,7 +45,7 @@ public class KoreanJosaStringConverter implements IJosaStringConverter {
 	 * @param formatString %s 인자를 지니고 있는 포맷 문장 "%s는 활성화됐지만 %s가 종료되었네요." 형태의 문장<br>
 	 */
 	@Override
-	public String getSentenceWithMultiJosa(String formatString, Object... words) {
+	public String getSentence(String formatString, Object... words) {
 		FormatSpecifier formatSpecifier = new FormatSpecifier(formatString);
 		// - get count of params
 		int countOfWord = words.length;
@@ -65,18 +64,18 @@ public class KoreanJosaStringConverter implements IJosaStringConverter {
 		StringBuilder sb = new StringBuilder();
 		int length = truncated.size();
 		for (int i=0; i<length; i++) {
-			String aWord = getSentenceWithSingleJosa(truncated.get(i), words[i], false);
+			String aWord = getSentence(truncated.get(i), words[i], false);
 			sb.append(aWord);
 		}
 		//- applyWord
 		String completeSentence = sb.toString();
-		log("final getSentenceWithMultiJosa() --- end :" + completeSentence + ", countOfFormatSpecifier :" + countOfFormatSpecifier);
+		log("final getSentence() --- end :" + completeSentence + ", countOfFormatSpecifier :" + countOfFormatSpecifier);
 		return getSafeFormatString(completeSentence, words);
 	}
 
 	@Override
-	public String getSentenceWithSingleJosa(String formatString, Object word, boolean applyWordOnFormatSentence) {
-		log("--- getSentenceWithSingleJosa() --- start word:" + word + ", formatSentence:" + formatString);
+	public String getSentence(String formatString, Object word, boolean applyWord) {
+		log("--- getSentence() --- start word:" + word + ", formatSentence:" + formatString);
 		if (word == null) {
 			return formatString;
 		}
@@ -93,7 +92,7 @@ public class KoreanJosaStringConverter implements IJosaStringConverter {
 		KoreanJosa josaSet = KoreanJosa.getJosaSet(formatString, formatSpecifier.getFormatSpecifiers());
 		if (KoreanJosa.UNKNOWN.equals(josaSet)) {
 			log("[unknown] KoreanJosa.UNKNOWN word:" + word + "/ formatSentence:" + formatString);
-			if (applyWordOnFormatSentence) {
+			if (applyWord) {
 				return getSafeFormatString(formatString, word);
 			} else {
 				return formatString;
@@ -108,16 +107,16 @@ public class KoreanJosaStringConverter implements IJosaStringConverter {
 		log("[josa] properJosa:" + setOfJosa.getProperJosa() + ", unproperJosa:" + setOfJosa.getUnproperJosa());
 		String replacedSentence = formatString.replace(oldWord, newWord);
 		String completeSentence = replacedSentence;
-		if (applyWordOnFormatSentence) {
+		if (applyWord) {
 			completeSentence = getSafeFormatString(replacedSentence, word);
 			log("[swap] oldSentence:" + formatString + ", newSentence:" + replacedSentence);
 		}
-		log("final getSentenceWithSingleJosa() --- end :"+completeSentence);
+		log("final getSentence() --- end :"+completeSentence);
 		return completeSentence;
 	}
 
 	@Override
-	public String getWordWithJosa(Object word, String josaWithJongsung, String josaWithoutJongsung) {
+	public String getWord(Object word, String josaWithJongsung, String josaWithoutJongsung) {
 		JosaConverter josaConverter = new JosaConverterObject();
 		KoreanJosa koreanJosa = KoreanJosa.getKoreanJosa(josaWithJongsung, josaWithoutJongsung);
 		if (KoreanJosa.UNKNOWN.equals(koreanJosa)) {
@@ -126,7 +125,7 @@ public class KoreanJosaStringConverter implements IJosaStringConverter {
 		}
 		JosaSet setOfJosa = josaConverter.select(word, koreanJosa);
 		String result = word + setOfJosa.getProperJosa();
-		log(getSafeFormatString("getSentenceWithSingleJosa result=%s on word=%s + josa=%s", new String[] { result, ""+word, setOfJosa.getProperJosa()}));
+		log(getSafeFormatString("getSentence result=%s on word=%s + josa=%s", result, ""+word, setOfJosa.getProperJosa()));
 		return result;
 	}
 

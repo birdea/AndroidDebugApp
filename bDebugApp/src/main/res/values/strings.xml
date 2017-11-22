@@ -21,4 +21,12 @@
     <string name="common_upload">업로드</string>
     <string name="common_refresh">갱신</string>
 
+    <!-- about call -->
+    <string name="from_name">%s에게</string>
+    <string name="from_unknown_number">모르는 번호에서</string>
+    <string name="from_hidden_number">발신자 표시제한 번호에서</string>
+
+    <string name="tts_incoming_call_received"><![CDATA[<skml domain=\"phone\">%s 전화가 왔어요. 전화연결 또는 전화거절 이라고 말씀해주세요.</skml>]]></string>
+    <string name="tts_incoming_call_received_again"><![CDATA[<skml domain=\"phone\">%s 전화가 또 왔어요. 전화연결 또는 전화거절 이라고 말씀해주세요.</skml>]]></string>
+
 </resources>

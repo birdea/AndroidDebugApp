@@ -1,4 +1,4 @@
-package com.risewide.bdebugapp.util.stringconverter.format;
+package com.risewide.bdebugapp.util.stringconverter;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -2,11 +2,12 @@ package com.risewide.bdebugapp.util.stringconverter.converter;
 
 import java.util.regex.Pattern;
 
-import com.risewide.bdebugapp.util.stringconverter.helper.StringUtils;
+import android.text.TextUtils;
+
 import com.risewide.bdebugapp.util.stringconverter.data.JosaSet;
-import com.risewide.bdebugapp.util.stringconverter.josa.KoreanJosa;
-import com.risewide.bdebugapp.util.stringconverter.spec.MatcherAlphabetToKorean;
-import com.risewide.bdebugapp.util.stringconverter.spec.MatcherArabicToKorean;
+import com.risewide.bdebugapp.util.stringconverter.data.KoreanJosa;
+import com.risewide.bdebugapp.util.stringconverter.data.MatcherAlphabetToKorean;
+import com.risewide.bdebugapp.util.stringconverter.data.MatcherArabicToKorean;
 
 /**
  * Created by birdea on 2016-11-22.
@@ -20,8 +21,8 @@ public class JosaConverterObject extends JosaConverter<Object> {
 	@Override
 	public JosaSet select(Object obj, KoreanJosa koreanJosa) {
 		// step.1 - check if param is empty
-		if (obj == null || koreanJosa == null || StringUtils.isEmpty(koreanJosa.getJosaWithJongsung())
-				|| StringUtils.isEmpty(koreanJosa.getJosaWithoutJongsung())) {
+		if (obj == null || koreanJosa == null || TextUtils.isEmpty(koreanJosa.getJosaWithJongsung())
+				|| TextUtils.isEmpty(koreanJosa.getJosaWithoutJongsung())) {
 			log("[except] StringUtils.isEmpty obj:" + obj + ", koreanJosa:"
 					+ koreanJosa);
 			return new JosaSet("","");

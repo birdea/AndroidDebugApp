@@ -1,7 +1,8 @@
 package com.risewide.bdebugapp.util.stringconverter.converter;
 
+
 import com.risewide.bdebugapp.util.stringconverter.data.JosaSet;
-import com.risewide.bdebugapp.util.stringconverter.josa.KoreanJosa;
+import com.risewide.bdebugapp.util.stringconverter.data.KoreanJosa;
 
 /**
  * Created by birdea on 2016-11-22.

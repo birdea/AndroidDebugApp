@@ -51,6 +51,22 @@
                 style="@style/btnCommonLayout"
                 android:text="exec Other Process"/>
         </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <EditText
+                android:id="@+id/etAdbCommand"
+                style="@style/etCommonLayout"
+                android:layout_weight="1"
+                android:text="adb shell input keyevent"/>
+            <Button
+                android:id="@+id/btnExecuteAdbCommand"
+                style="@style/btnCommonLayout"
+                android:layout_weight="0"
+                android:layout_width="100dp"
+                android:text="exec"/>
+        </TableRow>
 
         <TextView
             style="@style/titleCommonLayout"

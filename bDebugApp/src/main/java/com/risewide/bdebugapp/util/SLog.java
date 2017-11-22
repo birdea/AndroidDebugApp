@@ -1,5 +1,6 @@
 package com.risewide.bdebugapp.util;
 
+import android.os.Process;
 import android.util.Log;
 
 import com.risewide.bdebugapp.BuildConfig;
@@ -11,214 +12,106 @@ import com.risewide.bdebugapp.BuildConfig;
  */
 public class SLog {
 
-	public static String makeTag(Class c) {
-		return "[S]" + c.getSimpleName();
+	private final static String TAG = "NuguSdk";
+
+	private static boolean isDebug() {
+		return BuildConfig.DEBUG;
 	}
 
-	public enum Mode {
-		OFF, ON,;
+	public static void d() {
+		d("");
+	}
 
-		public boolean isActive() {
-			return ON.equals(this);
+	public static void w() {
+		w("");
+	}
+
+	public static void e() {
+		e("");
+	}
+
+	public static void i() {
+		i("");
+	}
+
+	public static void d(String format, Object... args) {
+		d(String.format(format, args));
+	}
+
+	public static void w(String format, Object... args) {
+		w(String.format(format, args));
+	}
+
+	public static void e(String format, Object... args) {
+		e(String.format(format, args));
+	}
+
+	public static void i(String format, Object... args) {
+		i(String.format(format, args));
+	}
+
+	public static void d(String message) {
+		if (isDebug()) {
+			Log.d(getTag(), getMessage(message));
 		}
 	}
 
-	public enum Level {
-		DEFAULT("#000000"), VERBOSE("#FFFF00"), DEBUG("#00FF00"), INFO("#0000FF"), WARN("#00FFFF"), ERROR("#FF0000"),;
-
-		String color;
-
-		Level(String _color) {
-			color = _color;
+	public static void w(String message) {
+		if (isDebug()) {
+			Log.w(getTag(), getMessage(message));
 		}
 	}
 
-	private static Mode modePrintOut = Mode.ON;
-
-	/**
-	 * check if log is active or not
-	 *
-	 * @return true/false
-	 */
-	protected static boolean loggable() {
-		return (isActive() || BuildConfig.DEBUG);
+	public static void e(String message) {
+		if (isDebug()) {
+			Log.e(getTag(), getMessage(message));
+		}
 	}
 
-	/**
-	 * set active or deactive logcat + debugview
-	 */
-	public static void activeLog() {
-		modePrintOut = Mode.ON;
+	public static void i(String message) {
+		if (isDebug()) {
+			Log.i(getTag(), getMessage(message));
+		}
 	}
 
-	/**
-	 * set active or deactive logcat + debugview
-	 */
-	public static void deactiveLog() {
-		modePrintOut = Mode.OFF;
+	private static String getTag() {
+		int pid = Process.myPid();
+		long tid = Thread.currentThread().getId();
+		return TAG + "(" + pid + ":" + tid + ")";
 	}
 
-	private static boolean isActive() {
-		return modePrintOut.isActive();
+	private static String getMessage(String message) {
+		StackTraceElement stack = getCurrentInvokedElement();
+		if (stack != null) {
+			String className = shortenClassName(stack.getClassName());
+			String methodName = stack.getMethodName();
+			int line = stack.getLineNumber();
+			return className + "." + methodName + "(" + line + ") " + message;
+		} else {
+			return "?.?(?) " + message;
+		}
 	}
 
-	/**
-	 * Handy-Logger of [verbose] priority
-	 *
-	 * @param obj
-	 */
-	public static void v(Object obj) {
-		v(makeTag(SLog.class), obj);
-	}
-
-	public static void v(String tag, Object msg) {
-		if (false == loggable()) {
-			if (BuildConfig.DEBUG) {
-				printLogcat(tag, msg, Level.VERBOSE);
+	private static StackTraceElement getCurrentInvokedElement() {
+		StackTraceElement stacks[] = Thread.currentThread().getStackTrace();
+		if (stacks != null && stacks.length > 3) {
+			int idx = 4;
+			while (stacks[idx].getClassName().equals(SLog.class.getName()) && idx < stacks.length) {
+				idx++;
 			}
-			return;
+			return stacks[idx];
+
 		}
-
-		printLogcat(tag, msg, Level.VERBOSE);
+		return null;
 	}
 
-	/**
-	 * Handy-Logger of [debug] priority
-	 *
-	 * @param obj
-	 */
-	public static void d(Object obj) {
-		d(makeTag(SLog.class), obj);
-	}
-
-	public static void d(String tag, Object msg) {
-		if (false == loggable()) {
-			if (BuildConfig.DEBUG) {
-				printLogcat(tag, msg, Level.DEBUG);
+	private static String shortenClassName(String fullClassName) {
+		if (fullClassName != null) {
+			int lastIdx = fullClassName.lastIndexOf('.');
+			if (lastIdx != -1) {
+				return fullClassName.substring(lastIdx + 1);
 			}
-			return;
 		}
-
-		printLogcat(tag, msg, Level.DEBUG);
-	}
-
-	/**
-	 * Handy-Logger of [info] priority
-	 *
-	 * @param obj
-	 */
-	public static void i(Object obj) {
-		i(makeTag(SLog.class), obj);
-	}
-
-	public static void i(String tag, Object msg) {
-		if (false == loggable()) {
-			if (BuildConfig.DEBUG) {
-				printLogcat(tag, msg, Level.INFO);
-			}
-			return;
-		}
-
-		printLogcat(tag, msg, Level.INFO);
-	}
-
-	/**
-	 * Handy-Logger of [warn] priority
-	 *
-	 * @param obj
-	 */
-	public static void w(Object obj) {
-		w(makeTag(SLog.class), obj);
-	}
-
-	public static void w(String tag, Object msg) {
-		if (false == loggable()) {
-			if (BuildConfig.DEBUG) {
-				printLogcat(tag, msg, Level.ERROR);
-			}
-			return;
-		}
-
-		printLogcat(tag, msg, Level.WARN);
-	}
-
-	/**
-	 * Handy-Logger of [error] priority
-	 *
-	 * @param obj
-	 */
-	public static void e(Object obj) {
-		e(makeTag(SLog.class), obj);
-	}
-
-	public static void e(String tag, Object msg) {
-		if (false == loggable()) {
-			if (BuildConfig.DEBUG) {
-				printLogcat(tag, msg, Level.ERROR);
-			}
-			return;
-		}
-
-		printLogcat(tag, msg, Level.ERROR);
-	}
-
-	private static void printLogcat(String tag, Object msg, Level level) {
-		try {
-			if (msg instanceof String) {
-				// print out general string message
-				switch (level) {
-				case VERBOSE:
-					Log.v(tag, buildMsg(msg));
-					break;
-				case DEBUG:
-					Log.d(tag, buildMsg(msg));
-					break;
-				case INFO:
-					Log.i(tag, buildMsg(msg));
-					break;
-				case WARN:
-					Log.w(tag, buildMsg(msg));
-					break;
-				case ERROR:
-					Log.e(tag, buildMsg(msg));
-					break;
-				}
-			} else if (msg instanceof Throwable) {
-				// print out throwable message
-				switch (level) {
-				case VERBOSE:
-					Log.v(tag, "Throwable", (Throwable) msg);
-					break;
-				case DEBUG:
-					Log.d(tag, "Throwable", (Throwable) msg);
-					break;
-				case INFO:
-					Log.i(tag, "Throwable", (Throwable) msg);
-					break;
-				case WARN:
-					Log.w(tag, "Throwable", (Throwable) msg);
-					break;
-				case ERROR:
-					Log.e(tag, "Throwable", (Throwable) msg);
-					break;
-				}
-			} else {
-				// do nothing is ok.
-			}
-		} catch (Exception e) {
-			//e.printStackTrace();
-			System.out.println(msg);
-		}
-	}
-
-	private static String buildMsg(Object msg) {
-		StackTraceElement ste = Thread.currentThread().getStackTrace()[4];
-
-		StringBuilder sb = new StringBuilder()
-//		sb.append("[").append(ste.getFileName().replace(".java", "")).append("::");;
-//		sb.append(ste.getMethodName()).append("]").append(msg);
-		.append(msg);
-
-		return sb.toString();
+		return "";
 	}
 }
