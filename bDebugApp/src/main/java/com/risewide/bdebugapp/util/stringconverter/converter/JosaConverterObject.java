@@ -64,7 +64,7 @@ public class JosaConverterObject extends JosaConverter<Object> {
 		// case of String
 		if (obj instanceof String) {
 			log("obj instanceof String[true] :"+obj);
-			String word = ((String)obj).trim();
+			String word = (String)obj;
 			// case of String > Integer, ex) "1209390123"
 			try {
 				Long val = Long.parseLong(word);
@@ -102,6 +102,5 @@ public class JosaConverterObject extends JosaConverter<Object> {
 	
 	private void log(String msg) {
 		//SLog.d(msg);
-		System.out.println(msg);
 	}
 }
