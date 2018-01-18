@@ -48,14 +48,14 @@ public class KorStringJosaConverter implements IStringJosaConverter {
 	public String getSentence(String formatString, Object... words) {
 		FormatSpecifier formatSpecifier = new FormatSpecifier(formatString);
 		// - get count of params
-		int countOfWord = words.length;
-		int countOfFormatSpecifier = formatSpecifier.getCountOfFormatSpecifier();
-		log("countOfWord:" + countOfWord + ", countOfFormatSpecifier :" + countOfFormatSpecifier);
+		int countWord = words.length;
+		int countFormatSpecifier = formatSpecifier.getCountOfFormatSpecifier();
+		log("countWord:" + countWord + ", countFormatSpecifier :" + countFormatSpecifier);
 		// - check if params is invalid
-		if (countOfFormatSpecifier < 1) {
+		if (countFormatSpecifier < 1) {
 			log("The formatSentence should has only one letter of %s or %d...");
 		}
-		if (countOfWord < countOfFormatSpecifier) {
+		if (countWord < countFormatSpecifier) {
 			log("You have set wrong params, [format count > param count is FAIL] ");
 		}
 		// - param is valid, next step should be split sentence with each word by prefix_format like %s
@@ -64,12 +64,12 @@ public class KorStringJosaConverter implements IStringJosaConverter {
 		StringBuilder sb = new StringBuilder();
 		int length = truncated.size();
 		for (int i=0; i<length; i++) {
-			String aWord = getSentence(truncated.get(i), words[i], false);
-			sb.append(aWord);
+			String aSentence = getSentence(truncated.get(i), words[i], false);
+			sb.append(aSentence);
 		}
 		//- applyWord
 		String completeSentence = sb.toString();
-		log("final getSentence() --- end :" + completeSentence + ", countOfFormatSpecifier :" + countOfFormatSpecifier);
+		log("final getSentence() --- end :" + completeSentence + ", countOfFormatSpecifier :" + countFormatSpecifier);
 		return getSafeFormatString(completeSentence, words);
 	}
 
@@ -80,10 +80,10 @@ public class KorStringJosaConverter implements IStringJosaConverter {
 			return formatString;
 		}
 		FormatSpecifier formatSpecifier = new FormatSpecifier(formatString);
-		int countOfFormatSpecifier = formatSpecifier.getCountOfFormatSpecifier();
-		log("[valid] countOfFormatSpecifier :" + countOfFormatSpecifier);
+		int countFormatSpecifier = formatSpecifier.getCountOfFormatSpecifier();
+		log("[valid] countFormatSpecifier :" + countFormatSpecifier);
 		// - check if params is invalid then return formatString
-		if (countOfFormatSpecifier != 1) {
+		if (countFormatSpecifier != 1) {
 			log("The formatSentence should has only one letter of %s or %d...");
 			return formatString;
 		}

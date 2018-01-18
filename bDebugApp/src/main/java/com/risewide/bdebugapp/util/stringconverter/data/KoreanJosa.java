@@ -117,9 +117,10 @@ public enum KoreanJosa {
 		if (josaWithJongsung == null || josaWithoutJongsung == null) {
 			return false;
 		}
+		final String BLANK = " ";
 		for (String formatSpecifier : formatArray) {
-			if ((sentence.contains(formatSpecifier + withEndTag + josaWithJongsung) ||
-				sentence.contains(formatSpecifier + withEndTag + josaWithoutJongsung))) {
+			if ((sentence.contains(formatSpecifier + withEndTag + josaWithJongsung + BLANK) ||
+				sentence.contains(formatSpecifier + withEndTag + josaWithoutJongsung + BLANK))) {
 				return true;
 			}
 		}
