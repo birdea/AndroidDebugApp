@@ -32,8 +32,8 @@ public class KoreanJosaStringTest {
 	@Test
 	public void test() {
 		log("[testSentenceConverter] start");
-		TimeLap time = new TimeLap();
-		time.start();
+		//TimeLap time = new TimeLap();
+		//time.start();
 		///////////////////////////////////////////////////////////////////////////////
 		testWordCase();
 		testSingleSentenceCase();
@@ -41,13 +41,20 @@ public class KoreanJosaStringTest {
 
 		testDone();
 		testScenarioCase();
+
 		///////////////////////////////////////////////////////////////////////////////
-		time.end();
+		//time.end();
 		log("[testSentenceConverter] end");
 	}
 
+	@Test
+	public void test_handleTag() {
+		testStringWithTag();
+	}
+
 	private void log(String msg) {
-		SLog.d(msg);
+		//SLog.d(msg);
+		System.out.println(msg);
 	}
 
 	private String processExecuteWordJosa(Object word, String josaWith, String josaWithout) {
@@ -75,6 +82,35 @@ public class KoreanJosaStringTest {
 		log("getSentenceWithSingleJosa result:" + result);
 		log("-------------------------------------------------------------------");
 		return result;
+	}
+
+	private static final String FORM_A = "<skml domain=\\\"phone\\\">%s가 맞으면 전화연결 이라고 말씀하세요.</skml>";
+    private static final String FORM_B = "<skml domain=\\\"phone\\\"><sk_name>%s</sk_name>가 맞으면 전화연결 이라고 말씀하세요.</skml>";
+	private static final String FORM_C = "<skml domain=\\\"phone\\\"><sk_name> %s</sk_name>가 맞으면 전화연결 이라고 말씀하세요.</skml>";
+
+	private void testStringWithTag() {
+        // test
+        Object word;
+        String formatSentence;
+        String result;
+
+        // test case
+        formatSentence = FORM_A;
+        word = "윤정";
+        result = processExecuteSingleJosa(formatSentence, word);
+        assertEquals("<skml domain=\\\"phone\\\">윤정이 맞으면 전화연결 이라고 말씀하세요.</skml>", result);
+
+        // test case
+        formatSentence = FORM_B;
+        word = "윤정";
+        result = processExecuteSingleJosa(formatSentence, word);
+        assertEquals("<skml domain=\\\"phone\\\"><sk_name>윤정</sk_name>이 맞으면 전화연결 이라고 말씀하세요.</skml>", result);
+
+		// test case
+		formatSentence = FORM_C;
+		word = "윤정";
+		result = processExecuteSingleJosa(formatSentence, word);
+		assertEquals("<skml domain=\\\"phone\\\"><sk_name> 윤정</sk_name>이 맞으면 전화연결 이라고 말씀하세요.</skml>", result);
 	}
 
 	private void testWordCase() {

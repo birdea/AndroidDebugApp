@@ -4,6 +4,7 @@ import java.util.regex.Pattern;
 
 import android.text.TextUtils;
 
+import com.risewide.bdebugapp.util.stringconverter.ITextUtils;
 import com.risewide.bdebugapp.util.stringconverter.data.JosaSet;
 import com.risewide.bdebugapp.util.stringconverter.data.KoreanJosa;
 import com.risewide.bdebugapp.util.stringconverter.data.MatcherAlphabetToKorean;
@@ -21,8 +22,8 @@ public class JosaConverterObject extends JosaConverter<Object> {
 	@Override
 	public JosaSet select(Object obj, KoreanJosa koreanJosa) {
 		// step.1 - check if param is empty
-		if (obj == null || koreanJosa == null || TextUtils.isEmpty(koreanJosa.getJosaWithJongsung())
-				|| TextUtils.isEmpty(koreanJosa.getJosaWithoutJongsung())) {
+		if (obj == null || koreanJosa == null || ITextUtils.isEmpty(koreanJosa.getJosaWithJongsung())
+				|| ITextUtils.isEmpty(koreanJosa.getJosaWithoutJongsung())) {
 			log("[except] StringUtils.isEmpty obj:" + obj + ", koreanJosa:"
 					+ koreanJosa);
 			return new JosaSet("","");

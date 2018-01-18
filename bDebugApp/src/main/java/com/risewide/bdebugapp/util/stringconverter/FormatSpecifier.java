@@ -68,7 +68,44 @@ public class FormatSpecifier {
 		return truncatedList;
 	}
 
+	public String getEndTag() {
+
+		String formSpecifier = formatList.get(0);
+		String truncatedSentence = truncatedList.get(0);
+
+		int indexFormSpecifier = truncatedSentence.indexOf(formSpecifier) + formSpecifier.length();
+		int lengthTruncatedSentence = truncatedSentence.length();
+
+		final char startMark = '<';
+		final char endMark = '>';
+		boolean foundStartTag = false;
+		StringBuilder sb = new StringBuilder();
+
+		for (int i=indexFormSpecifier;i<lengthTruncatedSentence;i++) {
+			char c = truncatedSentence.charAt(i);
+			if (!foundStartTag && c == startMark) {
+				foundStartTag = true;
+				log("[tag] found start mark");
+			}
+			if (foundStartTag) {
+				sb.append(c);
+				if (c == endMark) {
+					log("[tag] found end mark");
+					break;
+				}
+			}
+			if (i == indexFormSpecifier && c != startMark) {
+				log("[tag] no end tag!");
+				break;
+			}
+		}
+		String withEndTag = sb.toString();
+		log("[tag] GET :"+withEndTag);
+		return withEndTag;
+	}
+
 	private void log(String msg) {
 		//SLog.d("FormatSpecifier", msg);
+		System.out.println(msg);
 	}
 }

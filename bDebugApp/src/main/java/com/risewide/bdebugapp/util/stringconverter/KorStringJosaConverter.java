@@ -88,8 +88,12 @@ public class KorStringJosaConverter implements IStringJosaConverter {
 			return formatString;
 		}
 
+		// - formatSpecifier에 <TAG>가 붙어있는 형태를 대응하기 위함 (ex. <sk_name>%s</sk_name>)
+		String withEndTag = formatSpecifier.getEndTag();
+		log("[tag] withEndTag:" + withEndTag);
+
 		// - formatSpecifier와 한국어 조사가 정규적으로 구성되어 있지 않다면, 조사 처리 필요 없음
-		KoreanJosa josaSet = KoreanJosa.getJosaSet(formatString, formatSpecifier.getFormatSpecifiers());
+		KoreanJosa josaSet = KoreanJosa.getJosaSet(formatString, formatSpecifier.getFormatSpecifiers(), withEndTag);
 		if (KoreanJosa.UNKNOWN.equals(josaSet)) {
 			log("[unknown] KoreanJosa.UNKNOWN word:" + word + "/ formatSentence:" + formatString);
 			if (applyWord) {
@@ -102,8 +106,8 @@ public class KorStringJosaConverter implements IStringJosaConverter {
 		JosaConverter josaConverter = new JosaConverterObject();
 		JosaSet setOfJosa = josaConverter.select(word, josaSet);
 		//
-		String oldWord = formatSpecifier.getFormatSpecifier() + setOfJosa.getUnproperJosa();
-		String newWord = formatSpecifier.getFormatSpecifier() + setOfJosa.getProperJosa();
+		String oldWord = formatSpecifier.getFormatSpecifier() + withEndTag + setOfJosa.getUnproperJosa();
+		String newWord = formatSpecifier.getFormatSpecifier() + withEndTag + setOfJosa.getProperJosa();
 		log("[josa] properJosa:" + setOfJosa.getProperJosa() + ", unproperJosa:" + setOfJosa.getUnproperJosa());
 		String replacedSentence = formatString.replace(oldWord, newWord);
 		String completeSentence = replacedSentence;
@@ -139,6 +143,7 @@ public class KorStringJosaConverter implements IStringJosaConverter {
 	}
 
 	private void log(String msg) {
-		SLog.d(TAG, msg);
+		//SLog.d(TAG, msg);
+		System.out.println(msg);
 	}
 }

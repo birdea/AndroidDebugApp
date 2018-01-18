@@ -96,9 +96,9 @@ public enum KoreanJosa {
 		return UNKNOWN;
 	}
 
-	public static KoreanJosa getJosaSet(String formatSentence, List<String> formatArray) {
+	public static KoreanJosa getJosaSet(String formatSentence, List<String> formatArray, String withEndTag) {
 		for (KoreanJosa josa : values()) {
-			if (josa.isContained(formatSentence, formatArray)) {
+			if (josa.isContained(formatSentence, formatArray, withEndTag)) {
 				return josa;
 			}
 		}
@@ -113,13 +113,13 @@ public enum KoreanJosa {
 	 * @param formatArray
 	 * @return
 	 */
-	public boolean isContained(String sentence, List<String> formatArray) {
+	public boolean isContained(String sentence, List<String> formatArray, String withEndTag) {
 		if (josaWithJongsung == null || josaWithoutJongsung == null) {
 			return false;
 		}
 		for (String formatSpecifier : formatArray) {
-			if ((sentence.contains(formatSpecifier + josaWithJongsung) ||
-				sentence.contains(formatSpecifier + josaWithoutJongsung))) {
+			if ((sentence.contains(formatSpecifier + withEndTag + josaWithJongsung) ||
+				sentence.contains(formatSpecifier + withEndTag + josaWithoutJongsung))) {
 				return true;
 			}
 		}
