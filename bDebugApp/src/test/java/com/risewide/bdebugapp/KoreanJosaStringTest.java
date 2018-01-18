@@ -111,6 +111,12 @@ public class KoreanJosaStringTest {
 		word = "윤정";
 		result = processExecuteSingleJosa(formatSentence, word);
 		assertEquals("<skml domain=\\\"phone\\\"><sk_name> 윤정</sk_name>이 맞으면 전화연결 이라고 말씀하세요.</skml>", result);
+
+		// test case
+		formatSentence = FORM_B;
+		word = " 윤정 ";
+		result = processExecuteSingleJosa(formatSentence, word);
+		assertEquals("<skml domain=\\\"phone\\\"><sk_name> 윤정 </sk_name>이 맞으면 전화연결 이라고 말씀하세요.</skml>", result);
 	}
 
 	private void testWordCase() {
