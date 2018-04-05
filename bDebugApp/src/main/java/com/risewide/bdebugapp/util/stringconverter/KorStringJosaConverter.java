@@ -27,10 +27,10 @@ import com.risewide.bdebugapp.util.stringconverter.data.KoreanJosa;
  * <p>Created by birdea on 2016-11-16.</p>
  *
  * @see <a href="http://d2.naver.com/helloworld/76650">Refer#1</a>
- * @see <a href="http://SLog.jongminkim.co.kr/?p=252">Refer#2</a>
+ * @see <a href="http://blog.jongminkim.co.kr/?p=252">Refer#2</a>
  * @see <a href="http://okky.kr/article/33317">Refer#3</a>
  * @see <a href="http://gun0912.tistory.com/65">Refer#4</a>
- * @see <a href="http://SLog.naver.com/PostView.nhn?blogId=kkson50&logNo=120200156752&parentCategoryNo=&categoryNo=9&viewDate=&isShowPopularPosts=false&from=postView">Refer#5</a>
+ * @see <a href="http://blog.naver.com/PostView.nhn?blogId=kkson50&logNo=120200156752&parentCategoryNo=&categoryNo=9&viewDate=&isShowPopularPosts=false&from=postView">Refer#5</a>
  */
 
 public class KorStringJosaConverter implements IStringJosaConverter {
@@ -46,17 +46,23 @@ public class KorStringJosaConverter implements IStringJosaConverter {
 	 */
 	@Override
 	public String getSentence(String formatString, Object... words) {
+		if (words == null) {
+			log("err: have no param of words (words is null)");
+			return formatString;
+		}
 		FormatSpecifier formatSpecifier = new FormatSpecifier(formatString);
 		// - get count of params
-		int countWord = words.length;
-		int countFormatSpecifier = formatSpecifier.getCountOfFormatSpecifier();
-		log("countWord:" + countWord + ", countFormatSpecifier :" + countFormatSpecifier);
+		int countOfWord = words.length;
+		int countOfFormatSpecifier = formatSpecifier.getCountOfFormatSpecifier();
+		log("countOfWord:" + countOfWord + ", countOfFormatSpecifier :" + countOfFormatSpecifier);
 		// - check if params is invalid
-		if (countFormatSpecifier < 1) {
-			log("The formatSentence should has only one letter of %s or %d...");
+		if (countOfFormatSpecifier < 1) {
+			log("err: The formatSentence should has at least one letter of %s or %d...");
+			return formatString;
 		}
-		if (countWord < countFormatSpecifier) {
-			log("You have set wrong params, [format count > param count is FAIL] ");
+		if (countOfWord < countOfFormatSpecifier) {
+			log("err: You have set wrong params, [format count > param count is FAIL] ");
+			return formatString;
 		}
 		// - param is valid, next step should be split sentence with each word by prefix_format like %s
 		List<String> truncated = formatSpecifier.getTruncatedSentence();
@@ -64,26 +70,35 @@ public class KorStringJosaConverter implements IStringJosaConverter {
 		StringBuilder sb = new StringBuilder();
 		int length = truncated.size();
 		for (int i=0; i<length; i++) {
-			String aSentence = getSentence(truncated.get(i), words[i], false);
+			Object aWord;
+			try {
+				aWord = words[i];
+			} catch (ArrayIndexOutOfBoundsException ignore) {
+				aWord = null;
+			}
+			String aSentence = getSentence(truncated.get(i), aWord, false);
 			sb.append(aSentence);
 		}
 		//- applyWord
 		String completeSentence = sb.toString();
-		log("final getSentence() --- end :" + completeSentence + ", countOfFormatSpecifier :" + countFormatSpecifier);
+		if (ITextUtils.isEmpty(completeSentence)) {
+			completeSentence = formatString;
+		}
+		log("final getSentence() --- end :" + completeSentence + ", countOfFormatSpecifier :" + countOfFormatSpecifier);
 		return getSafeFormatString(completeSentence, words);
 	}
 
 	@Override
 	public String getSentence(String formatString, Object word, boolean applyWord) {
 		log("--- getSentence() --- start word:" + word + ", formatSentence:" + formatString);
-		if (word == null) {
+		if (isWordEmpty(word)) {
 			return formatString;
 		}
 		FormatSpecifier formatSpecifier = new FormatSpecifier(formatString);
-		int countFormatSpecifier = formatSpecifier.getCountOfFormatSpecifier();
-		log("[valid] countFormatSpecifier :" + countFormatSpecifier);
+		int countOfFormatSpecifier = formatSpecifier.getCountOfFormatSpecifier();
+		log("[valid] countOfFormatSpecifier :" + countOfFormatSpecifier);
 		// - check if params is invalid then return formatString
-		if (countFormatSpecifier != 1) {
+		if (countOfFormatSpecifier != 1) {
 			log("The formatSentence should has only one letter of %s or %d...");
 			return formatString;
 		}
@@ -140,6 +155,15 @@ public class KorStringJosaConverter implements IStringJosaConverter {
 			ignore.printStackTrace();
 			return formatString;
 		}
+	}
+
+	private boolean isWordEmpty(Object word) {
+		if (word == null) {
+			return true;
+		} else if (word instanceof String){
+			return ((String)word).length() == 0;
+		}
+		return false;
 	}
 
 	private void log(String msg) {

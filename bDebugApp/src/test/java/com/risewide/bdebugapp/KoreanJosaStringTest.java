@@ -1,7 +1,5 @@
 package com.risewide.bdebugapp;
 
-import com.risewide.bdebugapp.util.SLog;
-import com.risewide.bdebugapp.util.TimeLap;
 import com.risewide.bdebugapp.util.stringconverter.KorStringJosaConverter;
 import com.risewide.bdebugapp.util.stringconverter.data.MatcherArabicToKorean;
 
@@ -35,12 +33,13 @@ public class KoreanJosaStringTest {
 		//TimeLap time = new TimeLap();
 		//time.start();
 		///////////////////////////////////////////////////////////////////////////////
-		testWordCase();
-		testSingleSentenceCase();
-		testMultiSentenceCase();
+		//testWordCase();
+		//testSingleSentenceCase();
+		//testMultiSentenceCase();
 
-		testDone();
-		testScenarioCase();
+        testExceptCase();
+		//testDone();
+		//testScenarioCase();
 
 		///////////////////////////////////////////////////////////////////////////////
 		//time.end();
@@ -286,6 +285,37 @@ public class KoreanJosaStringTest {
 			return a * pow(a * a, b / 2); // odd a=a*(a^2)^b/2
 	}
 
+	private void testExceptCase() {
+        Object word;
+        String formatSentence;
+        String result;
+
+        // test case
+        formatSentence = "%s가 맞나요?";
+        result = processExecuteMultiJosa(formatSentence, "");
+        assertEquals("가 맞나요?", result);
+
+        formatSentence = "";
+        result = processExecuteMultiJosa(formatSentence, "");
+        assertEquals("", result);
+
+        formatSentence = null;
+        result = processExecuteMultiJosa(formatSentence, null);
+        assertEquals(null, result);
+
+        formatSentence = "%s";
+        result = processExecuteMultiJosa(formatSentence, ".");
+        assertEquals(".", result);
+
+        formatSentence = "%s %s";
+        result = processExecuteMultiJosa(formatSentence, ".");
+        assertEquals("%s %s", result);
+
+        formatSentence = "%s .. ";
+        result = processExecuteMultiJosa(formatSentence);
+        assertEquals("%s .. ", result);
+	}
+
 	private void testFailCase() {
 	}
 
@@ -360,6 +390,9 @@ public class KoreanJosaStringTest {
 	}*/
 
 	private String getReadable(Object[] objArray) {
+	    if (objArray == null) {
+	        return null;
+        }
 		StringBuilder sb = new StringBuilder();
 		for (Object item : objArray) {
 			sb.append(item).append(",");

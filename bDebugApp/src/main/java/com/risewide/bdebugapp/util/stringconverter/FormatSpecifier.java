@@ -23,6 +23,10 @@ public class FormatSpecifier {
 
 	private void parse(String text) {
 		log("printPatternMatch-start:"+text+", REG_EXP:"+REG_EXP);
+		if (text == null) {
+			log("err: text is null");
+			return;
+		}
 		Pattern p = Pattern.compile(REG_EXP);
 		Matcher m = p.matcher(text);
 		int idxStart = 0, idxBase = 0;
@@ -70,8 +74,12 @@ public class FormatSpecifier {
 
 	public String getEndTag() {
 
-		String formSpecifier = formatList.get(0);
-		String truncatedSentence = truncatedList.get(0);
+		String formSpecifier = (formatList.size()>0)?formatList.get(0):null;
+		String truncatedSentence = (truncatedList.size()>0)?truncatedList.get(0):null;
+
+		if (ITextUtils.isEmpty(formSpecifier) || ITextUtils.isEmpty(truncatedSentence)) {
+			return null;
+		}
 
 		int indexFormSpecifier = truncatedSentence.indexOf(formSpecifier) + formSpecifier.length();
 		int lengthTruncatedSentence = truncatedSentence.length();
