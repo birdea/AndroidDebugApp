@@ -36,6 +36,15 @@
 
         <TextView
             style="@style/titleCommonLayout"
+            android:text="# reflection"/>
+
+        <Button
+            android:id="@+id/btnSetOnReflect"
+            style="@style/btnCommonLayout"
+            android:text="set on reflect"/>
+
+        <TextView
+            style="@style/titleCommonLayout"
             android:text="# process"/>
 
         <TableRow

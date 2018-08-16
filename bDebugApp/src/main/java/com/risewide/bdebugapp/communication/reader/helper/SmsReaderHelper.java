@@ -48,11 +48,11 @@ public class SmsReaderHelper {
 			int idx_read = cursor.getColumnIndex(projection[7]); //READ
 			//
 			long date;
-			SLog.i("*getBodyFor:"+DateUtil.getSimpleDate(timeStamp)+", raw:"+timeStamp);
+			SLog.d("*getBodyFor:"+DateUtil.getSimpleDate(timeStamp)+", raw:"+timeStamp);
 			do {
 				date = cursor.getLong(idx_date);
 				msg.body = cursor.getString(idx_body);
-				SLog.i("*body:"+msg.body+", date:"+date);
+				SLog.d("*body:"+msg.body+", date:"+date);
 				if (CommMsgData.isEqualDateValueOnNormalize(timeStamp, date)) {
 					msg.setDate(date);
 					msg._id = cursor.getLong(idx_id);

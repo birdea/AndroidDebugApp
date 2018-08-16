@@ -19,7 +19,7 @@ public class ActivityTestCrashOnSameProcess extends BaseActivity {
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override
 			public void uncaughtException(Thread t, Throwable e) {
-				SLog.w("ActivityTestCrashOnSameProcess.uncaughtException :"+e.getLocalizedMessage());
+				SLog.d("ActivityTestCrashOnSameProcess.uncaughtException :"+e.getLocalizedMessage());
 				deUncaughtExceptionHandler.uncaughtException(t, e);
 			}
 		});

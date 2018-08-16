@@ -161,7 +161,7 @@ public class SpeechDemoNaverActivity extends Activity {
 		switch (msg.what) {
 			case R.id.clientReady:
 				// Now an user can speak.
-				SLog.d("NaverSTT: clientReady");
+				SLog.d(TAG, "NaverSTT: clientReady");
 				txtResult.setText("Connected");
 				//writer = new AudioWriterPCM(
 				//		Environment.getExternalStorageDirectory().getAbsolutePath() + "/NaverSpeechTest");
@@ -170,19 +170,19 @@ public class SpeechDemoNaverActivity extends Activity {
 				break;
 
 			case R.id.audioRecording:
-				SLog.d("NaverSTT: audioRecording");
+				SLog.d(TAG, "NaverSTT: audioRecording");
 				//writer.write((short[]) msg.obj);
 				break;
 
 			case R.id.partialResult:
-				SLog.d("NaverSTT: partialResult");
+				SLog.d(TAG, "NaverSTT: partialResult");
 				// Extract obj property typed with String.
 				mResult = (String) (msg.obj);
 				txtResult.setText(mResult);
 				break;
 
 			case R.id.finalResult:
-				SLog.d("NaverSTT: finalResult");
+				SLog.d(TAG, "NaverSTT: finalResult");
 				// Extract obj property typed with String array.
 				// The first element is recognition result for speech.
 				lastWord = null;
@@ -202,7 +202,7 @@ public class SpeechDemoNaverActivity extends Activity {
 				break;
 
 			case R.id.recognitionError:
-				SLog.d("NaverSTT: recognitionError");
+				SLog.d(TAG, "NaverSTT: recognitionError");
 				//if (writer != null) {
 				//	writer.close();
 				//}
@@ -216,7 +216,7 @@ public class SpeechDemoNaverActivity extends Activity {
 				break;
 
 			case R.id.clientInactive:
-				SLog.d("NaverSTT: clientInactive");
+				SLog.d(TAG, "NaverSTT: clientInactive");
 				//if (writer != null) {
 				//	writer.close();
 				//}

@@ -39,7 +39,7 @@ public class SttQualityTestRecorder {
 			br = new BufferedWriter(fw);
 			//
 			count = 0;
-			SLog.i("init!");
+			SLog.d("init!");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -50,7 +50,7 @@ public class SttQualityTestRecorder {
 			if(br != null) {
 				br.close();
 				br = null;
-				SLog.i("release!");
+				SLog.d("release!");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -79,7 +79,7 @@ public class SttQualityTestRecorder {
 				br.write(encoded);
 				br.newLine();
 				br.flush();
-				SLog.i("write:"+encoded);
+				SLog.d("write:"+encoded);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

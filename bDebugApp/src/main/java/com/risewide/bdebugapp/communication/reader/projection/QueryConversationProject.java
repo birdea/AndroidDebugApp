@@ -39,11 +39,11 @@ public class QueryConversationProject {
 			if (SamsungProject.isTargetDevice()) {
 				project = new SamsungProject();
 				cursor = resolver.query(project.getUri(), project.getProjection(), project.getSelection(), project.getSelectionArgs(), null);
-				SLog.i("** Conversation - getProject - Samsung URI");
+				SLog.d("** Conversation - getProject - Samsung URI");
 			} else {
 				project = new CommonProject();
 				cursor = resolver.query(project.getUri(), project.getProjection(), project.getSelection(), project.getSelectionArgs(), null);
-				SLog.i("** Conversation - getProject - Common URI");
+				SLog.d("** Conversation - getProject - Common URI");
 			}
 		} catch (Exception ignore) {
 			ignore.printStackTrace();

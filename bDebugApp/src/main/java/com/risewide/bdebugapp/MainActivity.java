@@ -11,6 +11,7 @@ import com.risewide.bdebugapp.process.ActivityTestCrashOnOtherProcess;
 import com.risewide.bdebugapp.process.ActivityTestCrashOnSameProcess;
 import com.risewide.bdebugapp.process.ExecuterAdbShellCommand;
 import com.risewide.bdebugapp.receiver.AladdinCallManager;
+import com.risewide.bdebugapp.reflect.TestReflect;
 import com.risewide.bdebugapp.util.AudioFocusManager;
 import com.risewide.bdebugapp.util.SLog;
 import com.risewide.bdebugapp.util.stringconverter.KoreanJosaStringConverterTest;
@@ -30,7 +31,7 @@ import android.widget.EditText;
 
 public class MainActivity extends BaseActivity implements AudioManager.OnAudioFocusChangeListener{
 
-	private static final String TAG = MainActivity.class.getSimpleName();
+	private static final String TAG = "MainActivity";
 
 	private Thread.UncaughtExceptionHandler deUncaughtExceptionHandler;
 	private ISmartVoice iSmartVoice;
@@ -47,7 +48,7 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override
 			public void uncaughtException(Thread t, Throwable e) {
-				SLog.w("MainActivity.uncaughtException :"+e.getLocalizedMessage());
+				SLog.w(TAG, "MainActivity.uncaughtException :"+e.getLocalizedMessage());
 				deUncaughtExceptionHandler.uncaughtException(t, e);
 			}
 		});
@@ -72,6 +73,10 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 
 	public void onClickView(View view) {
 		switch (view.getId()) {
+			case R.id.btnSetOnReflect: {
+				TestReflect.changeByReflection(getApplicationContext());
+				break;
+			}
 			case R.id.btnExecuteAdbCommand: {
 				EditText etAdbCommand = (EditText) findViewById(R.id.etAdbCommand);
 				String cmd = etAdbCommand.getText().toString();
@@ -148,7 +153,7 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 		}
 	}
 	private void log(String msg) {
-		SLog.i("DebugAppTest", msg);
+		SLog.d(TAG, msg);
 	}
 
 	private ServiceConnection mConnection = new ServiceConnection() {

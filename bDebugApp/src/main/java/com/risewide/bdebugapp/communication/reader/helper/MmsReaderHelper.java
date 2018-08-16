@@ -65,7 +65,7 @@ public class MmsReaderHelper {
 			int rowCount = 0;
 			do {
 				String address = cursor.getString(idx_address);
-				SLog.i("rowCount:"+(rowCount++)+", idx_address:"+idx_address+", address:"+address);
+				SLog.d("rowCount:"+(rowCount++)+", idx_address:"+idx_address+", address:"+address);
 				list.add(address);
 			} while (cursor.moveToNext());
 		}

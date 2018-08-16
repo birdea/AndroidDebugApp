@@ -8,6 +8,8 @@ import com.risewide.bdebugapp.util.SLog;
 
 public class ActivityTestCrashOnOtherProcess extends BaseActivity {
 
+	private static final String TAG = "ActivityTestCrashOnOtherProcess";
+
 	private Thread.UncaughtExceptionHandler deUncaughtExceptionHandler;
 
 	@Override
@@ -19,7 +21,7 @@ public class ActivityTestCrashOnOtherProcess extends BaseActivity {
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override
 			public void uncaughtException(Thread t, Throwable e) {
-				SLog.w("ActivityTestCrashOnOtherProcess.uncaughtException :"+e.getLocalizedMessage());
+				SLog.w(TAG, "ActivityTestCrashOnOtherProcess.uncaughtException :"+e.getLocalizedMessage());
 				deUncaughtExceptionHandler.uncaughtException(t, e);
 			}
 		});

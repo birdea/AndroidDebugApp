@@ -34,7 +34,9 @@ import android.widget.TextView;
  * Created by birdea on 2017-08-02.
  */
 
-public class MessageSenderTestActivity extends BaseActivity{
+public class MessageSenderTestActivity extends BaseActivity {
+
+	private static final String TAG = "MessageSenderTestActivity";
 
 	private CommUnifyMessageSender mCommUnifyMessageSender;
 	private HandyListAdapter mHandyListAdapter;
@@ -131,7 +133,7 @@ public class MessageSenderTestActivity extends BaseActivity{
 	}
 
 	private void addEventMessage(String event) {
-		SLog.i(event);
+		SLog.i(TAG, event);
 		if(mHandyListAdapter == null) {
 			return;
 		}
@@ -283,11 +285,11 @@ public class MessageSenderTestActivity extends BaseActivity{
 		mCommUnifyMessageSender.send(this, new AbsMessageSender.OnSendTextMessageListener() {
 			@Override
 			public void onSent(boolean success) {
-				SLog.i("mCommUnifyMessageSender.onSent:"+success);
+				SLog.i(TAG, "mCommUnifyMessageSender.onSent:"+success);
 			}
 			@Override
 			public void onReceived(boolean success) {
-				SLog.i("mCommUnifyMessageSender.onReceived:"+success);
+				SLog.i(TAG, "mCommUnifyMessageSender.onReceived:"+success);
 			}
 		});
 	}

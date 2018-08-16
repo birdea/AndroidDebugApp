@@ -11,6 +11,8 @@ import android.media.AudioManager;
  */
 public class AudioFocusManager {
 
+	private static final String TAG = "AudioFocusManager";
+
 	private AudioFocusManager() {
 	}
 
@@ -50,9 +52,9 @@ public class AudioFocusManager {
 		}
 		int result = audioManager.requestAudioFocus(listener, STREAM_TYPE, FOCUS_MODE);
 		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-			SLog.i("init - result [SUCCESS] AUDIOFOCUS_REQUEST_GRANTED ! = " + result);
+			SLog.i(TAG, "init - result [SUCCESS] AUDIOFOCUS_REQUEST_GRANTED ! = " + result);
 		} else {
-			SLog.i("init - result [FAIL] AUDIOFOCUS_REQUEST_NOT_GRANTED ! = " + result);
+			SLog.i(TAG, "init - result [FAIL] AUDIOFOCUS_REQUEST_NOT_GRANTED ! = " + result);
 		}
 	}
 
@@ -62,13 +64,13 @@ public class AudioFocusManager {
 			return;
 		}
 		int result = audioManager.abandonAudioFocus(listener);
-		SLog.i("release - abandonAudioFocus > result : " + result);
+		SLog.i(TAG, "release - abandonAudioFocus > result : " + result);
 		switch (result) {
 			case AudioManager.AUDIOFOCUS_REQUEST_FAILED:
-				SLog.i("release - FAIL (AUDIOFOCUS_REQUEST_FAILED): " + result);
+				SLog.i(TAG, "release - FAIL (AUDIOFOCUS_REQUEST_FAILED): " + result);
 				break;
 			case AudioManager.AUDIOFOCUS_REQUEST_GRANTED:
-				SLog.i("release - SUCCESS (AUDIOFOCUS_REQUEST_GRANTED): " + result);
+				SLog.i(TAG, "release - SUCCESS (AUDIOFOCUS_REQUEST_GRANTED): " + result);
 				break;
 			default:
 				break;
@@ -85,9 +87,9 @@ public class AudioFocusManager {
 		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
 			// audioManager.registerMediaButtonEventReceiver(RemoteControlReceiver);
 			// Start playback.
-			SLog.i("takeInFocus - result [SUCCESS] AUDIOFOCUS_REQUEST_GRANTED ! = " + result);
+			SLog.i(TAG, "takeInFocus - result [SUCCESS] AUDIOFOCUS_REQUEST_GRANTED ! = " + result);
 		} else {
-			SLog.i("takeInFocus - result [FAIL] AUDIOFOCUS_REQUEST_NOT_GRANTED ! = " + result);
+			SLog.i(TAG, "takeInFocus - result [FAIL] AUDIOFOCUS_REQUEST_NOT_GRANTED ! = " + result);
 		}
 	}
 
@@ -99,10 +101,10 @@ public class AudioFocusManager {
 		int result = audioManager.abandonAudioFocus(onAudioFocusChangeListener);
 		switch (result) {
 			case AudioManager.AUDIOFOCUS_REQUEST_FAILED:
-				SLog.i("takeOutFocus - FAIL (AUDIOFOCUS_REQUEST_FAILED): " + result);
+				SLog.i(TAG, "takeOutFocus - FAIL (AUDIOFOCUS_REQUEST_FAILED): " + result);
 				break;
 			case AudioManager.AUDIOFOCUS_REQUEST_GRANTED:
-				SLog.i("takeOutFocus - SUCCESS (AUDIOFOCUS_REQUEST_GRANTED): " + result);
+				SLog.i(TAG, "takeOutFocus - SUCCESS (AUDIOFOCUS_REQUEST_GRANTED): " + result);
 				break;
 			default:
 				break;
@@ -141,7 +143,7 @@ public class AudioFocusManager {
 					 * We don't release the media player because playback is likely to resume
 					 * if (mMediaPlayer.isPlaying()) mMediaPlayer.pause();
 					 */
-					SLog.i("onAudioFocusChange - AUDIOFOCUS_LOSS_TRANSIENT : " + focusChange);
+					SLog.i(TAG, "onAudioFocusChange - AUDIOFOCUS_LOSS_TRANSIENT : " + focusChange);
 					break;
 				case AudioManager.AUDIOFOCUS_GAIN:
 					/**
@@ -150,7 +152,7 @@ public class AudioFocusManager {
 					 * else if (!mMediaPlayer.isPlaying()) mMediaPlayer.start();
 					 * mMediaPlayer.setVolume(1.0f, 1.0f);
 					 */
-					SLog.i("onAudioFocusChange - AUDIOFOCUS_GAIN : " + focusChange);
+					SLog.i(TAG, "onAudioFocusChange - AUDIOFOCUS_GAIN : " + focusChange);
 					break;
 				case AudioManager.AUDIOFOCUS_LOSS:
 					/**
@@ -160,7 +162,7 @@ public class AudioFocusManager {
 					 * mMediaPlayer.release();
 					 * mMediaPlayer = null;
 					 */
-					SLog.i("onAudioFocusChange - AUDIOFOCUS_LOSS : " + focusChange);
+					SLog.i(TAG, "onAudioFocusChange - AUDIOFOCUS_LOSS : " + focusChange);
 					//am.unregisterMediaButtonEventReceiver(RemoteControlReceiver);
 					// Stop playback
 					break;
@@ -169,10 +171,10 @@ public class AudioFocusManager {
 					 * Lost focus for a short time, but it's ok to keep playing at an attenuated level
 					 * if (mMediaPlayer.isPlaying()) mMediaPlayer.setVolume(0.1f, 0.1f);
 					 */
-					SLog.i("onAudioFocusChange - AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK : " + focusChange);
+					SLog.i(TAG, "onAudioFocusChange - AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK : " + focusChange);
 					break;
 				default:
-					SLog.i("onAudioFocusChange - unknown focusChange : " + focusChange);
+					SLog.i(TAG, "onAudioFocusChange - unknown focusChange : " + focusChange);
 					break;
 			}
 		}

@@ -18,66 +18,55 @@ public class SLog {
 		return BuildConfig.DEBUG;
 	}
 
-	public static void d() {
-		d("");
-	}
-
-	public static void w() {
-		w("");
-	}
-
-	public static void e() {
-		e("");
-	}
-
-	public static void i() {
-		i("");
-	}
-
-	public static void d(String format, Object... args) {
-		d(String.format(format, args));
-	}
-
-	public static void w(String format, Object... args) {
-		w(String.format(format, args));
-	}
-
-	public static void e(String format, Object... args) {
-		e(String.format(format, args));
-	}
-
-	public static void i(String format, Object... args) {
-		i(String.format(format, args));
-	}
-
 	public static void d(String message) {
+		d(TAG, message);
+	}
+
+	public static void d(String tag, String message) {
 		if (isDebug()) {
-			Log.d(getTag(), getMessage(message));
+			Log.d(tag, getMessage(message));
 		}
 	}
 
-	public static void w(String message) {
+	public static void w(String tag, Object message) {
 		if (isDebug()) {
-			Log.w(getTag(), getMessage(message));
+		    if (message instanceof String) {
+                Log.w(tag, getMessage((String)message));
+            }
+            else if (message instanceof Throwable) {
+                StringBuilder sb = new StringBuilder();
+
+                Throwable throwable = (Throwable) message;
+                try {
+                    sb.append(throwable.toString());
+                    sb.append("\n");
+                    StackTraceElement[] element = throwable.getStackTrace();
+
+                    for(int idx = 0; idx < element.length; ++idx) {
+                        sb.append("\tat ");
+                        sb.append(element[idx].toString());
+                        sb.append("\n");
+                    }
+                } catch (Exception var5) {
+                    d(TAG, "[Exception] " + throwable.getMessage());
+                    return;
+                }
+
+                d(TAG, "[Exception] " + sb.toString());
+            }
 		}
 	}
 
-	public static void e(String message) {
+	public static void e(String tag, String message) {
 		if (isDebug()) {
-			Log.e(getTag(), getMessage(message));
+			Log.e(tag, getMessage(message));
 		}
 	}
 
-	public static void i(String message) {
+	public static void i(String tag, String message) {
 		if (isDebug()) {
-			Log.i(getTag(), getMessage(message));
+			Log.i(tag, getMessage(message));
 		}
-	}
-
-	private static String getTag() {
-		int pid = Process.myPid();
-		long tid = Thread.currentThread().getId();
-		return TAG + "(" + pid + ":" + tid + ")";
 	}
 
 	private static String getMessage(String message) {

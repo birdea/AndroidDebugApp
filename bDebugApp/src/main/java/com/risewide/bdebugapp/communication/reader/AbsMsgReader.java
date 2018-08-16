@@ -64,7 +64,7 @@ public abstract class AbsMsgReader {
 				String uriChange = uri.toString();
 				String uriMonitor = getUriMonitor();
 				String uriConversation = getUriConversations();
-				SLog.i(String.format("ContentObserver.onChange > selfChange:%s, Uri:%s, uriChange:%s, mUriMonitor:%s",selfChange, uri, uriChange, uriMonitor));
+				SLog.d(String.format("ContentObserver.onChange > selfChange:%s, Uri:%s, uriChange:%s, mUriMonitor:%s",selfChange, uri, uriChange, uriMonitor));
 				if (uriChange.equals(uriMonitor) || uriChange.contains(uriConversation)) {
 					if (mOnContentObserver != null) {
 						mOnContentObserver.onChange();

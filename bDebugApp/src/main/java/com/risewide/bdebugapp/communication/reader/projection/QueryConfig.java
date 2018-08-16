@@ -89,7 +89,7 @@ public class QueryConfig {
 		StringBuilder sb = new StringBuilder();
 		appendIfNotNull(sb, getSortOrderClause());
 		appendIfNotNull(sb, getClauseLimitSize());
-		SLog.i("** ComposedSortOrderClause:"+sb.toString());
+		SLog.d("** ComposedSortOrderClause:"+sb.toString());
 		return sb.toString();
 	}
 

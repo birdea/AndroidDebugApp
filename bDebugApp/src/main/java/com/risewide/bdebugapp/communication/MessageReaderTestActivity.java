@@ -160,7 +160,7 @@ public class MessageReaderTestActivity extends BaseActivity {
 	private AbsMsgReader.OnContentObserver contentObserver = new AbsMsgReader.OnContentObserver() {
 		@Override
 		public void onChange() {
-			SLog.i("*OnContentObserver.onChange()");
+			SLog.d("*OnContentObserver.onChange()");
 			refresh();
 		}
 	};
