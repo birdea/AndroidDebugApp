@@ -16,6 +16,12 @@
         android:focusableInTouchMode="true"
         android:orientation="vertical">
 
+
+        <Button
+            android:id="@+id/btnTestAnim"
+            style="@style/btnCommonLayout"
+            android:text="animation"/>
+
         <TextView
             style="@style/titleCommonLayout"
             android:text="# Message(SMS/MMS)"/>

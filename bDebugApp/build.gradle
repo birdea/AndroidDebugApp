@@ -35,4 +35,6 @@ dependencies {
     implementation 'com.naver.speech.clientapi:naverspeech-sdk-android:1.1.2'
     // daum tts
     implementation project(':daum-speech-openapi-5.0')
+
+    implementation 'com.github.florent37:viewanimator:1.0.5'
 }

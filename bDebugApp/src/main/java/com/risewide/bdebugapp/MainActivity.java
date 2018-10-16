@@ -1,5 +1,6 @@
 package com.risewide.bdebugapp;
 
+import com.github.florent37.viewanimator.ViewAnimator;
 import com.risewide.bdebugapp.aidltest.TestAidlActivity;
 import com.risewide.bdebugapp.aidltest.TestAidlService;
 import com.risewide.bdebugapp.communication.MessageReaderTestActivity;
@@ -27,6 +28,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.widget.EditText;
 
 public class MainActivity extends BaseActivity implements AudioManager.OnAudioFocusChangeListener{
@@ -73,6 +75,10 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 
 	public void onClickView(View view) {
 		switch (view.getId()) {
+			case R.id.btnTestAnim: {
+				ViewAnimator.animate(view).shake().interpolator(new LinearInterpolator()).start();
+				break;
+			}
 			case R.id.btnSetOnReflect: {
 				TestReflect.changeByReflection(getApplicationContext());
 				break;
