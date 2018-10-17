@@ -5,6 +5,7 @@ import com.risewide.bdebugapp.aidltest.TestAidlActivity;
 import com.risewide.bdebugapp.aidltest.TestAidlService;
 import com.risewide.bdebugapp.communication.MessageReaderTestActivity;
 import com.risewide.bdebugapp.communication.MessageSenderTestActivity;
+import com.risewide.bdebugapp.communication.util.TToast;
 import com.risewide.bdebugapp.external.SpeechDemoGoogleActivity;
 import com.risewide.bdebugapp.external.SpeechDemoKakaoActivity;
 import com.risewide.bdebugapp.external.SpeechDemoNaverActivity;
@@ -20,12 +21,15 @@ import com.skt.prod.voice.v2.aidl.ISmartVoice;
 import com.skt.prod.voice.v2.aidl.ITextToSpeechCallback;
 
 import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
@@ -73,8 +77,71 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 		//System.gc();
 	}
 
+	AudioManager mAudioManager;
+	private AudioManager getAudioManager() {
+		if (mAudioManager == null) {
+			mAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+		}
+		return mAudioManager;
+	}
+
+
+//	public static final int MODE_INVALID            = -2;
+//	public static final int MODE_CURRENT            = -1;
+//	public static final int MODE_NORMAL             = 0;
+//	public static final int MODE_RINGTONE           = 1;
+//	public static final int MODE_IN_CALL            = 2;
+//	public static final int MODE_IN_COMMUNICATION   = 3;
+//	public static final int NUM_MODES               = 4;
+
+	private String[] mAudioModes = {
+		"MODE_CURRENT",
+		"MODE_NORMAL",
+		"MODE_RINGTONE",
+		"MODE_IN_CALL",
+		"MODE_IN_COMMUNICATION"
+	};
+
+	private void setAudioMode() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("pick a message")
+				.setItems(mAudioModes, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						TToast.show(getApplicationContext(), "selected:"+which+"->"+mAudioModes[which]);
+						getAudioManager().setMode(which-1);
+					}
+				});
+		builder.create().show();
+	}
+
 	public void onClickView(View view) {
 		switch (view.getId()) {
+			case R.id.btnSpeakerOn: {
+				AudioManager am = getAudioManager();
+				am.setSpeakerphoneOn(true);
+				break;
+			}
+			case R.id.btnSpeakerOff: {
+				AudioManager am = getAudioManager();
+				am.setSpeakerphoneOn(false);
+				break;
+			}
+			case R.id.btnBtScoOn: {
+				AudioManager am = getAudioManager();
+				am.setBluetoothScoOn(true);
+				am.startBluetoothSco();
+				break;
+			}
+			case R.id.btnBtScoOff: {
+				AudioManager am = getAudioManager();
+				am.stopBluetoothSco();
+				am.setBluetoothScoOn(false);
+				break;
+			}
+			case R.id.btnAudioMode: {
+				setAudioMode();
+				break;
+			}
 			case R.id.btnTestAnim: {
 				ViewAnimator.animate(view).shake().interpolator(new LinearInterpolator()).start();
 				break;

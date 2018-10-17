@@ -24,6 +24,42 @@
 
         <TextView
             style="@style/titleCommonLayout"
+            android:text="# Bluetooth(CALL)"/>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <Button
+                android:id="@+id/btnSpeakerOn"
+                style="@style/btnCommonLayout"
+                android:text="SpeakerOn"
+                android:textSize="10sp"/>
+            <Button
+                android:id="@+id/btnSpeakerOff"
+                style="@style/btnCommonLayout"
+                android:text="SpeakerOff"
+                android:textSize="10sp"/>
+            <Button
+                android:id="@+id/btnBtScoOn"
+                style="@style/btnCommonLayout"
+                android:text="BtScoOn"
+                android:textSize="10sp"/>
+            <Button
+                android:id="@+id/btnBtScoOff"
+                style="@style/btnCommonLayout"
+                android:text="BtScoOff"
+                android:textSize="10sp"/>
+        </TableRow>
+
+        <Button
+            android:id="@+id/btnAudioMode"
+            style="@style/btnCommonLayout"
+            android:text="AudioMode"
+            android:textSize="10sp"/>
+
+        <TextView
+            style="@style/titleCommonLayout"
             android:text="# Message(SMS/MMS)"/>
 
         <TableRow
