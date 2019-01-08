@@ -13,27 +13,47 @@ import com.risewide.bdebugapp.process.ActivityTestCrashOnOtherProcess;
 import com.risewide.bdebugapp.process.ActivityTestCrashOnSameProcess;
 import com.risewide.bdebugapp.process.ExecuterAdbShellCommand;
 import com.risewide.bdebugapp.receiver.AladdinCallManager;
+import com.risewide.bdebugapp.receiver.CallHelper;
 import com.risewide.bdebugapp.reflect.TestReflect;
 import com.risewide.bdebugapp.util.AudioFocusManager;
+import com.risewide.bdebugapp.util.PermissionHelper;
 import com.risewide.bdebugapp.util.SLog;
+import com.risewide.bdebugapp.util.TelephonyHelper;
 import com.risewide.bdebugapp.util.stringconverter.KoreanJosaStringConverterTest;
 import com.skt.prod.voice.v2.aidl.ISmartVoice;
 import com.skt.prod.voice.v2.aidl.ITextToSpeechCallback;
 
+import android.Manifest;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.os.UserHandle;
+import android.provider.CallLog;
+import android.provider.ContactsContract;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.EditText;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+
+import custom.ChromeBarType;
+import custom.ChromeBarView;
 
 public class MainActivity extends BaseActivity implements AudioManager.OnAudioFocusChangeListener{
 
@@ -42,6 +62,7 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 	private Thread.UncaughtExceptionHandler deUncaughtExceptionHandler;
 	private ISmartVoice iSmartVoice;
 	private AladdinCallManager aladdinCallManager;
+	private ChromeBarView chromeBarView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +81,29 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 		});
 
 		aladdinCallManager = new AladdinCallManager(this);
+
+		if (!PermissionHelper.hasPermission(this, Manifest.permission.CALL_PHONE)) {
+			SLog.w(TAG, "requestPermissions CALL_PHONE permission ");
+			ActivityCompat.requestPermissions(this,
+					new String[] {Manifest.permission.CALL_PHONE},
+					1);
+		}
+
+        if (!PermissionHelper.hasPermission(this, Manifest.permission.READ_CALL_LOG)) {
+            SLog.w(TAG, "requestPermissions CALL_PHONE permission ");
+            ActivityCompat.requestPermissions(this,
+                    new String[] {Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_CONTACTS},
+                    1);
+        }
+
+        if (!PermissionHelper.hasPermission(this, Manifest.permission.READ_PHONE_STATE)) {
+            SLog.w(TAG, "requestPermissions CALL_PHONE permission ");
+            ActivityCompat.requestPermissions(this,
+                    new String[] {Manifest.permission.READ_PHONE_STATE},
+                    1);
+        }
+
+        chromeBarView = findViewById(R.id.chrome_bar_view);
 	}
 
 	@Override
@@ -114,8 +158,290 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 		builder.create().show();
 	}
 
+	private void getCallLog() {
+		String[] projection = { CallLog.Calls.CONTENT_TYPE, CallLog.Calls.NUMBER, CallLog.Calls.DURATION, CallLog.Calls.DATE };
+
+		Cursor cur = managedQuery(CallLog.Calls.CONTENT_URI, null, CallLog.Calls.TYPE + "= ?",
+				new String[]{ String.valueOf(CallLog.Calls.OUTGOING_TYPE) },                CallLog.Calls.DEFAULT_SORT_ORDER);
+
+		log("db count=" + String.valueOf(cur.getCount()));
+		log("db count=" + CallLog.Calls.CONTENT_ITEM_TYPE);
+		log("db count=" + CallLog.Calls.CONTENT_TYPE);
+
+		if(cur.moveToFirst() && cur.getCount() > 0) {
+			while(cur.isAfterLast() == false) {
+				StringBuffer sb = new StringBuffer();
+
+				sb.append("call type=").append(cur.getString(cur.getColumnIndex(CallLog.Calls.TYPE)));
+				sb.append(", cashed name=").append(cur.getString(cur.getColumnIndex(CallLog.Calls.CACHED_NAME)));
+				sb.append(", content number=").append(cur.getString(cur.getColumnIndex(CallLog.Calls.NUMBER)));
+				sb.append(", duration=").append(cur.getString(cur.getColumnIndex(CallLog.Calls.DURATION)));
+				sb.append(", new=").append(cur.getString(cur.getColumnIndex(CallLog.Calls.NEW)));
+				//sb.append(", date=").append(timeToString(cur.getLong(cur.getColumnIndex(CallLog.Calls.DATE)))).append("]");
+				cur.moveToNext();
+				log("call history["+sb.toString());
+
+			}
+		}
+	}
+
+    private void getContactList() {
+        ContentResolver cr = getContentResolver();
+        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
+                null, null, null, null);
+
+        if ((cur != null ? cur.getCount() : 0) > 0) {
+            while (cur != null && cur.moveToNext()) {
+                String id = cur.getString(
+                        cur.getColumnIndex(ContactsContract.Contacts._ID));
+                String name = cur.getString(cur.getColumnIndex(
+                        ContactsContract.Contacts.DISPLAY_NAME));
+
+                if (cur.getInt(cur.getColumnIndex(
+                        ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0) {
+                    Cursor pCur = cr.query(
+                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                            null,
+                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                            new String[]{id}, null);
+                    while (pCur.moveToNext()) {
+                        String phoneNo = pCur.getString(pCur.getColumnIndex(
+                                ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        log("Name: " + name);
+                        log("Phone Number: " + phoneNo);
+                    }
+                    pCur.close();
+                }
+            }
+        }
+        if(cur!=null){
+            cur.close();
+        }
+    }
+
+    private void selectChromeType() {
+        final String[] types = ChromeBarType.getTypes();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("pick one..");
+        builder.setItems(types, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                chromeBarView.setBarType(ChromeBarType.valueOf(types[which]));
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+    }
+
+	public static final String AUTHORITY    = "com.skt.aidev.nugujuniorphone.provider";
+
+	/** ContentProvider 제공 클래스에서 받을 uri.getPathSegments()를 등록해 준다
+	 *  << content://" + AUTHORITY + PATH_FIRST_RUN>> 다음부터 getPathSegments[0] = PATH_FIRST_RUN,
+	 * [1], [2], [3]... 순으로 나간다.
+	 */
+	public static final String PATH_FIRST_RUN = "/first_run/boolean";
+	public static final String PATH_IMAGE_TYPE = "/flickup_image_type";
+
+	/** CotentProvider 접근을 위한 ContentResolver 객체를 생성할 때 넣어 주는 매개변수에
+	 *  URI를 사용 한다.
+	 */
+	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + PATH_FIRST_RUN);
+	public static final Uri CONTENT_URI2 = Uri.parse("content://" + AUTHORITY + PATH_IMAGE_TYPE);
+
+    private void getContentProviderValue() {
+		ContentResolver cr = getContentResolver();
+		Cursor cursor = cr.query(CONTENT_URI, null, null, null, null);
+		int result1 = -1, result2 = -1;
+		if (cursor != null) {
+			if (cursor.moveToNext()) {
+				result1 = cursor.getInt(0);
+			}
+		}
+		log("result1 = " + result1);
+
+		Cursor cursor2 = cr.query(CONTENT_URI2, null, null, null, null);
+		if (cursor2 != null) {
+			if (cursor2.moveToNext()) {
+				result2 = cursor2.getInt(0);
+			}
+		}
+		log("result2 = " + result2);
+		TToast.show(this, "getContentProviderValue:"+result1+","+result2);
+	}
+
+	private void setAudioVolume() {
+		AudioManager audioManager = getAudioManager();
+		int beepStream = AudioManager.STREAM_NOTIFICATION;
+		int volume = 3;
+		int volBeep = audioManager.getStreamVolume(beepStream);
+		int volMax = audioManager.getStreamMaxVolume(beepStream);
+		SLog.w(TAG, "onChanged() volBeep:"+volBeep+", volMax:"+volMax+", volMid:"+volume);
+		audioManager.setStreamVolume(beepStream, volume, 0);
+	}
+
+	StatePhoneReceiver myPhoneStateListener;
+
+	private void callSpeakerPhone(String phoneNumber, boolean speakOn) {
+
+		//AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		//audioManager.setMode(AudioManager.MODE_IN_CALL);
+		//audioManager.setSpeakerphoneOn(speakOn);
+
+		if (myPhoneStateListener == null) {
+			myPhoneStateListener = new StatePhoneReceiver(this);
+		}
+		myPhoneStateListener.setSpeakerOn(speakOn);
+
+		TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+		tm.listen(myPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+
+		TelephonyHelper.connectCallWithPhoneNumber(this, phoneNumber);
+	}
+
+	// Monitor for changes to the state of the phone
+	public class StatePhoneReceiver extends PhoneStateListener {
+		private boolean flagSpeakerOn = false;
+		private boolean flagCallHook = false;
+		private TelephonyManager tm;
+
+		public StatePhoneReceiver(Context context) {
+			tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+		}
+
+		public void setSpeakerOn(boolean flag) {
+			flagSpeakerOn = flag;
+			flagCallHook = false;
+		}
+
+		@Override
+		public void onCallStateChanged(int state, String incomingNumber) {
+			super.onCallStateChanged(state, incomingNumber);
+			SLog.w(TAG, "onCallStateChanged() state:"+state);
+			switch (state) {
+				case TelephonyManager.CALL_STATE_OFFHOOK: //Call is established
+					if (flagSpeakerOn) {
+						flagSpeakerOn=false;
+						flagCallHook=true;
+
+						try {
+							Thread.sleep(500); // Delay 0,5 seconds to handle better turning on loudspeaker
+						} catch (InterruptedException e) {
+						}
+
+						//Activate loudspeaker
+						AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+						audioManager.setMode(AudioManager.MODE_IN_CALL);
+						audioManager.setSpeakerphoneOn(true);
+					}
+					break;
+				case TelephonyManager.CALL_STATE_IDLE: //Call is finished
+					if (flagCallHook) {
+						flagCallHook=false;
+						AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+						audioManager.setMode(AudioManager.MODE_NORMAL); //Deactivate loudspeaker
+						tm.listen(myPhoneStateListener, PhoneStateListener.LISTEN_NONE);// Remove listener
+					}
+					break;
+			}
+		}
+	}
+
+	private void showCurrentAssistInfo() {
+		Context context = getApplicationContext();
+		ComponentName cpName;
+		cpName = MainAssistActivity.getCurrentAssist(context);
+		String out1 = (cpName!=null)?cpName.flattenToShortString():"null";
+		cpName = MainAssistActivity.getCurrentAssistWithReflection(context);
+		String out2 = (cpName!=null)?cpName.flattenToShortString():"null";
+		TToast.show(context, "[currentAssist]\n> "+out1+"\n> "+out2);
+	}
+
 	public void onClickView(View view) {
 		switch (view.getId()) {
+			case R.id.btnGetAssistApp: {
+				showCurrentAssistInfo();
+				break;
+			}
+			case R.id.btnSetAssistApp: {
+				startActivity(new Intent(android.provider.Settings.ACTION_VOICE_INPUT_SETTINGS));
+				break;
+			}
+			case R.id.btnCallSpeakerPhoneOn: {
+				callSpeakerPhone("01020259580",true);
+				break;
+			}
+			case R.id.btnCallSpeakerPhoneOff: {
+				callSpeakerPhone("01020259580",false);
+				break;
+			}
+			case R.id.btnSetAudioVolume: {
+				setAudioVolume();
+				break;
+			}
+			case R.id.btnGetContentProviderValue: {
+				getContentProviderValue();
+				break;
+			}
+			case R.id.btnTestVoiceChrome: {
+                selectChromeType();
+				break;
+			}
+			case R.id.btnSeeCallLog: {
+				getCallLog();
+				break;
+			}
+			case R.id.btnSeeContact: {
+                getContactList();
+				break;
+			}
+			case R.id.btnGoCallStart: {
+				CallHelper.connectCallWithPhoneNumber(MainActivity.this, "01020259580");
+				break;
+			}
+			case R.id.btnGoCallEnd: {
+				CallHelper.disconnectCall(getApplicationContext());
+				break;
+			}
+			case R.id.btnGoCallLogView: {
+				/*Intent intent = new Intent();
+				intent.setAction(Intent.ACTION_VIEW);
+				intent.setType(CallLog.Calls.CONTENT_TYPE);
+				startActivity(intent);*/
+				//
+				// Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("content://call_log/calls"));
+				// com.android.dialer/.DialtactsActivity
+
+				Intent i = new Intent();
+				i.setComponent(new ComponentName("com.android.dialer", "com.android.dialer.DialtactsActivity"));
+				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				startActivity(i);
+
+				break;
+			}
+			case R.id.btnGoContactView: {
+				Intent i = new Intent();
+				//i.setComponent(new ComponentName("com.samsung.android.contacts", "com.android.dialer.DialtactsActivity"));
+				i.setComponent(new ComponentName("com.android.contacts", "com.android.contacts.activities.PeopleActivity"));
+				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				startActivity(i);
+
+				// com.android.contacts/.activities.PeopleActivity
+				//
+				/*Intent intent = new Intent();
+				intent.setAction(Intent.ACTION_VIEW);
+				intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
+				startActivity(intent);*/
+				//
+				/*Intent intent = new Intent(ContactsContract.Intents.SHOW_OR_CREATE_CONTACT,
+						Uri.parse("tel:"));
+				intent.putExtra(ContactsContract.Intents.EXTRA_FORCE_CREATE, true);
+				startActivity(intent);*/
+				//
+				/*Intent i = new Intent(Intent.ACTION_INSERT_OR_EDIT);
+				i.setType(ContactsContract.Contacts.CONTENT_ITEM_TYPE);
+				startActivity(i);*/
+				break;
+			}
 			case R.id.btnSpeakerOn: {
 				AudioManager am = getAudioManager();
 				am.setSpeakerphoneOn(true);

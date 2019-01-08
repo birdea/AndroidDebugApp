@@ -1,12 +1,15 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt' // Use experimental kapt implementation
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '28.0.1'
+    compileSdkVersion 26
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.risewide.bdebugapp"
         minSdkVersion 19
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -26,10 +29,13 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation 'com.android.support:appcompat-v7:25.4.0'
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:support-v4:26.1.0'
+
     testImplementation 'junit:junit:4.12'
     // naver tts
     implementation 'com.naver.speech.clientapi:naverspeech-sdk-android:1.1.2'
@@ -37,4 +43,9 @@ dependencies {
     implementation project(':daum-speech-openapi-5.0')
 
     implementation 'com.github.florent37:viewanimator:1.0.5'
+
+    implementation 'com.airbnb.android:lottie:2.5.5'
+}
+repositories {
+    mavenCentral()
 }

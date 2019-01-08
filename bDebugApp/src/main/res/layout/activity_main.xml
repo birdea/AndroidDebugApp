@@ -16,11 +16,157 @@
         android:focusableInTouchMode="true"
         android:orientation="vertical">
 
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <Button
+                android:id="@+id/btnSetAssistApp"
+                style="@style/btnCommonLayout"
+                android:text="Set Assist App"/>
+
+            <Button
+                android:id="@+id/btnGetAssistApp"
+                style="@style/btnCommonLayout"
+                android:text="Get Assist App"/>
+        </TableRow>
+
+        <Button
+            android:id="@+id/btnGetContentProviderValue"
+            style="@style/btnCommonLayout"
+            android:text="Get C.P."/>
+
+        <Button
+            android:id="@+id/btnTestVoiceChrome"
+            style="@style/btnCommonLayout"
+            android:text="VoiceChromeView"/>
+
+        <FrameLayout
+            android:id="@+id/voicechrome_view_frame"
+            android:layout_width="match_parent"
+            android:layout_height="106dp"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center_horizontal"
+            android:background="#ffffff">
+
+            <custom.ChromeBarView
+                android:id="@+id/chrome_bar_view"
+                android:layout_width="140dp"
+                android:layout_height="70dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="horizontal" />
+
+            <RelativeLayout
+                android:id="@+id/watermark_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/watermark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="0dp"
+                    android:text="Watermark"
+                    android:textColor="#ffaaaa"
+                    android:textSize="15dp" />
+
+                <TextView
+                    android:id="@+id/watermark_asr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_alignParentBottom="true"
+                    android:text="Watermark"
+                    android:textColor="#ffaaaa"
+                    android:textSize="15dp" />
+            </RelativeLayout>
+        </FrameLayout>
 
         <Button
             android:id="@+id/btnTestAnim"
             style="@style/btnCommonLayout"
             android:text="animation"/>
+
+        <TextView
+            style="@style/titleCommonLayout"
+            android:text="# Intent(CALL)"/>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <Button
+                android:id="@+id/btnSetAudioVolume"
+                style="@style/btnCommonLayout"
+                android:text="SetVolume"
+                android:textSize="10sp"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <Button
+                android:id="@+id/btnCallSpeakerPhoneOn"
+                style="@style/btnCommonLayout"
+                android:text="Call SpeakerOn"
+                android:textSize="10sp"/>
+            <Button
+                android:id="@+id/btnCallSpeakerPhoneOff"
+                style="@style/btnCommonLayout"
+                android:text="Call SpeakerOff"
+                android:textSize="10sp"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <Button
+                android:id="@+id/btnGoCallStart"
+                style="@style/btnCommonLayout"
+                android:text="CallStart"
+                android:textSize="10sp"/>
+            <Button
+                android:id="@+id/btnGoCallEnd"
+                style="@style/btnCommonLayout"
+                android:text="CallEnd"
+                android:textSize="10sp"/>
+            <Button
+                android:id="@+id/btnGoCallLogView"
+                style="@style/btnCommonLayout"
+                android:text="CallLog"
+                android:textSize="10sp"/>
+            <Button
+                android:id="@+id/btnGoContactView"
+                style="@style/btnCommonLayout"
+                android:text="Contact"
+                android:textSize="10sp"/>
+        </TableRow>
+
+        <TextView
+            style="@style/titleCommonLayout"
+            android:text="# Action(CALL)"/>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <Button
+                android:id="@+id/btnSeeCallLog"
+                style="@style/btnCommonLayout"
+                android:text="SeeCallLog"
+                android:textSize="10sp"/>
+            <Button
+                android:id="@+id/btnSeeContact"
+                style="@style/btnCommonLayout"
+                android:text="SeeContact"
+                android:textSize="10sp"/>
+        </TableRow>
 
         <TextView
             style="@style/titleCommonLayout"

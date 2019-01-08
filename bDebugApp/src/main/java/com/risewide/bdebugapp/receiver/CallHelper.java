@@ -13,6 +13,7 @@ import com.risewide.bdebugapp.util.SLog;
 import com.risewide.bdebugapp.util.SystemServiceHelper;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +21,7 @@ import android.media.session.MediaController;
 import android.media.session.MediaSessionManager;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.telephony.PhoneNumberUtils;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -45,7 +47,11 @@ public class CallHelper {
      */
     public static void connectCallWithPhoneNumber(Context context, String phoneNumber) {
         if (TextUtils.isEmpty(phoneNumber)) {
-            SLog.e(TAG, "connectCallWithPhoneNumber() : phoneNumber is empty.");
+            SLog.w(TAG, "connectCallWithPhoneNumber() : phoneNumber is empty.");
+            return;
+        }
+        if (!PermissionHelper.hasPermission(context, Manifest.permission.CALL_PHONE)) {
+            SLog.w(TAG, "connectCallWithPhoneNumber() : CALL_PHONE permission is not granted.");
             return;
         }
 		SLog.i(TAG, String.format("connectCallWithPhoneNumaber() : phoneNumber(%s)", phoneNumber));
