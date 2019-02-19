@@ -30,9 +30,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -104,6 +106,24 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
         }
 
         chromeBarView = findViewById(R.id.chrome_bar_view);
+
+		checkPermission();
+	}
+
+	private void checkPermission() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			boolean needRequestPermission = false;
+			for (String permission : PermissionHelper.PERMISSION_REQUEST_LIST) {
+				if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+					needRequestPermission = true;
+					break;
+				}
+			}
+			if (needRequestPermission) {
+				ActivityCompat.requestPermissions(this, PermissionHelper.PERMISSION_REQUEST_LIST, 1);
+				return;
+			}
+		}
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package com.risewide.bdebugapp.util;
 
+import android.Manifest;
 import android.app.AppOpsManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -16,6 +17,12 @@ import android.text.TextUtils;
 public class PermissionHelper {
     private static final String TAG = PermissionHelper.class.getSimpleName();
     private static final String SETTINGS_ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
+
+    public static final String[] PERMISSION_REQUEST_LIST = new String[]{
+            Manifest.permission.RECEIVE_SMS,
+            Manifest.permission.RECEIVE_MMS,
+            Manifest.permission.RECEIVE_WAP_PUSH,
+    };
 
     /**
      * @param context
