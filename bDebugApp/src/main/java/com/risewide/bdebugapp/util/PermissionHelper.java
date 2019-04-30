@@ -22,6 +22,8 @@ public class PermissionHelper {
             Manifest.permission.RECEIVE_SMS,
             Manifest.permission.RECEIVE_MMS,
             Manifest.permission.RECEIVE_WAP_PUSH,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
     };
 
     /**

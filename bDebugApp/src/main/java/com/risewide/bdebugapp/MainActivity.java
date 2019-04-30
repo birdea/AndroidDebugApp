@@ -92,14 +92,14 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 		}
 
         if (!PermissionHelper.hasPermission(this, Manifest.permission.READ_CALL_LOG)) {
-            SLog.w(TAG, "requestPermissions CALL_PHONE permission ");
+            SLog.w(TAG, "requestPermissions READ_CALL_LOG permission ");
             ActivityCompat.requestPermissions(this,
                     new String[] {Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_CONTACTS},
                     1);
         }
 
         if (!PermissionHelper.hasPermission(this, Manifest.permission.READ_PHONE_STATE)) {
-            SLog.w(TAG, "requestPermissions CALL_PHONE permission ");
+            SLog.w(TAG, "requestPermissions READ_PHONE_STATE permission ");
             ActivityCompat.requestPermissions(this,
                     new String[] {Manifest.permission.READ_PHONE_STATE},
                     1);
@@ -269,24 +269,28 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 	public static final Uri CONTENT_URI2 = Uri.parse("content://" + AUTHORITY + PATH_IMAGE_TYPE);
 
     private void getContentProviderValue() {
-		ContentResolver cr = getContentResolver();
-		Cursor cursor = cr.query(CONTENT_URI, null, null, null, null);
-		int result1 = -1, result2 = -1;
-		if (cursor != null) {
-			if (cursor.moveToNext()) {
-				result1 = cursor.getInt(0);
+    	try {
+			ContentResolver cr = getContentResolver();
+			Cursor cursor = cr.query(CONTENT_URI, null, null, null, null);
+			int result1 = -1, result2 = -1;
+			if (cursor != null) {
+				if (cursor.moveToNext()) {
+					result1 = cursor.getInt(0);
+				}
 			}
-		}
-		log("result1 = " + result1);
+			log("result1 = " + result1);
 
-		Cursor cursor2 = cr.query(CONTENT_URI2, null, null, null, null);
-		if (cursor2 != null) {
-			if (cursor2.moveToNext()) {
-				result2 = cursor2.getInt(0);
+			Cursor cursor2 = cr.query(CONTENT_URI2, null, null, null, null);
+			if (cursor2 != null) {
+				if (cursor2.moveToNext()) {
+					result2 = cursor2.getInt(0);
+				}
 			}
+			log("result2 = " + result2);
+			TToast.show(this, "getContentProviderValue:"+result1+","+result2);
+		} catch (Exception e) {
+    		e.printStackTrace();
 		}
-		log("result2 = " + result2);
-		TToast.show(this, "getContentProviderValue:"+result1+","+result2);
 	}
 
 	private void setAudioVolume() {
@@ -376,8 +380,30 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 		TToast.show(context, "[currentAssist]\n> "+out1+"\n> "+out2);
 	}
 
+	AudioRecognizeService audioRecognizeService = new AudioRecognizeService();
+
 	public void onClickView(View view) {
 		switch (view.getId()) {
+			case R.id.btnStartListen: {
+				audioRecognizeService.startRecording();
+				break;
+			}
+			case R.id.btnStopListen: {
+				audioRecognizeService.stopRecording();
+				break;
+			}
+			case R.id.btnPlayWave: {
+				audioRecognizeService.playWaveFile();
+				break;
+			}
+			case R.id.btnStopWave: {
+				audioRecognizeService.stopWaveFile();
+				break;
+			}
+			case R.id.btnStopAll: {
+				audioRecognizeService.stopAll();
+				break;
+			}
 			case R.id.btnGetAssistApp: {
 				showCurrentAssistInfo();
 				break;

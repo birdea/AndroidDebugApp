@@ -21,6 +21,41 @@
             android:layout_height="wrap_content"
             >
             <Button
+                android:id="@+id/btnStartListen"
+                style="@style/btnCommonLayout"
+                android:textSize="11sp"
+                android:text="Start Listen"/>
+
+            <Button
+                android:id="@+id/btnStopListen"
+                style="@style/btnCommonLayout"
+                android:textSize="11sp"
+                android:text="Stop Listen"/>
+
+            <Button
+                android:id="@+id/btnStopAll"
+                style="@style/btnCommonLayout"
+                android:textSize="11sp"
+                android:text="Stop All"/>
+
+            <Button
+                android:id="@+id/btnPlayWave"
+                style="@style/btnCommonLayout"
+                android:textSize="11sp"
+                android:text="Play Wav"/>
+
+            <Button
+                android:id="@+id/btnStopWave"
+                style="@style/btnCommonLayout"
+                android:textSize="11sp"
+                android:text="Stop Wav"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <Button
                 android:id="@+id/btnSetAssistApp"
                 style="@style/btnCommonLayout"
                 android:text="Set Assist App"/>
