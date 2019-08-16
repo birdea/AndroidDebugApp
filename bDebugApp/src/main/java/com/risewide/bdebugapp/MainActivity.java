@@ -15,7 +15,9 @@ import com.risewide.bdebugapp.process.ExecuterAdbShellCommand;
 import com.risewide.bdebugapp.receiver.AladdinCallManager;
 import com.risewide.bdebugapp.receiver.CallHelper;
 import com.risewide.bdebugapp.reflect.TestReflect;
+import com.risewide.bdebugapp.toktok.ToktokAuthManager;
 import com.risewide.bdebugapp.util.AudioFocusManager;
+import com.risewide.bdebugapp.util.BLog;
 import com.risewide.bdebugapp.util.PermissionHelper;
 import com.risewide.bdebugapp.util.SLog;
 import com.risewide.bdebugapp.util.TelephonyHelper;
@@ -24,6 +26,7 @@ import com.skt.prod.voice.v2.aidl.ISmartVoice;
 import com.skt.prod.voice.v2.aidl.ITextToSpeechCallback;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -38,10 +41,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.os.UserHandle;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
-import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.telephony.PhoneStateListener;
@@ -50,9 +51,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.EditText;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 
 import custom.ChromeBarType;
 import custom.ChromeBarView;
@@ -84,31 +82,19 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 
 		aladdinCallManager = new AladdinCallManager(this);
 
-		if (!PermissionHelper.hasPermission(this, Manifest.permission.CALL_PHONE)) {
-			SLog.w(TAG, "requestPermissions CALL_PHONE permission ");
-			ActivityCompat.requestPermissions(this,
-					new String[] {Manifest.permission.CALL_PHONE},
-					1);
+		if (!PermissionHelper.hasPermission(this, PermissionHelper.PERMISSION_REQUEST_LIST)) {
+			ActivityCompat.requestPermissions(this, PermissionHelper.PERMISSION_REQUEST_LIST, 1);
 		}
-
-        if (!PermissionHelper.hasPermission(this, Manifest.permission.READ_CALL_LOG)) {
-            SLog.w(TAG, "requestPermissions READ_CALL_LOG permission ");
-            ActivityCompat.requestPermissions(this,
-                    new String[] {Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_CONTACTS},
-                    1);
-        }
-
-        if (!PermissionHelper.hasPermission(this, Manifest.permission.READ_PHONE_STATE)) {
-            SLog.w(TAG, "requestPermissions READ_PHONE_STATE permission ");
-            ActivityCompat.requestPermissions(this,
-                    new String[] {Manifest.permission.READ_PHONE_STATE},
-                    1);
-        }
 
         chromeBarView = findViewById(R.id.chrome_bar_view);
 
 		checkPermission();
+
+		integrateTestToktok.init(this);
+
 	}
+
+	ToktokAuthManager integrateTestToktok = new ToktokAuthManager();
 
 	private void checkPermission() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -382,8 +368,23 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 
 	AudioRecognizeService audioRecognizeService = new AudioRecognizeService();
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		BLog.w("onActivityResult - requestCode:"+requestCode+", resultCode:"+resultCode+", intent:"+data);
+	}
+
 	public void onClickView(View view) {
 		switch (view.getId()) {
+			case R.id.btnToktokLoginReset: {
+                integrateTestToktok.resetCookieSession();
+				break;
+			}
+			case R.id.btnToktokLoginAuth: {
+				integrateTestToktok.checkStoreInfo();
+				integrateTestToktok.checkAuthInfo(MainActivity.this);
+				break;
+			}
 			case R.id.btnStartListen: {
 				audioRecognizeService.startRecording();
 				break;

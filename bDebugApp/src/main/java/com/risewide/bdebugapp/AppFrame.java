@@ -2,6 +2,8 @@ package com.risewide.bdebugapp;
 
 import android.app.Application;
 
+import com.risewide.bdebugapp.toktok.SharedPreferenceBase;
+import com.risewide.bdebugapp.toktok.ToktokApiClient;
 import com.risewide.bdebugapp.util.SLog;
 
 /**
@@ -14,5 +16,8 @@ public class AppFrame extends Application{
 	public void onCreate() {
 		super.onCreate();
 		SLog.d("AppFrame.onCreate()");
+
+		SharedPreferenceBase.init(this);
+		ToktokApiClient.init(this);
 	}
 }

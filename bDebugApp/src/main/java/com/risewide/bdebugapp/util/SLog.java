@@ -28,6 +28,10 @@ public class SLog {
 		}
 	}
 
+	public static void w(String message) {
+		w(TAG, message);
+	}
+
 	public static void w(String tag, Object message) {
 		if (isDebug()) {
 		    if (message instanceof String) {

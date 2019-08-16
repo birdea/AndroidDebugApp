@@ -45,6 +45,18 @@ dependencies {
     implementation 'com.github.florent37:viewanimator:1.0.5'
 
     implementation 'com.airbnb.android:lottie:2.5.5'
+
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.1'
+    implementation "com.squareup.okhttp3:okhttp:3.12.1"
+    implementation "com.squareup.okhttp3:okhttp-urlconnection:3.12.1"
+    implementation ('com.squareup.retrofit2:converter-simplexml:2.1.0'){
+        exclude group: 'stax', module: 'stax-api'
+        exclude group: 'stax', module: 'stax'
+        exclude group: 'xpp3', module: 'xpp3'
+    }
 }
 repositories {
     mavenCentral()

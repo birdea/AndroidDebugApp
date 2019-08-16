@@ -71,6 +71,22 @@
             style="@style/btnCommonLayout"
             android:text="Get C.P."/>
 
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <Button
+                android:id="@+id/btnToktokLoginAuth"
+                style="@style/btnCommonLayout"
+                android:text="Toktok Login"/>
+            <Button
+                android:id="@+id/btnToktokLoginReset"
+                style="@style/btnCommonLayout"
+                android:text="Toktok Reset"/>
+
+        </TableRow>
+
+
         <Button
             android:id="@+id/btnTestVoiceChrome"
             style="@style/btnCommonLayout"
