@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/btnWifiScan"
+        android:text="Wifi Scan"
+        android:textSize="11sp"
+        android:onClick="onClick"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"/>
+
+    <Button
+        android:id="@+id/btnWifiOn"
+        android:text="ON"
+        android:textSize="11sp"
+        android:onClick="onClick"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"/>
+
+    <Button
+        android:id="@+id/btnWifiOff"
+        android:text="OFF"
+        android:textSize="11sp"
+        android:onClick="onClick"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"/>
+
+    <TextView
+        android:id="@+id/tvResult"
+        android:text=".."
+        android:textSize="11sp"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_margin="10dp"
+        android:padding="10dp"/>
+
+    <ListView
+        android:id="@+id/lvEvents"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffd084"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll"/>
+
+</LinearLayout>

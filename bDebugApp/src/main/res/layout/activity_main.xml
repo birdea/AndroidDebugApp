@@ -16,6 +16,36 @@
         android:focusableInTouchMode="true"
         android:orientation="vertical">
 
+        <Button
+            android:id="@+id/btnBluetoothScan"
+            style="@style/btnCommonLayout"
+            android:textSize="11sp"
+            android:text="Bluetooth Scan"/>
+
+        <Button
+            android:id="@+id/btnWifiScan"
+            style="@style/btnCommonLayout"
+            android:textSize="11sp"
+            android:text="Wifi Scan"/>
+
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <TextView
+                android:id="@+id/watermark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="0dp"
+                android:text="Watermark"
+                android:textColor="#ffaaaa"
+                android:textSize="15dp" />
+
+        </TableRow>
+
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -3,6 +3,7 @@ package com.risewide.bdebugapp;
 import com.github.florent37.viewanimator.ViewAnimator;
 import com.risewide.bdebugapp.aidltest.TestAidlActivity;
 import com.risewide.bdebugapp.aidltest.TestAidlService;
+import com.risewide.bdebugapp.ble.BluetoothScanTestActivity;
 import com.risewide.bdebugapp.communication.MessageReaderTestActivity;
 import com.risewide.bdebugapp.communication.MessageSenderTestActivity;
 import com.risewide.bdebugapp.communication.util.TToast;
@@ -22,6 +23,7 @@ import com.risewide.bdebugapp.util.PermissionHelper;
 import com.risewide.bdebugapp.util.SLog;
 import com.risewide.bdebugapp.util.TelephonyHelper;
 import com.risewide.bdebugapp.util.stringconverter.KoreanJosaStringConverterTest;
+import com.risewide.bdebugapp.wifi.WifiScanTestActivity;
 import com.skt.prod.voice.v2.aidl.ISmartVoice;
 import com.skt.prod.voice.v2.aidl.ITextToSpeechCallback;
 
@@ -82,8 +84,30 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 
 		aladdinCallManager = new AladdinCallManager(this);
 
-		if (!PermissionHelper.hasPermission(this, PermissionHelper.PERMISSION_REQUEST_LIST)) {
-			ActivityCompat.requestPermissions(this, PermissionHelper.PERMISSION_REQUEST_LIST, 1);
+		/*if (!PermissionHelper.hasPermission(this, Manifest.permission.CALL_PHONE)) {
+			SLog.w(TAG, "requestPermissions CALL_PHONE permission ");
+			ActivityCompat.requestPermissions(this,
+					new String[] {Manifest.permission.CALL_PHONE},
+					1);
+		}
+
+        if (!PermissionHelper.hasPermission(this, Manifest.permission.READ_CALL_LOG)) {
+            SLog.w(TAG, "requestPermissions READ_CALL_LOG permission ");
+            ActivityCompat.requestPermissions(this,
+                    new String[] {Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_CONTACTS},
+                    1);
+        }
+
+        if (!PermissionHelper.hasPermission(this, Manifest.permission.READ_PHONE_STATE)) {
+            SLog.w(TAG, "requestPermissions READ_PHONE_STATE permission ");
+            ActivityCompat.requestPermissions(this,
+                    new String[] {Manifest.permission.READ_PHONE_STATE},
+                    1);
+        }*/
+
+		if (!PermissionHelper.allPermissionsGranted(this)) {
+			PermissionHelper.getRuntimePermissions(this);
+			return;
 		}
 
         chromeBarView = findViewById(R.id.chrome_bar_view);
@@ -376,6 +400,16 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 
 	public void onClickView(View view) {
 		switch (view.getId()) {
+            case R.id.btnBluetoothScan: {
+				Intent intent = new Intent(this, BluetoothScanTestActivity.class);
+				startActivity(intent);
+                break;
+            }
+			case R.id.btnWifiScan: {
+				Intent intent = new Intent(this, WifiScanTestActivity.class);
+				startActivity(intent);
+				break;
+			}
 			case R.id.btnToktokLoginReset: {
                 integrateTestToktok.resetCookieSession();
 				break;
