@@ -17,6 +17,12 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/btnWebview"
+            style="@style/btnCommonLayout"
+            android:textSize="11sp"
+            android:text="Webview Jsp"/>
+
+        <Button
             android:id="@+id/btnBluetoothScan"
             style="@style/btnCommonLayout"
             android:textSize="11sp"

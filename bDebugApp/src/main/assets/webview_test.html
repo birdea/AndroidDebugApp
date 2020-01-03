@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <title>테스트 화면</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="author" content="">
+</head>
+<body>
+<br/>
+<br/>
+<button style="height:50px;width:200px" onclick="sucessLogin();">이벤트전달 테스트</button>
+<br/>
+<br/>
+<input type="button" value="Say hello" onClick="showAndroidToast('Hello Android!')" />
+
+<script type="text/javascript">
+        function showAndroidToast(toast) {
+            window.NuguWebCommonHandler.showToast(toast);
+        }
+</script>
+<script>
+    
+
+var isMobile = {
+    Android: function() {
+        return navigator.userAgent.match(/Android/i);
+    },
+    BlackBerry: function() {
+        return navigator.userAgent.match(/BlackBerry/i);
+    },
+    iOS: function() {
+        return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+    },
+    Opera: function() {
+        return navigator.userAgent.match(/Opera Mini/i);
+    },
+    Windows: function() {
+        return navigator.userAgent.match(/IEMobile/i);
+    },
+    any: function() {
+        return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
+    }
+};
+
+function sucessLogin() {
+    var parameter = {
+                        method: "sucessLogin",
+                        body: {
+                            result: "",
+                            resultMessage: "로그인이 실패 했습니다.",
+                            deptCd: "SKT.00004268",
+                            deptNm: "AI Convergence개발 Cell",
+                            email: "birdea@sk.com",
+                            loginId: "SKT.1112327",
+                            empId: "1112327",
+                            userNm: "황승태"
+                        }
+                    };
+
+    if(isMobile.Android())
+        window.NuguWebCommonHandler.sucessLogin(JSON.stringify(parameter));
+    else if(isMobile.iOS())
+        window.webkit.messageHandlers.NuguWebCommonHandler.postMessage(parameter);
+}
+
+</script>
+<br/>
+</body>
+</html>

@@ -10,6 +10,7 @@ import com.risewide.bdebugapp.communication.util.TToast;
 import com.risewide.bdebugapp.external.SpeechDemoGoogleActivity;
 import com.risewide.bdebugapp.external.SpeechDemoKakaoActivity;
 import com.risewide.bdebugapp.external.SpeechDemoNaverActivity;
+import com.risewide.bdebugapp.jsp.WebViewTestActivity;
 import com.risewide.bdebugapp.process.ActivityTestCrashOnOtherProcess;
 import com.risewide.bdebugapp.process.ActivityTestCrashOnSameProcess;
 import com.risewide.bdebugapp.process.ExecuterAdbShellCommand;
@@ -400,6 +401,11 @@ public class MainActivity extends BaseActivity implements AudioManager.OnAudioFo
 
 	public void onClickView(View view) {
 		switch (view.getId()) {
+			case R.id.btnWebview: {
+				Intent intent = new Intent(this, WebViewTestActivity.class);
+				startActivity(intent);
+				break;
+			}
             case R.id.btnBluetoothScan: {
 				Intent intent = new Intent(this, BluetoothScanTestActivity.class);
 				startActivity(intent);

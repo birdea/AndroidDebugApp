@@ -98,6 +98,9 @@
         <activity android:name=".ble.BluetoothScanTestActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".jsp.WebViewTestActivity"
+            android:screenOrientation="portrait"/>
+
         <!-- Test Aidl Communication -->
         <activity android:name=".aidltest.TestAidlActivity"
                   android:screenOrientation="portrait"/>
